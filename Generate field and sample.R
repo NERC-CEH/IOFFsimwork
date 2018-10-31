@@ -1,11 +1,12 @@
 ##generate spatial field from log gaussian cox process
 ##this code is taken from the Simpson tutorial 
 
+#xdim = 100, ydim = 300
 
 library(spatstat) 
-win <- owin(c(0,3), c(0,3))
+win <- owin(c(0,1), c(0,3))
 
-spatstat.options(npixel=300)
+spatstat.options(npixel=c(100, 300))
 
 beta0 <- 3
 
@@ -16,14 +17,14 @@ set.seed(1)
 lg.s <- rLGCP('matern', beta0, 
               var=sigma2x, scale=1/kappa, nu=1, win=win)
 
-xy <- cbind(lg.s$x, lg.s$y)[,2:1]
+xy <- cbind(lg.s$x, lg.s$y)
 
 Lam <- attr(lg.s, 'Lambda') 
 summary(as.vector(rf.s <- log(Lam$v)))
 
 par(mfrow=c(1,1)) 
 library(fields) 
-image.plot(list(x=Lam$yrow, y=Lam$xcol, z=rf.s), main='log-Lambda', asp=1) 
+image.plot(list(x=Lam$xcol, y=Lam$yrow, z=t(rf.s)), main='log-Lambda', asp=1) 
 points(xy, pch=19)
 
 
@@ -78,7 +79,7 @@ pp2$presence <- rbinom(nrow(pp2),1,pp2$stratprobs)
 pp3 <- pp2[pp2$presence == 1,]
 
 
-image.plot(list(x=Lam$yrow, y=Lam$xcol, z=rf.s), main='log-Lambda', asp=1) 
+image.plot(list(x=Lam$xcol, y=Lam$yrow, z=t(rf.s)), main='log-Lambda', asp=1) 
 points(pp3$x/100, pp3$y/100, pch = 20)#note rescale again
 
 #distribution of points is now biased to the lower half of the region. Therefore pp3 could be unstructured data collection
@@ -101,17 +102,29 @@ s2 <- rbind(s2, s3)
 }
 
 par(mfrow=c(1,1))
-image.plot(list(x=Lam$yrow, y=Lam$xcol, z=rf.s), main='log-Lambda', asp=1) 
+image.plot(list(x=Lam$xcol, y=Lam$yrow, z=t(rf.s)), main='log-Lambda', asp=1) 
 points(s2$x/100, s2$y/100, pch = 20, col = "blue")#note rescale again
-points(xy, pch=20, col= "white")
 
 
+##need to generate new points - this would remove the assumption that the same individuals are observed in both processes. Still assume that the random field is the same
+
+newpoints <- rpoispp(lambda = Lam)
+points(newpoints$y ~ newpoints$x, pch = 20, col = "white")
 
 #see which points are observed 
 
-dat2 <- merge(pp2, s2, by.x = c("x", "x"), by.y = c("y","y"))
+newpoints_sc <- data.frame(x1 = round(newpoints$x*100), y1 = round(newpoints$y*100))
 
-##need to generate new points?
+dat2 <- merge(newpoints_sc, s2, by.x = c("x1", "y1"), by.y = c("x","y"))
 
+names(dat2) <- c("x1", "y1", "sim1", "stratum", "stratprobs", "sim2")
 
+head(dat2)
+
+dat2$x_sc <- dat2$x/100
+dat2$y_sc <- dat2$y/100
+
+points(dat2$y_sc ~ dat2$x_sc, pch = 20, col = "red")
+
+#dat2 now holds locations of points observed in structured survey
 

@@ -3,8 +3,8 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) 
 
 genStrataLam <- function(Lam, strata = 8, rows = 4, cols = 2, plot = TRUE){
   if(cols*rows != strata) {stop("Number of rows and columns do not total number of strata")}
-  xdim = Lam$dim[1]
-  ydim = Lam$dim[2]
+  xdim = Lam$dim[2]
+  ydim = Lam$dim[1]
   if(!is.wholenumber(xdim/cols)) {stop("x dimension is not divisible by number of columns")}
   if(!is.wholenumber(ydim/rows)) {stop("y dimension is not divisible by number of rows")}
   cutx <- split(1:xdim,cut(1:xdim, cols))

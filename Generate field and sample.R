@@ -10,8 +10,21 @@ win <- owin(c(0,1), c(0,3)) # keeping this rectangular is really important to ch
 # set number of pixels
 spatstat.options(npixel=c(100,300))
 
+##Creating environmental covariate and altering truth based on this
+# using Simpson tutorial again
 
-beta0 <- 3 # intercept/mu
+# can add covariate at the beginning - create arificial covariate
+# create y0 and x0 separately as rectangle
+y0 <- seq(win$yrange[1], win$yrange[2],
+          length=spatstat.options()$npixel[2])
+x0 <- seq(win$xrange[1], win$xrange[2],
+          length=spatstat.options()$npixel[1])
+# bit of a fudge but rounding this does work to give 3 levels (0,1,2)
+gridcov <- round(outer(y0, x0, function(x,y) cos(x) - sin(y-2))) 
+
+
+beta0 <- 2 # intercept/mu
+beta1 <- 0.2 # slope of relationship to environment
 
 sigma2x <- 0.2;      kappa <- 2
 
@@ -22,12 +35,19 @@ set.seed(1)
 lg.s <- rLGCP('matern', beta0, 
               var=sigma2x, scale=1/kappa, nu=1, win=win)
 
+# with environmental covariate
+lg.s.c <- rLGCP('matern', im(beta0 + beta1*gridcov, xcol=x0, yrow=y0),
+                var=sigma2x, scale=1/kappa, nu=1, win=win)
+
 # takes the coordinates of the randomly generated points
 xy <- cbind(lg.s$x, lg.s$y)
+xy.c <- cbind(lg.s.c$x, lg.s.c$y)
 
 # access attribute (Lambda) of lg.s object and create Lam 
 Lam <- attr(lg.s, 'Lambda') 
 summary(as.vector(rf.s <- log(Lam$v)))
+Lam.c <- attr(lg.s.c, 'Lambda') 
+summary(as.vector(rf.s.c <- log(Lam.c$v)))
 # can convert this to a Poisson point process with below
 ppLam <- rpoispp(Lam)
 
@@ -36,6 +56,13 @@ par(mfrow=c(1,1))
 library(fields) 
 image.plot(list(x=Lam$xcol, y=Lam$yrow, z=t(rf.s)), main='log-Lambda', asp=1) 
 points(xy, pch=19)
+
+# covariate and point process
+par(mfrow=c(1,2), mar=c(2,2,1,1), mgp=c(1,0.5,0))
+image.plot(list(x=x0, y=y0, z=t(gridcov)), main='Covariate', asp=1)
+image.plot(list(x=x0, y=y0, z=t(rf.s.c)),
+           main='log-Lambda', asp=1)
+points(xy.c, pch=19)
 
 
 ##function splits the surface into a grid of defined size

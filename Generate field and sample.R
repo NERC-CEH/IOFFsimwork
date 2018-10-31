@@ -1,7 +1,7 @@
 ##generate spatial field from log gaussian cox process
 ##this code is taken from the Simpson tutorial 
 
-
+#test
 library(spatstat) 
 # owin creates an object of class "owin" which is an observation window in 2D
 # specify x and y coordinates

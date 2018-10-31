@@ -1,5 +1,4 @@
 
-
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
 
 genStrataLam <- function(Lam, strata = 8, rows = 4, cols = 2, plot = TRUE){

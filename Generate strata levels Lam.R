@@ -1,4 +1,5 @@
 
+
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
 
 genStrataLam <- function(Lam, strata = 8, rows = 4, cols = 2, plot = TRUE){
@@ -7,8 +8,9 @@ genStrataLam <- function(Lam, strata = 8, rows = 4, cols = 2, plot = TRUE){
   ydim = Lam$dim[1]
   if(!is.wholenumber(xdim/cols)) {stop("x dimension is not divisible by number of columns")}
   if(!is.wholenumber(ydim/rows)) {stop("y dimension is not divisible by number of rows")}
-  cutx <- split(1:xdim,cut(1:xdim, cols))
-  cuty <- split(1:ydim,cut(1:ydim, rows))
+  # added in below claus to make more flexible if we say only want rows not columns or vice versa
+  if(cols > 1){cutx <- split(1:xdim,cut(1:xdim, cols))}else{cutx <- list(c(1:xdim))}
+  if(rows > 1){cuty <- split(1:ydim,cut(1:ydim, rows))}else{cuty <- list(c(1:ydim))}
   stratxy <- expand.grid(1:xdim, 1:ydim)
   names(stratxy) <- c("x","y")
   k = 1

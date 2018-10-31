@@ -23,7 +23,7 @@ x0 <- seq(win$xrange[1], win$xrange[2],
 gridcov <- round(outer(y0, x0, function(x,y) cos(x) - sin(y-2))) 
 
 
-beta0 <- 2 # intercept/mu
+beta0 <- 5 # intercept/mu (increased to 5 to increase no.obs)
 beta1 <- 0.2 # slope of relationship to environment
 
 sigma2x <- 0.2;      kappa <- 2
@@ -78,9 +78,9 @@ strata1 <- genStrataLam(Lam, strata = 8, rows = 4, cols = 2)
 lookup <- data.frame(stratum = 1:8, probs = NA)
 
 ## Specify probs for each stratum (note this is effectively a detection probability per point NOT a probability of each cell being sampled i.e. does not sum to 1)
-lookup$probs[lookup$stratum %in% c(1:4)] <- 0.8
-lookup$probs[lookup$stratum %in% c(5,6)] <- 0.4
-lookup$probs[lookup$stratum %in% c(7,8)] <- 0.2
+lookup$probs[lookup$stratum %in% c(1:4)] <- 0.5 #increased thinning
+lookup$probs[lookup$stratum %in% c(5,6)] <- 0.3
+lookup$probs[lookup$stratum %in% c(7,8)] <- 0.1
 
 
 #add probabilites to strata output
@@ -139,14 +139,15 @@ s1 <- sampleStrata(dat, nsamp = 24, type = "Stratified")
 
 s2 <- data.frame()
 for(i in 1:nrow(s1$Stratified)){
-  s3 <- dat[dat$x %in% seq(s1$Stratified$x[i]-2, s1$Stratified$x[i]+2) & dat$y %in% seq(s1$Stratified$y[i]-2, s1$Stratified$y[i]+2),]
+    s3 <- dat[dat$x %in% seq(s1$Stratified$x[i]-2, s1$Stratified$x[i]+2) & dat$y %in% seq(s1$Stratified$y[i]-2, s1$Stratified$y[i]+2),]
+  s3$samp_id <- i
   s2 <- rbind(s2, s3)
 }
 
 par(mfrow=c(1,1))
 image.plot(list(x=Lam$xcol, y=Lam$yrow, z=t(rf.s)), main='log-Lambda', asp=1) 
 points(s2$x/100, s2$y/100, pch = 20, col = "blue")#note rescale again
-points(xy, pch=20, col= "white")
+#points(xy, pch=20, col= "white")
 
 
 
@@ -163,7 +164,7 @@ points(newpoints$y ~ newpoints$x, pch = 20, col = "white")
 #see which points are observed 	#see which points are observed
 newpoints_sc <- data.frame(x1 = round(newpoints$x*100), y1 = round(newpoints$y*100))
 dat2 <- merge(newpoints_sc, s2, by.x = c("x1", "y1"), by.y = c("x","y"))
-names(dat2) <- c("x1", "y1", "sim1", "stratum", "stratprobs", "sim2")
+names(dat2) <- c("x1", "y1", "sim1", "stratum", "stratprobs", "sim2","samp_id")
 head(dat2)
 dat2$x_sc <- dat2$x/100
 dat2$y_sc <- dat2$y/100

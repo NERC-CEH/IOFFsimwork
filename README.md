@@ -13,6 +13,8 @@ output: html_document
 
 [Sample from strata.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Sample%20from%20strata.R) : Function to sample points from random field. Samples can either be taken equally from strata ("Stratified" type), or with probablity dependent on given strata sampling probabilities ("Unstructured" type), or with probability inversely related to the strata sampling probabilities ("Intelligent" type). "Stratified" sampling most closely resembles structured surveys whereas "Intelligent" sampling simulates the potential to take more samples from areas where unstructured samples are less likely to be taken (i.e. an adaptive sampling strategy)
 
+[Emily field generation.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Emily%20field%20generation.R) : This script is a manual way to create a Poisson point process of abundance with an environmental covariate. Does not look as pretty as the SpatStat version and the spatial autocorrelation is quite forced. Based loosely on the way Diana created her simulations.
+
 
 
 

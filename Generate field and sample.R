@@ -135,12 +135,14 @@ dat$sim2 <- dat$sim1 #no extra error added
 
 s1 <- sampleStrata(dat, nsamp = 24, type = "Stratified")
 
+s1$Stratified$samp_id <- 1:nrow(s1$Stratified)
+
 #add neighbourhood - areas of human occupancy?
 
 s2 <- data.frame()
 for(i in 1:nrow(s1$Stratified)){
     s3 <- dat[dat$x %in% seq(s1$Stratified$x[i]-2, s1$Stratified$x[i]+2) & dat$y %in% seq(s1$Stratified$y[i]-2, s1$Stratified$y[i]+2),]
-  s3$samp_id <- i
+    s3$samp_id <- s1$Stratified$samp_id[i]
   s2 <- rbind(s2, s3)
 }
 
@@ -171,7 +173,19 @@ dat2$y_sc <- dat2$y/100
 points(dat2$y_sc ~ dat2$x_sc, pch = 20, col = "red")
 #dat2 now holds locations of points observed in structured survey
 
+#add absences to structured data
 
+all_samps <- unique(s2$samp_id)
+
+struct_dat <- data.frame(samp_id = all_samps)
+struct_dat$x <- s1$Stratified$x[match(struct_dat$samp_id, s1$Stratified$samp_id)]
+struct_dat$y <- s1$Stratified$y[match(struct_dat$samp_id, s1$Stratified$samp_id)]
+
+
+
+struct_dat$presence <- match(all_samps, dat2$samp_id)
+struct_dat$presence[!is.na(struct_dat$presence)] <- 1 #convert to p/a
+struct_dat$presence[is.na(struct_dat$presence)] <- 0
 
 
 

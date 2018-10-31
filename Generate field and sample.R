@@ -125,23 +125,23 @@ points(xy, pch=20, col= "white")
 
 #see which points are observed 
 
-dat2 <- merge(pp2, s2, by.x = c("x", "x"), by.y = c("y","y"))
+#dat2 <- merge(pp2, s2, by.x = c("x", "x"), by.y = c("y","y"))
 
 
 ##need to generate new points? - otherwise we assume the same individuals are observed with both processes which is unrealistic. 
-# 
-# newpoints <- rpoispp(lambda = Lam)	
-# points(newpoints$y ~ newpoints$x, pch = 20, col = "white")
-# 
-# #see which points are observed 	#see which points are observed 
-# newpoints_sc <- data.frame(x1 = round(newpoints$x*100), y1 = round(newpoints$y*100))	dat2 <- merge(pp2, s2, by.x = c("x", "x"), by.y = c("y","y"))
-# dat2 <- merge(newpoints_sc, s2, by.x = c("x1", "y1"), by.y = c("x","y"))	
-# names(dat2) <- c("x1", "y1", "sim1", "stratum", "stratprobs", "sim2")	
-# head(dat2)	
-# dat2$x_sc <- dat2$x/100	
-# dat2$y_sc <- dat2$y/100	
-# points(dat2$y_sc ~ dat2$x_sc, pch = 20, col = "red")	
-# #dat2 now holds locations of points observed in structured survey
+
+newpoints <- rpoispp(lambda = Lam)
+points(newpoints$y ~ newpoints$x, pch = 20, col = "white")
+
+#see which points are observed 	#see which points are observed
+newpoints_sc <- data.frame(x1 = round(newpoints$x*100), y1 = round(newpoints$y*100))
+dat2 <- merge(newpoints_sc, s2, by.x = c("x1", "y1"), by.y = c("x","y"))
+names(dat2) <- c("x1", "y1", "sim1", "stratum", "stratprobs", "sim2")
+head(dat2)
+dat2$x_sc <- dat2$x/100
+dat2$y_sc <- dat2$y/100
+points(dat2$y_sc ~ dat2$x_sc, pch = 20, col = "red")
+#dat2 now holds locations of points observed in structured survey
 
 
 

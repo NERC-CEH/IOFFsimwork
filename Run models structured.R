@@ -57,7 +57,11 @@ result.struct <- inla(formulaN,family="poisson",
 result.struct.binom <- inla(formulaN,family="binomial",
                       data=inla.stack.data(stk_struct),
                       control.predictor=list(A=inla.stack.A(stk_struct)),
+<<<<<<< HEAD
                       control.family = list(link = "cloglog"),
+=======
+                      control.family = list(link = "logit"),
+>>>>>>> 87707d2a911ebf038e5aa0b58b8e401e1211cc2d
                       E = inla.stack.data(stk_struct)$e
 )
 
@@ -68,9 +72,16 @@ proj1.struct<-inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,30
 xmean1.struct <- exp(inla.mesh.project(proj1, result.struct$summary.random$Bnodes$mean))
 
 # binomial
+<<<<<<< HEAD
 loglog <- function(x){return(1-exp(-exp(x)))}
 proj1.struct.binom <- inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
 xmean1.struct.binom <- loglog(inla.mesh.project(proj1, result.struct.binom$summary.random$Bnodes$mean))
+=======
+logistic <- function(x){u <- exp(x)
+return(u/(1+u))}
+proj1.struct.binom <- inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
+xmean1.struct.binom <- logistic(inla.mesh.project(proj1, result.struct.binom$summary.random$Bnodes$mean))
+>>>>>>> 87707d2a911ebf038e5aa0b58b8e401e1211cc2d
 
 ##plot the estimated random field 
 # plot with the original
@@ -89,7 +100,10 @@ image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f"
 
 ## plotting the binomial vs the poisson - very different!
 par(mfrow=c(1,3))
+<<<<<<< HEAD
 par(mar=c(4,4,4,4))
+=======
+>>>>>>> 87707d2a911ebf038e5aa0b58b8e401e1211cc2d
 image.plot(1:100,1:300,xmean1.struct, col=tim.colors(),xlab='', ylab='',main="mean of Poisson",asp=1)
 image.plot(1:100,1:300,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of Binom",asp=1)
 image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
@@ -101,11 +115,19 @@ points(struct_dat[struct_dat$presence %in% 1,2:3], pch=16, col="black") #presenc
 result.struct$summary.fixed
 
 #estimated intercept
+<<<<<<< HEAD
 int_est.struct <- result.struct$summary.fixed[1,1] # way too low - assuming same scale (does it need back converting? Think so)
 
 #estimated covariate value
 cov_est.struct <- result.struct$summary.fixed[2,1] # wrong sign!! 
 cov_est.struct.binom <- result.struct.binom$summary.fixed[2,1] # wrong sign!! 
+=======
+int_est <- result.struct$summary.fixed[1,1] # way too low - assuming same scale (does it need back converting?)
+
+#estimated covariate value
+cov_est <- result.struct$summary.fixed[2,1] # wrong sign!! 
+
+>>>>>>> 87707d2a911ebf038e5aa0b58b8e401e1211cc2d
 
 ## VALIDATION
 

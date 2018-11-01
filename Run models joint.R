@@ -34,24 +34,46 @@ struct_dat_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(struct_dat[,3:4]))
 pp3_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(pp3[,1:2]))
 
 
-# Unstructured only
+# Joint model
+
+# One spatial field
+# Uses (as far as I can tell) Simpson approach for PP data
+# Binomial model for PA data
+# Using cloglog
 
 
-stk_pp3 <- inla.stack(data=list(y=pp3$presence, e = rep(0, nrow(pp3))),
+stk_pp3 <- inla.stack(data=list(y=cbind(pp3$presence, NA), e = rep(0, nrow(pp3))),
                       effects=list(data.frame(interceptB=rep(1,length(pp3$x)), env = pp3$env), 
                                    Bnodes=1:spde$n.spde),
                       A=list(1,pp3_A),
                       tag="pp3")	
 
 
-formulaN = y ~  interceptB + env + f(Bnodes, model = spde) -1
+#note intercept with different name
 
 
-result <- inla(formulaN,family="poisson",
-               data=inla.stack.data(stk_pp3),
-               control.predictor=list(A=inla.stack.A(stk_pp3)),
-               control.family = list(link = "log"),
-               E = inla.stack.data(stk_pp3)$e
+stk_struct <- inla.stack(data=list(y=cbind(NA, struct_dat$presence), Ntrials = rep(1, nrow(struct_dat))),
+                      effects=list(data.frame(interceptA=rep(1,length(struct_dat$x)), env = struct_dat$env), 
+                                   Bnodes=1:spde$n.spde),
+                      A=list(1,struct_dat_A),
+                      tag="struct")
+
+##NOTE: doesn't use the copy function initially
+
+
+stk <- inla.stack(stk_pp3, stk_struct)
+
+
+formulaJ = y ~  interceptB + interceptA + env + f(Bnodes, model = spde) -1
+
+
+result <- inla(formulaJ,family=c("poisson", "binomial"),
+               data=inla.stack.data(stk),
+               control.predictor=list(A=inla.stack.A(stk)),
+               control.family = list(list(link = "log"), 
+                                     list(link = "cloglog")),
+               E = inla.stack.data(stk)$e,
+               Ntrials = inla.stack.data(stk)$Ntrials
 )
 
 
@@ -65,35 +87,31 @@ xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
 library(fields)
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
-par(mfrow=c(1,3))
-image.plot(1:100,1:300,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
-image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
-points(pp3[,2:3], pch=16)
+par(mfrow=c(1,2))
+image.plot(1:100,1:300,exp(xmean1), col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
+image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s.c)), main='Truth', asp=1) # make sure scale = same
 
 ##plot the standard deviation of random field
 xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)
-#library(fields)
+library(fields)
 image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
 
 
-#biased to bottom of grid
+#biased to bottom of grid - any chance the environmental variable was included? 
 
 result$summary.fixed
 
-#estimated intercept
-int_est <- result$summary.fixed[1,1]
 
 #estimated covariate value
-cov_est <- result$summary.fixed[2,1]
+cov_est <- result$summary.fixed[3,1]
 
-library(reshape2)
+
 truefield <- melt(rf.s.c)
 estimatedfield <- melt(xmean1)
 covartable <- melt(gridcov)
 
-# this looks almost like someone's ribcage 
-# shows the difference between estimate and true value?
-plot(exp(int_est + cov_est*covartable$value + estimatedfield$value) ~ truefield$value, col = covartable$value*2)
+par(mfrow=c(1,1))
+plot(exp(cov_est*covartable$value + estimatedfield$value) ~ truefield$value, col = covartable$value+2)
 
 # Structured only
 

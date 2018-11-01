@@ -68,7 +68,9 @@ points(xy.c, pch=19)
 source('Generate strata levels Lam.R')
 par(mfrow = c(1,1))
 # creates a dataframe of x and y coordinates, intensity and assigned grid square
-strata1 <- genStrataLam(Lam, strata = 8, rows = 4, cols = 2)
+
+#note from here have changed this to the covariate example (i.e. Lam.c)
+strata1 <- genStrataLam(Lam.c, strata = 8, rows = 4, cols = 2)
 
 
 ## Create lookup table between strata and probabilities
@@ -98,13 +100,13 @@ dat <- stratumProbs(strata1, lookup$probs)
 
 par(mfrow=c(1,1))
 plot(dat$y ~ dat$x, pch = 20, col = factor(dat$stratprobs))
-points(xy*100, pch=19, col= "white") 
+points(xy.c*100, pch=19, col= "white") 
 # strata appears to be original scale * 100 not sure why
 
 ###now need to use strata in a different way to previously...sample from the points generated in the first section (xy) according to associated strata prob
 
 #put points on same scale as strata
-pp1 <- as.data.frame(xy*100)
+pp1 <- as.data.frame(xy.c*100)
 names(pp1) <- c("x", "y")
 
 pp2 <- merge(round(pp1), dat, by.x = c("x","y"), by.y = c("x","y"))
@@ -120,7 +122,7 @@ pp2$presence <- rbinom(nrow(pp2),1,pp2$stratprobs)
 pp3 <- pp2[pp2$presence == 1,]
 
 
-image.plot(list(x=Lam$xcol, y=Lam$yrow, z=t(rf.s)), main='log-Lambda', asp=1) 
+image.plot(list(x=Lam.c$xcol, y=Lam.c$yrow, z=t(rf.s.c)), main='log-Lambda', asp=1) 
 points(pp3$x/100, pp3$y/100, pch = 20)#note rescale again - plotting back on original
 
 #distribution of points is now biased to the lower half of the region. Therefore pp3 could be unstructured data collection
@@ -151,7 +153,7 @@ for(i in 1:nrow(s1$Stratified)){
 }
 
 par(mfrow=c(1,1))
-image.plot(list(x=Lam$xcol, y=Lam$yrow, z=t(rf.s)), main='log-Lambda', asp=1) 
+image.plot(list(x=Lam.c$xcol, y=Lam.c$yrow, z=t(rf.s.c)), main='log-Lambda', asp=1) 
 points(s2$x/100, s2$y/100, pch = 20, col = "blue")#note rescale again
 #points(xy, pch=20, col= "white")
 
@@ -164,7 +166,7 @@ points(s2$x/100, s2$y/100, pch = 20, col = "blue")#note rescale again
 
 ##need to generate new points! - otherwise we assume the same individuals are observed with both processes which is unrealistic. 
 
-newpoints <- rpoispp(lambda = Lam)
+newpoints <- rpoispp(lambda = Lam.c)
 points(newpoints$y ~ newpoints$x, pch = 20, col = "white")
 
 #see which points are observed 	#see which points are observed

@@ -15,7 +15,7 @@ output: html_document
 
 [Emily field generation.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Emily%20field%20generation.R) : This script is a manual way to create a Poisson point process of abundance with an environmental covariate. Does not look as pretty as the SpatStat version and the spatial autocorrelation is quite forced. Based loosely on the way Diana created her simulations.
 
-
+[Run models structured.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20structured.R) : This script takes the beginning of the Run models script to generate data then runs a structured only model in INLA. Both a Binomial and Poisson model are tried to capture the surface. Validation is then performed.
 
 
 ## Steps to code

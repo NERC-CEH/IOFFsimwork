@@ -5,6 +5,7 @@ library(INLA)
 
 #import data
 source("Generate field and sample.R") # note - once we've got the code finalised these need to be turned into functions
+## noted! Will be neater as functions :)
 
 head(struct_dat) #this is the structured data
 
@@ -13,8 +14,10 @@ head(pp3) # this is the unstructured data
 
 
 
-
 # Need to run several models...
+# 1) unstructured only
+# 2) structured only
+# 3) joint model
 
 
 #preparation - mesh construction - use the loc.domain argument
@@ -60,10 +63,15 @@ proj1<-inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
 xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
 
 ##plot the estimated random field 
+# plot with the original
 library(fields)
-image.plot(1:100,1:300,xmean1, col.regions=tim.colors(),xlab='', ylab='', scales=list(draw=FALSE),main="mean of r.f",asp=1)
+# some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
+# scales and col.region did nothing on my version
+par(mfrow=c(1,2))
+image.plot(1:100,1:300,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
+image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
 
-#biased to bottom of grid
+#biased to bottom of grid - any chance the environmental variable was included? 
 
 result$summary.fixed
 

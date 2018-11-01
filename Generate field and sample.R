@@ -1,7 +1,6 @@
 ##generate spatial field from log gaussian cox process
 ##this code is taken from the Simpson tutorial 
 
-#test
 library(spatstat) 
 # owin creates an object of class "owin" which is an observation window in 2D
 # specify x and y coordinates
@@ -163,7 +162,7 @@ points(s2$x/100, s2$y/100, pch = 20, col = "blue")#note rescale again
 #dat2 <- merge(pp2, s2, by.x = c("x", "x"), by.y = c("y","y"))
 
 
-##need to generate new points? - otherwise we assume the same individuals are observed with both processes which is unrealistic. 
+##need to generate new points! - otherwise we assume the same individuals are observed with both processes which is unrealistic. 
 
 newpoints <- rpoispp(lambda = Lam)
 points(newpoints$y ~ newpoints$x, pch = 20, col = "white")

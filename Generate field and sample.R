@@ -126,6 +126,11 @@ points(pp3$x/100, pp3$y/100, pch = 20)#note rescale again - plotting back on ori
 
 #distribution of points is now biased to the lower half of the region. Therefore pp3 could be unstructured data collection
 
+#add env covariate to unstructured data
+
+pp3$env <- gridcov[as.matrix(pp3[,2:1])]
+
+
 #how to simulate structured? 
 
 #basic approach - simulate stratified random set of sampling areas (5*5 points)
@@ -182,10 +187,13 @@ struct_dat$x <- s1$Stratified$x[match(struct_dat$samp_id, s1$Stratified$samp_id)
 struct_dat$y <- s1$Stratified$y[match(struct_dat$samp_id, s1$Stratified$samp_id)]
 
 
-
 struct_dat$presence <- match(all_samps, dat2$samp_id)
 struct_dat$presence[!is.na(struct_dat$presence)] <- 1 #convert to p/a
 struct_dat$presence[is.na(struct_dat$presence)] <- 0
 
+
+#add env covariate to structured data
+
+struct_dat$env <- gridcov[as.matrix(struct_dat[,3:2])]
 
 

@@ -43,7 +43,7 @@ stk_pp3 <- inla.stack(data=list(y=pp3$presence, e = rep(0, nrow(pp3))),
                        tag="pp3")	
 
 
-formulaN = y ~  interceptB + f(Bnodes, model = spde) -1  
+formulaN = y ~  interceptB + f(Bnodes, model = spde) -1
 
 
 result <- inla(formulaN,family="poisson",

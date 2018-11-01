@@ -64,17 +64,17 @@ xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
 library(fields)
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
-par(mfrow=c(1,2))
+par(mfrow=c(1,3))
 image.plot(1:100,1:300,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
 
 ##plot the standard deviation of random field
 xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)
-library(fields)
+#library(fields)
 image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
 
 
-#biased to bottom of grid - any chance the environmental variable was included? 
+#biased to bottom of grid
 
 result$summary.fixed
 
@@ -84,12 +84,13 @@ int_est <- result$summary.fixed[1,1]
 #estimated covariate value
 cov_est <- result$summary.fixed[2,1]
 
-
+library(reshape2)
 truefield <- melt(rf.s.c)
 estimatedfield <- melt(xmean1)
 covartable <- melt(gridcov)
 
-
+# this looks almost like someone's ribcage 
+# shows the difference between estimate and true value?
 plot(exp(int_est + cov_est*covartable$value + estimatedfield$value) ~ truefield$value, col = covartable$value*2)
 
 # Structured only

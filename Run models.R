@@ -37,13 +37,13 @@ pp3_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(pp3[,1:2]))
 
 
 stk_pp3 <- inla.stack(data=list(y=pp3$presence, e = rep(0, nrow(pp3))),
-                       effects=list(data.frame(interceptB=rep(1,length(pp3$x))), 
+                       effects=list(data.frame(interceptB=rep(1,length(pp3$x)), env = pp3$env), 
                                     Bnodes=1:spde$n.spde),
                        A=list(1,pp3_A),
                        tag="pp3")	
 
 
-formulaN = y ~  interceptB + f(Bnodes, model = spde) -1
+formulaN = y ~  interceptB + env + f(Bnodes, model = spde) -1
 
 
 result <- inla(formulaN,family="poisson",
@@ -63,11 +63,29 @@ xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
 library(fields)
 image.plot(1:100,1:300,xmean1, col.regions=tim.colors(),xlab='', ylab='', scales=list(draw=FALSE),main="mean of r.f",asp=1)
 
+##plot the standard deviation of random field
+xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)
+library(fields)
+image.plot(1:100,1:300,xsd1, col.regions=tim.colors(),xlab='', ylab='', scales=list(draw=FALSE),main="sd of r.f",asp=1)
+
+
 #biased to bottom of grid
 
 result$summary.fixed
 
+#estimated intercept
+int_est <- result$summary.fixed[1,1]
 
+#estimated covariate value
+cov_est <- result$summary.fixed[2,1]
+
+
+truefield <- melt(rf.s.c)
+estimatedfield <- melt(xmean1)
+covartable <- melt(gridcov)
+
+
+plot(exp(int_est + cov_est*covartable$value + estimatedfield$value) ~ truefield$value, col = covartable$value*2)
 
 # Structured only
 

@@ -5,7 +5,6 @@ library(INLA)
 
 #import data
 source("Generate field and sample.R") # note - once we've got the code finalised these need to be turned into functions
-## noted! Will be neater as functions :)
 
 head(struct_dat) #this is the structured data
 
@@ -13,12 +12,10 @@ head(struct_dat) #this is the structured data
 head(pp3) # this is the unstructured data
 
 
-
 # Need to run several models...
 # 1) unstructured only
 # 2) structured only
 # 3) joint model
-
 
 #preparation - mesh construction - use the loc.domain argument
 
@@ -40,13 +37,13 @@ pp3_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(pp3[,1:2]))
 
 
 stk_pp3 <- inla.stack(data=list(y=pp3$presence, e = rep(0, nrow(pp3))),
-                       effects=list(data.frame(interceptB=rep(1,length(pp3$x))), 
-                                    Bnodes=1:spde$n.spde),
-                       A=list(1,pp3_A),
-                       tag="pp3")	
+                      effects=list(data.frame(interceptB=rep(1,length(pp3$x)), env = pp3$env), 
+                                   Bnodes=1:spde$n.spde),
+                      A=list(1,pp3_A),
+                      tag="pp3")	
 
 
-formulaN = y ~  interceptB + f(Bnodes, model = spde) -1
+formulaN = y ~  interceptB + env + f(Bnodes, model = spde) -1
 
 
 result <- inla(formulaN,family="poisson",
@@ -71,17 +68,33 @@ par(mfrow=c(1,2))
 image.plot(1:100,1:300,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
 
+##plot the standard deviation of random field
+xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)
+library(fields)
+image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
+
+
 #biased to bottom of grid - any chance the environmental variable was included? 
 
 result$summary.fixed
 
+#estimated intercept
+int_est <- result$summary.fixed[1,1]
 
+#estimated covariate value
+cov_est <- result$summary.fixed[2,1]
+
+
+truefield <- melt(rf.s.c)
+estimatedfield <- melt(xmean1)
+covartable <- melt(gridcov)
+
+
+plot(exp(int_est + cov_est*covartable$value + estimatedfield$value) ~ truefield$value, col = covartable$value*2)
 
 # Structured only
 
 
 # Joint (multiple versions possible)
-
-
 
 

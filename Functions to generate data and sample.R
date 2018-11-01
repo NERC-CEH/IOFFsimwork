@@ -5,8 +5,8 @@ source("genData.R")
 
 dat1 <- genData(lambda = 5, env.beta = 0.2, seed = 1)
 
+######## PREPARATION #########
 
-####### UNSTRUCTURED DATA ##########
 
 ##sampling bias
 source('Generate strata levels Lam.R')
@@ -17,21 +17,22 @@ strata1 <- genStrataLam(dat1$Lam, strata = 3, rows = 3, cols = 1)
 
 source("addSpatialBias.R")
 #no spatial bias
-biasfield1 <- addSpatialBias(strata1, probs = c(0.5, 0.5, 0.5))
+#biasfield <- addSpatialBias(strata1, probs = c(0.5, 0.5, 0.5))
 #spatial bias not correlated with environmental covariate
-biasfield2 <- addSpatialBias(strata1, probs = c(0.2, 0.8, 0.5))
+biasfield <- addSpatialBias(strata1, probs = c(0.2, 0.8, 0.5))
 #spatial bias correlated with environmental covariate
-biasfield3 <- addSpatialBias(strata1, probs = c(0.8, 0.5, 0.2))
+#biasfield <- addSpatialBias(strata1, probs = c(0.8, 0.5, 0.2))
 
+
+####### UNSTRUCTURED DATA ##########
 
 ##thinning
 
 source("thinData.R")
 
-#unbiased
-thin1 <- thinData(dat1, biasfield1)
-#unbiased but not correlated with env
-thin1 <- thinData(dat1, biasfield2)
+#thin data according to biasfield
+thin1 <- thinData(dat1, biasfield)
+
 
 
 #add env covariate
@@ -46,8 +47,11 @@ unstructured_data <- thin1
 ####### STRUCTURED DATA ##########
 
 
+source("sampleStructured.R")
 
-
+structured_data <- sampleStructured(dat1, biasfield, nsamp = 50, plotdat = TRUE)
+  
+  
 
 
 

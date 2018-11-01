@@ -58,7 +58,6 @@ result.struct.binom <- inla(formulaN,family="binomial",
                       data=inla.stack.data(stk_struct),
                       control.predictor=list(A=inla.stack.A(stk_struct)),
                       control.family = list(link = "cloglog"),
-                      control.family = list(link = "logit"),
                       E = inla.stack.data(stk_struct)$e
 )
 
@@ -119,12 +118,36 @@ cov_est <- result.struct$summary.fixed[2,1] # wrong sign!!
 
 ## VALIDATION
 
-# look at area under the curve
+# look at area under the curve - think we need to create an ROC curve
+# used to assess the accuracy of a continuous measurement for predicting a binary outcome... we maybe want the opposite?
+
+
 
 # look at presences
 
 # grid it and compare average abundance
-library(reshape2)
-truefield <- melt(rf.s.c)
-estimatedfield <- melt(xmean1)
-covartable <- melt(gridcov)
+# set up grid of 10X10 pixels
+grid_points <- matrix(c(rep(rep(1:30,each=10),10)), ncol=100, nrow=300, byrow=F)
+# show grid
+plot(dat$y ~ dat$x, col = grid_points)
+
+# sum average abundance by grid square for truth and predicted
+grid_average <- function(grid_points, data){
+  output <- rep(NA, length(1:max(grid_points)))
+  data <- data-mean(data)
+  for(i in 1:max(grid_points)){
+    marker <- which(grid_points==i)
+    output[i] <- mean(data[marker])
+  }
+  return(output)
+}
+
+
+# make sure mean scaled as we cannot accurately assess mean abundance
+difference_struct_binom <- grid_average(grid_points, xmean1.struct.binom)-grid_average(grid_points, rf.s)
+difference_struct <- grid_average(grid_points, xmean1.struct)-grid_average(grid_points, rf.s)
+
+# now have difference in relative abundance per grid square
+hist(difference_struct_binom)
+hist(difference_struct)
+# appear to be very similar in distribution despite different appearances

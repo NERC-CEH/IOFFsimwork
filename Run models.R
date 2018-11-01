@@ -2,6 +2,7 @@
 
 #packages
 library(INLA)
+library(reshape2)
 
 #import data
 source("Generate field and sample.R") # note - once we've got the code finalised these need to be turned into functions

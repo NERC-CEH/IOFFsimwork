@@ -57,7 +57,7 @@ result.struct <- inla(formulaN,family="poisson",
 result.struct.binom <- inla(formulaN,family="binomial",
                       data=inla.stack.data(stk_struct),
                       control.predictor=list(A=inla.stack.A(stk_struct)),
-                      control.family = list(link = "logit"),
+                      control.family = list(link = "cloglog"),
                       E = inla.stack.data(stk_struct)$e
 )
 
@@ -68,10 +68,11 @@ proj1.struct<-inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,30
 xmean1.struct <- exp(inla.mesh.project(proj1, result.struct$summary.random$Bnodes$mean))
 
 # binomial
-logistic <- function(x){u <- exp(x)
-return(u/(1+u))}
+
+loglog <- function(x){return(1-exp(-exp(x)))}
 proj1.struct.binom <- inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
-xmean1.struct.binom <- logistic(inla.mesh.project(proj1, result.struct.binom$summary.random$Bnodes$mean))
+xmean1.struct.binom <- loglog(inla.mesh.project(proj1, result.struct.binom$summary.random$Bnodes$mean))
+
 
 ##plot the estimated random field 
 # plot with the original
@@ -90,6 +91,9 @@ image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f"
 
 ## plotting the binomial vs the poisson - very different!
 par(mfrow=c(1,3))
+
+par(mar=c(4,4,4,4))
+
 image.plot(1:100,1:300,xmean1.struct, col=tim.colors(),xlab='', ylab='',main="mean of Poisson",asp=1)
 image.plot(1:100,1:300,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of Binom",asp=1)
 image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
@@ -101,20 +105,49 @@ points(struct_dat[struct_dat$presence %in% 1,2:3], pch=16, col="black") #presenc
 result.struct$summary.fixed
 
 #estimated intercept
+int_est.struct <- result.struct$summary.fixed[1,1] # way too low - assuming same scale (does it need back converting? Think so)
+
+#estimated covariate value
+cov_est.struct <- result.struct$summary.fixed[2,1] # wrong sign!! 
+cov_est.struct.binom <- result.struct.binom$summary.fixed[2,1] # wrong sign!! 
+
 int_est <- result.struct$summary.fixed[1,1] # way too low - assuming same scale (does it need back converting?)
 
 #estimated covariate value
 cov_est <- result.struct$summary.fixed[2,1] # wrong sign!! 
 
-
 ## VALIDATION
 
-# look at area under the curve
+# look at area under the curve - think we need to create an ROC curve
+# used to assess the accuracy of a continuous measurement for predicting a binary outcome... we maybe want the opposite?
+
+
 
 # look at presences
 
 # grid it and compare average abundance
-library(reshape2)
-truefield <- melt(rf.s.c)
-estimatedfield <- melt(xmean1)
-covartable <- melt(gridcov)
+# set up grid of 10X10 pixels
+grid_points <- matrix(c(rep(rep(1:30,each=10),10)), ncol=100, nrow=300, byrow=F)
+# show grid
+plot(dat$y ~ dat$x, col = grid_points)
+
+# sum average abundance by grid square for truth and predicted
+grid_average <- function(grid_points, data){
+  output <- rep(NA, length(1:max(grid_points)))
+  data <- data-mean(data)
+  for(i in 1:max(grid_points)){
+    marker <- which(grid_points==i)
+    output[i] <- mean(data[marker])
+  }
+  return(output)
+}
+
+
+# make sure mean scaled as we cannot accurately assess mean abundance
+difference_struct_binom <- grid_average(grid_points, xmean1.struct.binom)-grid_average(grid_points, rf.s)
+difference_struct <- grid_average(grid_points, xmean1.struct)-grid_average(grid_points, rf.s)
+
+# now have difference in relative abundance per grid square
+hist(difference_struct_binom)
+hist(difference_struct)
+# appear to be very similar in distribution despite different appearances

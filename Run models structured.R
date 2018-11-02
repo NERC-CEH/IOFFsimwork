@@ -28,48 +28,37 @@ plot(mesh)
 spde <- inla.spde2.matern(mesh)
 
 #make A matrix for structured data - for projection
-struct_dat_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(struct_dat[,3:4]))
+struct_dat_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(struct_dat[,2:3]))
 
 #make A matrix for unstructured data - for projection
 pp3_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(pp3[,1:2]))
 
 ## Structured only
 
-# create stack including presence data from structured, e = expected vector of 0s, and effects
-stk_struct <- inla.stack(data=list(y=struct_dat$presence, e = rep(0, nrow(struct_dat_A))),
-                      effects=list(data.frame(interceptB=rep(1,length(struct_dat$x)), env = struct_dat$env), 
-                                   Bnodes=1:spde$n.spde),
-                      A=list(1,struct_dat_A),
-                      tag="struct")	
+# create stack including presence data from structured, have Ntrials instead of expected
+stk_struct <- inla.stack(data=list(y=struct_dat$presence, Ntrials = rep(1, nrow(struct_dat))),
+                         effects=list(data.frame(interceptA=rep(1,length(struct_dat$x)), env = struct_dat$env), 
+                                      Bnodes=1:spde$n.spde),
+                         A=list(1,struct_dat_A),
+                         tag="struct")
 
 # what is Bnodes?
-formulaN = y ~  interceptB + env + f(Bnodes, model = spde) -1
+formulaN = y ~  interceptA + env + f(Bnodes, model = spde) -1
 
-# looks like this should predict abundance as it is Poisson? But we are using binomial data to do so?
-result.struct <- inla(formulaN,family="poisson",
-               data=inla.stack.data(stk_struct),
-               control.predictor=list(A=inla.stack.A(stk_struct)),
-               control.family = list(link = "log"),
-               E = inla.stack.data(stk_struct)$e
-)
-
-# try just predicting presence/absence
+# Binomial cloglog link model
 result.struct.binom <- inla(formulaN,family="binomial",
-                      data=inla.stack.data(stk_struct),
-                      control.predictor=list(A=inla.stack.A(stk_struct)),
-                      control.family = list(link = "cloglog"),
-                      E = inla.stack.data(stk_struct)$e
+                            data=inla.stack.data(stk_struct),
+                            control.predictor=list(A=inla.stack.A(stk_struct)),
+                            control.family = list(link = "cloglog"),
+                            Ntrials = inla.stack.data(stk_struct)$Ntrials
 )
+
+
+
 
 ##project the mesh onto the initial simulated grid 100x100 cells in dimension
-proj1.struct<-inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
-##pull out the mean of the random field for the NPMS model
-# think you might need to back transform - for binomial projection makes more sense transformed
-xmean1.struct <- exp(inla.mesh.project(proj1.struct, result.struct$summary.random$Bnodes$mean))
-
-# binomial
-
 loglog <- function(x){return(1-exp(-exp(x)))}
+
 proj1.struct.binom <- inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
 xmean1.struct.binom <- loglog(inla.mesh.project(proj1.struct.binom, result.struct.binom$summary.random$Bnodes$mean))
 
@@ -81,7 +70,7 @@ library(fields)
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
 image.plot(1:100,1:300,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
-image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
+image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s.c)), main='Truth', asp=1) # make sure scale = same
 points(struct_dat[struct_dat[,4] %in% 0,2:3], pch=16, col='white') # many absences, few presences
 points(struct_dat[struct_dat[,4] %in% 1,2:3], pch=16, col='black')
 
@@ -90,32 +79,17 @@ xsd1 <- inla.mesh.project(proj1.struct.binom, result.struct$summary.random$Bnode
 #library(fields)
 image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
 
-## plotting the binomial vs the poisson - vnow much closer
-par(mfrow=c(1,3))
 
-par(mar=c(4,4,4,4))
+#biased to bottom of grid 
 
-image.plot(1:100,1:300,xmean1.struct, col=tim.colors(),xlab='', ylab='',main="mean of Poisson",asp=1)
-image.plot(1:100,1:300,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of Binom",asp=1)
-image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
-points(struct_dat[struct_dat$presence %in% 0,2:3], pch=16, col="white") #absences
-points(struct_dat[struct_dat$presence %in% 1,2:3], pch=16, col="black") #presences
-
-#biased to bottom of grid - opposite directions depending on type of model
-
-result.struct$summary.fixed
+result.struct.binom$summary.fixed
 
 #estimated intercept
-int_est.struct <- result.struct$summary.fixed[1,1] # way too low - assuming same scale (does it need back converting? Think so)
+int_est.struct <- result.struct.binom$summary.fixed[1,1] # way too low - assuming same scale (does it need back converting? Think so)
 
 #estimated covariate value
-cov_est.struct <- result.struct$summary.fixed[2,1] # wrong sign!! 
 cov_est.struct.binom <- result.struct.binom$summary.fixed[2,1] # wrong sign!! 
 
-int_est <- result.struct$summary.fixed[1,1] # way too low - assuming same scale (does it need back converting?)
-
-#estimated covariate value
-cov_est <- result.struct$summary.fixed[2,1] # wrong sign!! 
 
 ## VALIDATION
 
@@ -145,10 +119,7 @@ grid_average <- function(grid_points, data){
 
 
 # make sure mean scaled as we cannot accurately assess mean abundance
-difference_struct_binom <- grid_average(grid_points, xmean1.struct.binom)-grid_average(grid_points, rf.s)
-difference_struct <- grid_average(grid_points, xmean1.struct)-grid_average(grid_points, rf.s)
+difference_struct_binom <- grid_average(grid_points, xmean1.struct.binom)-grid_average(grid_points, rf.s.c)
 
 # now have difference in relative abundance per grid square
 hist(difference_struct_binom)
-hist(difference_struct)
-# appear to be very similar in distribution despite different appearances

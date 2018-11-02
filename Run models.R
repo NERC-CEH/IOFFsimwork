@@ -67,7 +67,7 @@ library(fields)
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
 image.plot(1:100,1:300,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
-image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
+image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s.c)), main='Truth', asp=1) # make sure scale = same
 points(pp3[,1:2], pch=16)
 
 ##plot the standard deviation of random field

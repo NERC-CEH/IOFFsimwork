@@ -100,12 +100,12 @@ cov_est.struct.binom <- result.struct.binom$summary.fixed[2,1] # wrong sign!!
 
 # look at presences
 
-# grid it and compare average abundance
+# GRID and compare average abundance
 # set up grid of 30X10 pixels
-grid_points <- cbind(matrix(c(rep(rep(seq(1,100,4),each=3),10)), ncol=25, nrow=300, byrow=F),
-                     matrix(c(rep(rep(seq(2,100,4),each=3),10)), ncol=25, nrow=300, byrow=F),
-                     matrix(c(rep(rep(seq(3,100,4),each=3),10)), ncol=25, nrow=300, byrow=F),
-                     matrix(c(rep(rep(seq(4,100,4),each=3),10)), ncol=25, nrow=300, byrow=F))
+grid_points <- cbind(matrix(c(rep(rep(seq(1,100,4),each=12),25)), ncol=25, nrow=300, byrow=F),
+                     matrix(c(rep(rep(seq(2,100,4),each=12),25)), ncol=25, nrow=300, byrow=F),
+                     matrix(c(rep(rep(seq(3,100,4),each=12),25)), ncol=25, nrow=300, byrow=F),
+                     matrix(c(rep(rep(seq(4,100,4),each=12),25)), ncol=25, nrow=300, byrow=F))
 
 # sum average abundance by grid square for truth and predicted
 grid_average <- function(grid_points, data){
@@ -138,8 +138,12 @@ diff_to_grid <- function(differences, grid_points){
 # now can plot
 # show grid
 par(mfrow=c(1,4))
+par(mar=c(4,4,4,4))
 image.plot(1:100,1:300, t(grid_points), col=tim.colors(), xlab='', ylab='',main="grid",asp=1)
 image.plot(1:100,1:300, diff_to_grid(difference_struct_binom, grid_points), col=tim.colors(), xlab='', ylab='',main="differences",asp=1)
 image.plot(1:100,1:300,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s.c)), main='Truth', asp=1) # make sure scale = same
 
+# CONTINUOUS
+
+#

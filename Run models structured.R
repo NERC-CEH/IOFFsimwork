@@ -60,8 +60,8 @@ result.struct.binom <- inla(formulaN,family="binomial",
 loglog <- function(x){return(1-exp(-exp(x)))}
 
 proj1.struct.binom <- inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
-xmean1.struct.binom <- loglog(inla.mesh.project(proj1.struct.binom, result.struct.binom$summary.random$Bnodes$mean))
-
+# need to maybe back transform in both ways - the cloglog = log() so then exp
+xmean1.struct.binom <- exp(loglog(inla.mesh.project(proj1.struct.binom, result.struct.binom$summary.random$Bnodes$mean)))
 
 ##plot the estimated random field 
 # plot with the original

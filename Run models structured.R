@@ -65,13 +65,13 @@ result.struct.binom <- inla(formulaN,family="binomial",
 proj1.struct<-inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
 ##pull out the mean of the random field for the NPMS model
 # think you might need to back transform - for binomial projection makes more sense transformed
-xmean1.struct <- exp(inla.mesh.project(proj1, result.struct$summary.random$Bnodes$mean))
+xmean1.struct <- exp(inla.mesh.project(proj1.struct, result.struct$summary.random$Bnodes$mean))
 
 # binomial
 
 loglog <- function(x){return(1-exp(-exp(x)))}
 proj1.struct.binom <- inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
-xmean1.struct.binom <- loglog(inla.mesh.project(proj1, result.struct.binom$summary.random$Bnodes$mean))
+xmean1.struct.binom <- loglog(inla.mesh.project(proj1.struct.binom, result.struct.binom$summary.random$Bnodes$mean))
 
 
 ##plot the estimated random field 
@@ -80,16 +80,17 @@ library(fields)
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
-image.plot(1:100,1:300,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
+image.plot(1:100,1:300,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
-points(struct_dat[,2:3], pch=16)
+points(struct_dat[struct_dat[,4] %in% 0,2:3], pch=16, col='white') # many absences, few presences
+points(struct_dat[struct_dat[,4] %in% 1,2:3], pch=16, col='black')
 
 ##plot the standard deviation of random field
-xsd1 <- inla.mesh.project(proj1, result.struct$summary.random$Bnodes$sd)
+xsd1 <- inla.mesh.project(proj1.struct.binom, result.struct$summary.random$Bnodes$sd)
 #library(fields)
 image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
 
-## plotting the binomial vs the poisson - very different!
+## plotting the binomial vs the poisson - vnow much closer
 par(mfrow=c(1,3))
 
 par(mar=c(4,4,4,4))

@@ -118,4 +118,27 @@ plot(exp(cov_est*covartable$value + estimatedfield$value) ~ truefield$value, col
 
 # Joint (multiple versions possible)
 
+# VALIDATION - grid based approach
+
+# grid it and compare average abundance
+# set up grid of 10X10 pixels
+grid_points <- matrix(c(rep(rep(1:30,each=10),10)), ncol=100, nrow=300, byrow=F)
+# show grid
+plot(dat$y ~ dat$x, col = grid_points)
+
+# sum average abundance by grid square for truth and predicted
+grid_average <- function(grid_points, data){
+  output <- rep(NA, length(1:max(grid_points)))
+  data <- data-mean(data)
+  for(i in 1:max(grid_points)){
+    marker <- which(grid_points==i)
+    output[i] <- mean(data[marker])
+  }
+  return(output)
+}
+
+
+# make sure mean scaled as we cannot accurately assess mean abundance
+difference_joint <- grid_average(grid_points, xmean1)-grid_average(grid_points, rf.s.c)
+
 

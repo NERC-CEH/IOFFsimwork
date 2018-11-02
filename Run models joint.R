@@ -27,7 +27,7 @@ plot(mesh)
 ##set the spde representation to be the mesh just created
 spde <- inla.spde2.matern(mesh)
 
-#make A matrix for structured data
+#make A matrix for structured data - should this be pulling the x and y coordinates for the location?
 struct_dat_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(struct_dat[,3:4]))
 
 #make A matrix for unstructured data
@@ -87,13 +87,13 @@ xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
 library(fields)
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
-par(mfrow=c(1,2))
+par(mfrow=c(1,3))
 image.plot(1:100,1:300,exp(xmean1), col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s.c)), main='Truth', asp=1) # make sure scale = same
 
 ##plot the standard deviation of random field
 xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)
-library(fields)
+
 image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
 
 

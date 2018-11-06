@@ -15,7 +15,7 @@
 
 
 
-genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE, seed = 1){
+genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE, seed = 1, sigma2x = 0.2, kappa = 2){
  
   library(spatstat) 
   # owin creates an object of class "owin" which is an observation window in 2D
@@ -41,7 +41,7 @@ genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE
   beta0 <- lambda # intercept/mu (increased to 5 to increase no.obs)
   beta1 <- env.beta # slope of relationship to environment
   
-  sigma2x <- 0.2;      kappa <- 2
+  sigma2x <- sigma2x;      kappa <- kappa
   
   library(RandomFields) 
   set.seed(seed) 
@@ -82,7 +82,7 @@ genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE
     image.plot(list(x=x0, y=y0, z=t(gridcov)), main='Covariate', asp=1)
     image.plot(list(x=x0, y=y0, z=t(rf.s)),
                main='log-Lambda', asp=1)
-    points(xy, pch=19)
+    #points(xy, pch=19)
   }
   
   dataout <- list(Lam = Lam, xy = xy, rf.s = rf.s, gridcov = gridcov)

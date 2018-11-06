@@ -3,7 +3,9 @@
 
 source("genData.R")
 
-dat1 <- genData(lambda = 5, env.beta = 0.2, seed = 1)
+#dat1 <- genData(lambda = 5, env.beta = 0.2, seed = 1)
+
+dat1 <- genData(lambda = 5, env.beta = 0.2, seed = 1, kappa = 0.3)
 
 ######## PREPARATION #########
 

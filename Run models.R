@@ -77,7 +77,7 @@ e.pp <- c(w, rep(0, n))
 
 imat <- Diagonal(nv, rep(1, nv))
 
-A.pp <- rBind(imat, unstructured_data_A)
+A.pp <- rbind(imat, unstructured_data_A)
 
 
 #get covariate for integration points
@@ -108,7 +108,7 @@ result <- inla(formulaN,family="poisson",
 result$summary.fixed
 
 ##project the mesh onto the initial simulated grid 100x100 cells in dimension
-proj1<-inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
+proj1<- inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
 ##pull out the mean of the random field for the NPMS model
 xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
 
@@ -152,3 +152,21 @@ plot(exp(int_est + cov_est*covartable$value + estimatedfield$value) ~ truefield$
 # Joint (multiple versions possible)
 
 
+### Attempt at validation
+# Spatial prediction
+
+# set up prediction grid, same size as original
+pred.grid <- expand.grid(x=seq(1,100,1), y=seq(1,300,1))
+dim(pred.grid)
+
+A.pred <- inla.spde.make.A(mesh, loc=as.matrix(pred.grid))
+dim(A.pred)
+
+Aest <- inla.spde.make.A(mesh, loc=unstructured_data[,1:2])
+
+# make inla stack using proper tag (pred.latent)
+s.index <- inla.spde.make.index(name="spatial_field", n.spde = spde$n.spde)
+stack.pred.latent <- inla.stack(data=list(y=NA),
+                                A=list(A.pred),
+                                effects=list(c(s.index, list(intercept=1))),
+                                tag='pred.response')

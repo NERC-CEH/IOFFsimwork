@@ -20,7 +20,7 @@ head(unstructured_data) # this is the unstructured data
 
 #preparation - mesh construction - use the loc.domain argument
 
-mesh <- inla.mesh.2d(loc.domain = dat[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
+mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
 #plot the mesh to see what it looks like
 plot(mesh)
 
@@ -42,26 +42,73 @@ unstructured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(unstructure
 # Using cloglog
 
 
-stk_unstructured_data <- inla.stack(data=list(y=cbind(unstructured_data$presence, NA), e = rep(0, nrow(unstructured_data))),
-                      effects=list(data.frame(interceptB=rep(1,length(unstructured_data$x)), env = unstructured_data$env), 
-                                   Bnodes=1:spde$n.spde),
-                      A=list(1,unstructured_data_A),
+# create integration stack
+
+loc.d <- t(matrix(c(0,0,100,0,100,300,0,300,0,0), 2))
+
+#make dual mesh
+dd <- deldir::deldir(mesh$loc[, 1], mesh$loc[, 2])
+tiles <- deldir::tile.list(dd)
+
+#make domain into spatial polygon
+domainSP <- SpatialPolygons(list(Polygons(
+  list(Polygon(loc.d)), '0')))
+
+#intersection between domain and dual mesh
+poly.gpc <- as(domainSP@polygons[[1]]@Polygons[[1]]@coords, "gpc.poly")
+
+# w now contains area of voronoi polygons
+w <- sapply(tiles, function(p) rgeos::area.poly(rgeos::intersect(as(cbind(p$x, p$y), "gpc.poly"), poly.gpc)))
+
+#check some have 0 weight
+table(w>0)
+
+##plot stuff
+par(mfrow=c(1,1))
+plot(mesh$loc, asp=1, col=(w==0)+1, pch=19, xlab='', ylab='')
+plot(dd, add=TRUE)
+lines(loc.d, col=3)
+
+nv <- mesh$n
+n <- nrow(unstructured_data)
+
+
+#change data to include 0s for nodes and 1s for presences
+y.pp <- rep(0:1, c(nv, n))
+
+#add expectation vector (area for integration points/nodes and 0 for presences)
+e.pp <- c(w, rep(0, n))
+
+#diagonal matrix for integration point A matrix
+imat <- Diagonal(nv, rep(1, nv))
+
+A.pp <- rBind(imat, unstructured_data_A)
+
+#get covariate for integration points
+
+covariate = dat1$gridcov[Reduce('cbind', nearest.pixel(mesh$loc[,1], mesh$loc[,2], im(dat1$gridcov)))]
+
+
+#unstructured data stack with integration points
+
+stk_unstructured_data <- inla.stack(data=list(y=cbind(y.pp, NA), e = e.pp),
+                      effects=list(list(data.frame(interceptB=rep(1,nv+n)), env = c(covariate,unstructured_data$env)), list(Bnodes=1:spde$n.spde)),
+                      A=list(1,A.pp),
                       tag="unstructured_data")	
 
-
+#stack for structured data
 #note intercept with different name
 
-
-stk_struct <- inla.stack(data=list(y=cbind(NA, structured_data$presence), Ntrials = rep(1, nrow(structured_data))),
+stk_structured_data <- inla.stack(data=list(y=cbind(NA, structured_data$presence), Ntrials = rep(1, nrow(structured_data))),
                       effects=list(data.frame(interceptA=rep(1,length(structured_data$x)), env = structured_data$env), 
                                    Bnodes=1:spde$n.spde),
                       A=list(1,structured_data_A),
-                      tag="struct")
+                      tag="structured_data")
 
 ##NOTE: doesn't use the copy function initially
 
 
-stk <- inla.stack(stk_unstructured_data, stk_struct)
+stk <- inla.stack(stk_unstructured_data, stk_structured_data)
 
 
 formulaJ = y ~  interceptB + interceptA + env + f(Bnodes, model = spde) -1
@@ -89,7 +136,7 @@ library(fields)
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
 image.plot(1:100,1:300,exp(xmean1), col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
-image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s.c)), main='Truth', asp=1) # make sure scale = same
+image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
 
 ##plot the standard deviation of random field
 xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)

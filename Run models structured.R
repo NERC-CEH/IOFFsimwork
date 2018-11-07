@@ -20,7 +20,7 @@ head(pp3) # this is the unstructured data
 
 #preparation - mesh construction - use the loc.domain argument
 
-mesh <- inla.mesh.2d(loc.domain = dat[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
+mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
 #plot the mesh to see what it looks like
 plot(mesh)
 
@@ -70,7 +70,7 @@ library(fields)
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
 image.plot(1:100,1:300,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
-image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s.c)), main='Truth', asp=1) # make sure scale = same
+image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
 points(struct_dat[struct_dat[,4] %in% 0,2:3], pch=16, col='white') # many absences, few presences
 points(struct_dat[struct_dat[,4] %in% 1,2:3], pch=16, col='black')
 

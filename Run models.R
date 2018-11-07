@@ -5,12 +5,12 @@ library(INLA)
 library(reshape2)
 
 #import data
-source("Generate field and sample.R") # note - once we've got the code finalised these need to be turned into functions
+source("Functions to generate data and sample.R") # note - once we've got the code finalised these need to be turned into functions
 
-head(struct_dat) #this is the structured data
+head(structured_data) #this is the structured data
 
 
-head(pp3) # this is the unstructured data
+head(unstructured_data) # this is the unstructured data
 
 
 # Need to run several models...
@@ -20,7 +20,7 @@ head(pp3) # this is the unstructured data
 
 #preparation - mesh construction - use the loc.domain argument
 
-mesh <- inla.mesh.2d(loc.domain = dat[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
+mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
 #plot the mesh to see what it looks like
 plot(mesh)
 
@@ -28,30 +28,30 @@ plot(mesh)
 spde <- inla.spde2.matern(mesh)
 
 #make A matrix for structured data
-struct_dat_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(struct_dat[,3:4]))
+structured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(structured_data[,3:4]))
 
 #make A matrix for unstructured data
-pp3_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(pp3[,1:2]))
+unstructured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(unstructured_data[,1:2]))
 
 
 # Unstructured only
 
 
-stk_pp3 <- inla.stack(data=list(y=pp3$presence, e = rep(0, nrow(pp3))),
-                      effects=list(data.frame(interceptB=rep(1,length(pp3$x)), env = pp3$env), 
+stk_unstructured_data <- inla.stack(data=list(y=unstructured_data$presence, e = rep(0, nrow(unstructured_data))),
+                      effects=list(data.frame(interceptB=rep(1,length(unstructured_data$x)), env = unstructured_data$env), 
                                    Bnodes=1:spde$n.spde),
-                      A=list(1,pp3_A),
-                      tag="pp3")	
+                      A=list(1,unstructured_data_A),
+                      tag="unstructured_data")	
 
 
 formulaN = y ~  interceptB + env + f(Bnodes, model = spde) -1
 
 
 result <- inla(formulaN,family="poisson",
-               data=inla.stack.data(stk_pp3),
-               control.predictor=list(A=inla.stack.A(stk_pp3)),
+               data=inla.stack.data(stk_unstructured_data),
+               control.predictor=list(A=inla.stack.A(stk_unstructured_data)),
                control.family = list(link = "log"),
-               E = inla.stack.data(stk_pp3)$e
+               E = inla.stack.data(stk_unstructured_data)$e
 )
 
 
@@ -67,8 +67,8 @@ library(fields)
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
 image.plot(1:100,1:300,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
-image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s.c)), main='Truth', asp=1) # make sure scale = same
-points(pp3[,1:2], pch=16)
+image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
+points(unstructured_data[,1:2], pch=16)
 
 ##plot the standard deviation of random field
 xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)

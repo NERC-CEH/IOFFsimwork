@@ -5,12 +5,12 @@ library(INLA)
 library(reshape2)
 
 #import data
-source("Generate field and sample.R") # note - once we've got the code finalised these need to be turned into functions
+source("Functions to generate data and sample.R") # note - once we've got the code finalised these need to be turned into functions
 
-head(struct_dat) #this is the structured data
+head(structured_data) #this is the structured data
 
 
-head(pp3) # this is the unstructured data
+head(unstructured_data) # this is the unstructured data
 
 
 # Need to run several models...
@@ -28,10 +28,10 @@ plot(mesh)
 spde <- inla.spde2.matern(mesh)
 
 #make A matrix for structured data - should this be pulling the x and y coordinates for the location?
-struct_dat_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(struct_dat[,3:4]))
+structured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(structured_data[,3:4]))
 
 #make A matrix for unstructured data
-pp3_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(pp3[,1:2]))
+unstructured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(unstructured_data[,1:2]))
 
 
 # Joint model
@@ -42,26 +42,26 @@ pp3_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(pp3[,1:2]))
 # Using cloglog
 
 
-stk_pp3 <- inla.stack(data=list(y=cbind(pp3$presence, NA), e = rep(0, nrow(pp3))),
-                      effects=list(data.frame(interceptB=rep(1,length(pp3$x)), env = pp3$env), 
+stk_unstructured_data <- inla.stack(data=list(y=cbind(unstructured_data$presence, NA), e = rep(0, nrow(unstructured_data))),
+                      effects=list(data.frame(interceptB=rep(1,length(unstructured_data$x)), env = unstructured_data$env), 
                                    Bnodes=1:spde$n.spde),
-                      A=list(1,pp3_A),
-                      tag="pp3")	
+                      A=list(1,unstructured_data_A),
+                      tag="unstructured_data")	
 
 
 #note intercept with different name
 
 
-stk_struct <- inla.stack(data=list(y=cbind(NA, struct_dat$presence), Ntrials = rep(1, nrow(struct_dat))),
-                      effects=list(data.frame(interceptA=rep(1,length(struct_dat$x)), env = struct_dat$env), 
+stk_struct <- inla.stack(data=list(y=cbind(NA, structured_data$presence), Ntrials = rep(1, nrow(structured_data))),
+                      effects=list(data.frame(interceptA=rep(1,length(structured_data$x)), env = structured_data$env), 
                                    Bnodes=1:spde$n.spde),
-                      A=list(1,struct_dat_A),
+                      A=list(1,structured_data_A),
                       tag="struct")
 
 ##NOTE: doesn't use the copy function initially
 
 
-stk <- inla.stack(stk_pp3, stk_struct)
+stk <- inla.stack(stk_unstructured_data, stk_struct)
 
 
 formulaJ = y ~  interceptB + interceptA + env + f(Bnodes, model = spde) -1

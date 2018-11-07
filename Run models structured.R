@@ -5,12 +5,13 @@ library(INLA)
 library(reshape2)
 
 #import data
-source("Generate field and sample.R") # note - once we've got the code finalised these need to be turned into functions
+source("Functions to generate data and sample.R") # note - once we've got the code finalised these need to be turned into functions
 
-head(struct_dat) #this is the structured data
+head(structured_data) #this is the structured data
 
 
-head(pp3) # this is the unstructured data
+head(unstructured_data) # this is the unstructured data
+
 
 
 # Need to run several models...
@@ -28,29 +29,29 @@ plot(mesh)
 spde <- inla.spde2.matern(mesh)
 
 #make A matrix for structured data - for projection
-struct_dat_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(struct_dat[,2:3]))
+structured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(structured_data[,2:3]))
 
 #make A matrix for unstructured data - for projection
-pp3_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(pp3[,1:2]))
+unstructured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(unstructured_data[,1:2]))
 
 ## Structured only
 
 # create stack including presence data from structured, have Ntrials instead of expected
-stk_struct <- inla.stack(data=list(y=struct_dat$presence, Ntrials = rep(1, nrow(struct_dat))),
-                         effects=list(data.frame(interceptA=rep(1,length(struct_dat$x)), env = struct_dat$env), 
+stk_structured <- inla.stack(data=list(y=structured_data$presence, Ntrials = rep(1, nrow(structured_data))),
+                         effects=list(data.frame(interceptA=rep(1,length(structured_data$x)), env = structured_data$env), 
                                       Bnodes=1:spde$n.spde),
-                         A=list(1,struct_dat_A),
-                         tag="struct")
+                         A=list(1,structured_data_A),
+                         tag="structured")
 
 # what is Bnodes?
 formulaN = y ~  interceptA + env + f(Bnodes, model = spde) -1
 
 # Binomial cloglog link model
 result.struct.binom <- inla(formulaN,family="binomial",
-                            data=inla.stack.data(stk_struct),
-                            control.predictor=list(A=inla.stack.A(stk_struct)),
+                            data=inla.stack.data(stk_structured),
+                            control.predictor=list(A=inla.stack.A(stk_structured)),
                             control.family = list(link = "cloglog"),
-                            Ntrials = inla.stack.data(stk_struct)$Ntrials
+                            Ntrials = inla.stack.data(stk_structured)$Ntrials
 )
 
 
@@ -70,12 +71,12 @@ library(fields)
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
 image.plot(1:100,1:300,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
-image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s)), main='Truth', asp=1) # make sure scale = same
-points(struct_dat[struct_dat[,4] %in% 0,2:3], pch=16, col='white') # many absences, few presences
-points(struct_dat[struct_dat[,4] %in% 1,2:3], pch=16, col='black')
+image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
+points(structured_data[structured_data[,4] %in% 0,2:3], pch=16, col='white') # many absences, few presences
+points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')
 
 ##plot the standard deviation of random field
-xsd1 <- inla.mesh.project(proj1.struct.binom, result.struct$summary.random$Bnodes$sd)
+xsd1 <- inla.mesh.project(proj1.struct.binom, result.struct.binom$summary.random$Bnodes$sd)
 #library(fields)
 image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
 

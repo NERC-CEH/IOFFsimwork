@@ -147,9 +147,9 @@ result$summary.fixed
 cov_est <- result$summary.fixed[3,1]
 
 
-truefield <- melt(rf.s.c)
+truefield <- melt(dat1$rf.s)
 estimatedfield <- melt(xmean1)
-covartable <- melt(gridcov)
+covartable <- melt(dat1$gridcov)
 
 par(mfrow=c(1,1))
 plot(exp(cov_est*covartable$value + estimatedfield$value) ~ truefield$value, col = covartable$value+2)
@@ -180,7 +180,7 @@ grid_average <- function(grid_points, data){
 
 
 # make sure mean scaled as we cannot accurately assess mean abundance
-difference_joint <- grid_average(grid_points, xmean1)-grid_average(grid_points, rf.s.c)
+difference_joint <- grid_average(grid_points, xmean1)-grid_average(grid_points, dat1$rf.s)
 
 return(result)
 }

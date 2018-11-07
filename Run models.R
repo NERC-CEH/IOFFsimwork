@@ -29,7 +29,7 @@ plot(mesh)
 spde <- inla.spde2.matern(mesh)
 
 #make A matrix for structured data
-structured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(structured_data[,3:4]))
+structured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(structured_data[,2:3]))
 
 #make A matrix for unstructured data
 unstructured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(unstructured_data[,1:2]))

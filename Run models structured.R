@@ -1,17 +1,11 @@
 ## Models with simulated data
 
+structured_model <- function(structured_data, dat1, biasfield){
+  
+
 #packages
 library(INLA)
 library(reshape2)
-
-#import data
-source("Functions to generate data and sample.R") # note - once we've got the code finalised these need to be turned into functions
-
-head(structured_data) #this is the structured data
-
-
-head(unstructured_data) # this is the unstructured data
-
 
 
 # Need to run several models...
@@ -121,7 +115,7 @@ grid_average <- function(grid_points, data){
 
 
 # make sure mean scaled as we cannot accurately assess mean abundance
-difference_struct_binom <- grid_average(grid_points, xmean1.struct.binom)-grid_average(grid_points, rf.s.c)
+difference_struct_binom <- grid_average(grid_points, xmean1.struct.binom)-grid_average(grid_points, dat1$rf.s)
 
 # now have difference in relative abundance per grid square
 hist(difference_struct_binom)
@@ -143,8 +137,12 @@ par(mar=c(4,4,4,4))
 image.plot(1:100,1:300, t(grid_points), col=tim.colors(), xlab='', ylab='',main="grid",asp=1)
 image.plot(1:100,1:300, diff_to_grid(difference_struct_binom, grid_points), col=tim.colors(), xlab='', ylab='',main="differences",asp=1)
 image.plot(1:100,1:300,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
-image.plot(list(x=Lam$xcol*100, y=Lam$yrow*100, z=t(rf.s.c)), main='Truth', asp=1) # make sure scale = same
+image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
 
 # CONTINUOUS
 
 #
+
+return(result.struct.binom)
+
+}

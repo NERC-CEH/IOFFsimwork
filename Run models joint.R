@@ -1,16 +1,10 @@
 ## Models with simulated data
 
+joint_model <- function(structured_data, unstructured_data, dat1, biasfield){
+
 #packages
 library(INLA)
 library(reshape2)
-
-#import data
-source("Functions to generate data and sample.R") # note - once we've got the code finalised these need to be turned into functions
-
-head(structured_data) #this is the structured data
-
-
-head(unstructured_data) # this is the unstructured data
 
 
 # Need to run several models...
@@ -44,7 +38,7 @@ unstructured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(unstructure
 
 # create integration stack
 
-loc.d <- t(matrix(c(0,0,100,0,100,300,0,300,0,0), 2))
+loc.d <- t(matrix(c(0,0,max(biasfield$x),0,max(biasfield$x),max(biasfield$y),0,max(biasfield$y),0,0), 2))
 
 #make dual mesh
 dd <- deldir::deldir(mesh$loc[, 1], mesh$loc[, 2])
@@ -188,4 +182,6 @@ grid_average <- function(grid_points, data){
 # make sure mean scaled as we cannot accurately assess mean abundance
 difference_joint <- grid_average(grid_points, xmean1)-grid_average(grid_points, rf.s.c)
 
+return(result)
+}
 

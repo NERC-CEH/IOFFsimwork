@@ -92,7 +92,8 @@ formulaN = y ~  interceptB + env + f(Bnodes, model = spde) -1
 result <- inla(formulaN,family="poisson",
                data=inla.stack.data(join.stack),
                control.predictor=list(A=inla.stack.A(join.stack), compute=TRUE),
-               control.family = list(link = "log")
+               control.family = list(link = "log"),
+               E = inla.stack.data(join.stack)$e.pp
 )
 
 result$summary.fixed

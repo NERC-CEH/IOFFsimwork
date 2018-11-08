@@ -19,7 +19,7 @@ source("setParams.R")
 
 #e.g. we want to simulate a point process with a smaller mean intensity
 
-lambda <- 2
+lambda <- 5
 
 #' ## Generate data from parameters.
 #' 
@@ -33,7 +33,35 @@ lambda <- 2
 #' 
 #' 4. Sample the new points over an area (roughly speaking) by generating stratified random points (to ensure global coverage) and then denoting presence as the presence of one or more point process realisation in the 5x5 neighbourhood surrounding the stratified random points. Absence is denoted as the absence of any point process realisation in this "quadrat".
 #' 
+#+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
 source("Functions to generate data and sample.R")
+
+#' Visualise the random field and covariate pattern
+#+ echo = FALSE 
+par(mfrow=c(1,2)) 
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='log-Lambda', asp=1) 
+points(dat1$xy, pch=19)
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Covariate', asp=1)
+
+#' Visualise the strata and associated probabilities of sampling
+#+ echo = FALSE 
+par(mfrow=c(1,1), xpd = TRUE) 
+plot(strata1$y ~ strata1$x, col = strata1$stratum)
+legend(110,300, fill = unique(strata1$stratum), legend = probs, title = "Probability")
+
+#' Visualise thinned unstructured data
+#+ echo = FALSE 
+par(mfrow=c(1,1))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Thinned unstructured data', asp=1) 
+points(thin1$x/100, thin1$y/100, pch = 20)#note rescale again - plotting back on original
+
+#' Visualise structured data
+#+ echo = FALSE  
+par(mfrow=c(1,1))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Structured data', asp=1) 
+points(structured_data$x/100,structured_data$y/100, pch = 21, bg = structured_data$presence, col = "black")
+legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1))
+
 
 #' ## Run individual data models
 #' 
@@ -49,14 +77,15 @@ source("Functions to generate data and sample.R")
 #' 
 #' 4. In joint models the true species occurrence can be represented with a shared random spatial field
 #' 
-#' 
+#+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
 source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield)
 
+#+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
 source("Run models.R")
 mod_2 <- unstructured_model(unstructured_data, dat1, biasfield)
 
-#' Run joint model
+#+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
 source("Run models joint.R")
 mod_joint <- joint_model(structured_data, unstructured_data, dat1, biasfield)
 

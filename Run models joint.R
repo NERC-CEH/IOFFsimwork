@@ -6,13 +6,12 @@ joint_model <- function(structured_data, unstructured_data, dat1, biasfield){
 library(INLA)
 library(reshape2)
 library(rgeos)
+library(fields)
 
-
-# Need to run several models...
-# 1) unstructured only
-# 2) structured only
-# 3) joint model
-
+max_x <- max(biasfield$x)
+max_y <- max(biasfield$y)
+  
+  
 #preparation - mesh construction - use the loc.domain argument
 
 mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
@@ -39,7 +38,7 @@ unstructured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(unstructure
 
 # create integration stack
 
-loc.d <- t(matrix(c(0,0,max(biasfield$x),0,max(biasfield$x),max(biasfield$y),0,max(biasfield$y),0,0), 2))
+loc.d <- t(matrix(c(0,0,max_x,0,max_x,max_y,0,max_y,0,0), 2))
 
 #make dual mesh
 dd <- deldir::deldir(mesh$loc[, 1], mesh$loc[, 2])
@@ -102,8 +101,11 @@ stk_structured_data <- inla.stack(data=list(y=cbind(NA, structured_data$presence
 
 ##NOTE: doesn't use the copy function initially
 
-
 stk <- inla.stack(stk_unstructured_data, stk_structured_data)
+
+source("Create prediction stack.R")
+
+join.stack <- create_prediction_stack(stk, c(10,10), biasfield = biasfield, dat1 = dat1)
 
 
 formulaJ = y ~  interceptB + interceptA + env + f(Bnodes, model = spde) -1
@@ -120,7 +122,7 @@ result <- inla(formulaJ,family=c("poisson", "binomial"),
 
 
 ##project the mesh onto the initial simulated grid 100x100 cells in dimension
-proj1<-inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
+proj1<-inla.mesh.projector(mesh,ylim=c(1,max_y),xlim=c(1,max_x),dims=c(max_x,max_y))
 ##pull out the mean of the random field for the NPMS model
 xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
 
@@ -130,59 +132,17 @@ library(fields)
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
-image.plot(1:100,1:300,exp(xmean1), col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
+image.plot(1:max_x,1:max_y,exp(xmean1), col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
 
 ##plot the standard deviation of random field
 xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)
 
-image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
+image.plot(1:max_x,1:max_y,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
 
-
-#biased to bottom of grid - any chance the environmental variable was included? 
 
 result$summary.fixed
 
-
-#estimated covariate value
-cov_est <- result$summary.fixed[3,1]
-
-
-truefield <- melt(dat1$rf.s)
-estimatedfield <- melt(xmean1)
-covartable <- melt(dat1$gridcov)
-
-par(mfrow=c(1,1))
-plot(exp(cov_est*covartable$value + estimatedfield$value) ~ truefield$value, col = covartable$value+2)
-
-# Structured only
-
-
-# Joint (multiple versions possible)
-
-# VALIDATION - grid based approach
-
-# grid it and compare average abundance
-# set up grid of 10X10 pixels
-grid_points <- matrix(c(rep(rep(1:30,each=10),10)), ncol=100, nrow=300, byrow=F)
-# show grid
-plot(dat$y ~ dat$x, col = grid_points)
-
-# sum average abundance by grid square for truth and predicted
-grid_average <- function(grid_points, data){
-  output <- rep(NA, length(1:max(grid_points)))
-  data <- data-mean(data)
-  for(i in 1:max(grid_points)){
-    marker <- which(grid_points==i)
-    output[i] <- mean(data[marker])
-  }
-  return(output)
-}
-
-
-# make sure mean scaled as we cannot accurately assess mean abundance
-difference_joint <- grid_average(grid_points, xmean1)-grid_average(grid_points, dat1$rf.s)
-
-return(result)
+return(list(join.stack = join.stack, result = result))
 }
 

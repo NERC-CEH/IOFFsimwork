@@ -1,8 +1,4 @@
 
-##source parameter values
-
-source("setParams.R")
-
 ##data generation 
 
 source("genData.R")

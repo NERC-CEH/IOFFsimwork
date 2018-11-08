@@ -6,6 +6,7 @@ unstructured_model <- function(unstructured_data, dat1, biasfield){
 library(INLA)
 library(reshape2)
 library(deldir)
+library(rgeos)
 
 
 # Need to run several models...
@@ -132,9 +133,9 @@ int_est <- result$summary.fixed[1,1]
 cov_est <- result$summary.fixed[2,1]
 
 library(reshape2)
-truefield <- melt(rf.s.c)
+truefield <- melt(dat1$rf.s)
 estimatedfield <- melt(xmean1)
-covartable <- melt(gridcov)
+covartable <- melt(dat1$gridcov)
 
 # this looks almost like someone's ribcage 
 # shows the difference between estimate and true value?

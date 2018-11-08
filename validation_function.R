@@ -55,12 +55,12 @@ if(summary_results == T){
   
   summary_results = list(data.frame(Model = model_type,
                      RMSE = mean(RSE_differences)),
-               coefficients = coefficients[,c(1,3,5,6)]     
+               coefficients = coefficients[,c(1,3,5,6)],     
                differences,
                worst_areas = unique(grid[which(RSE_differences>(mean(RSE_differences)+sd(RSE_differences)))]),
                best_areas = unique(grid[which(RSE_differences<(mean(RSE_differences)-sd(RSE_differences)))])
                )
-  names(summary_results) <- c("Proto-table", "All_differences", "Worst_grid_cells", "Best_grid_cells")
+  names(summary_results) <- c("Proto-table", "coefficients", "All_differences", "Worst_grid_cells", "Best_grid_cells")
   return(summary_results)
 }
 

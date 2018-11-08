@@ -80,6 +80,7 @@ legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 #+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
 source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield)
+source("validation_function.R")
 validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
                                     structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T)
 

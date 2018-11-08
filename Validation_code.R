@@ -54,33 +54,27 @@ join.output <- inla(formulaN,family="poisson",
 # will be the average intensity of each 10X10
 make_truth_grid <- function(resolution, dat1, dimensions){
   
+  grid = matrix(NA, nrow=dimensions[2], ncol=dimensions[1])
+  grid_numbers <- 1:prod(dimensions/resolution)
   # loop for y values
-  for(j in 1:resolution[2]){
-    seq((i-1)+resolution[2]-9,(i*resolution[2]),1)
+  for(j in 1:(dimensions[2]/resolution[2])){
+    index.y <- seq((j*resolution[2]-9),(j*resolution[2]),1)
+    temp_grid_numbers <- grid_numbers[index.y]
     # loop for x values
-    for(i in 1:resolution[1]){
-      xrow <- rep(i,dimensions[1]/resolution[1])
+    for(i in 1:(dimensions[1]/resolution[1])){
+      index.x <- seq((i*resolution[1]-9),(i*resolution[1]),1)
+      grid[index.y,index.x] <- temp_grid_numbers[i]
     }
-    
   }
   
-  grid_points <- cbind(matrix(c(rep(rep(seq(1,100,4),each=10),25)), ncol=10, nrow=300, byrow=F),
-                       matrix(c(rep(rep(seq(2,100,4),each=10),25)), ncol=10, nrow=300, byrow=F),
-                       matrix(c(rep(rep(seq(3,100,4),each=10),25)), ncol=10, nrow=300, byrow=F),
-                       matrix(c(rep(rep(seq(4,100,4),each=10),25)), ncol=10, nrow=300, byrow=F))
-  
-  # sum average abundance by grid square for truth and predicted
-  grid_average <- function(grid_points, data){
-    output <- rep(NA, length(1:max(grid_points)))
-    data <- data-mean(data)
-    for(i in 1:max(grid_points)){
-      marker <- which(grid_points==i)
-      output[i] <- mean(data[marker])
-    }
-    return(output)
+  # sum average abundance by grid square for truth
+  output <- rep(NA, length(1:max(grid)))
+  data <- dat1$rf.s-mean(dat1$rf.s)
+  for(i in 1:max(grid)){
+    marker <- which(grid==i)
+    output[i] <- mean(data[marker])
   }
-  
-  
+  return(output)
 }
 
 # result = model output
@@ -90,14 +84,17 @@ make_truth_grid <- function(resolution, dat1, dimensions){
 # dat1 = original spatial field (truth)
 # unstructured_data 
 # structured_data
-validation_plots <- function(result, resolution, join_stack, model_type = c("unstructured", "structured", "joint"), unstructured_data=NULL,
-                             structured_data=NULL, dat1){
+# choose table and/or plot
+validation <- function(result, resolution, join_stack, model_type = c("unstructured", "structured", "joint"), unstructured_data=NULL,
+                             structured_data=NULL, dat1,
+                             plot = F, table = F){
 
 index.pred.response <- inla.stack.index(join.stack, tag="pred.response")$data
 
 m.prd <- result$summary.fitted.values$mean[index.pred.response]
 sd.prd <- result$summary.fitted.values$sd[index.pred.response]
 
+if(plot == T){
 par(mfrow=c(1,4))
 #truth
 image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
@@ -110,9 +107,21 @@ image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolu
 image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
            matrix(exp(sd.prd), ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
 # relative differences
-differences <- 
-
+truth_grid <- make_truth_grid(c(10,10), dat1, c(100,300)) # grid truth and take averaged
+differences <- (exp(m.prd)-mean(exp(m.prd)))-truth_grid # calculate differences
 image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
-           matrix(differences, ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
+           matrix(differences, ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Relative differences",asp=1)
+}
+
+if(table == T){
+  table = list(data.frame(Model = model_type,
+                     RMSE = mean(sqrt(differences^2))),
+               differences,
+               worst_areas <- unique(grid[which(differences>(mean(differences)+sd(differences)))]),
+               best_areas <- unique(grid[which(differences<(mean(differences)-sd(differences)))])
+               )
+  names(table) <- c("Error", "All_differences", "Worst_grid_cells", "Best_grid_cells")
+  return(table)
+}
 
 }

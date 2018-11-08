@@ -5,6 +5,7 @@ joint_model <- function(structured_data, unstructured_data, dat1, biasfield){
 #packages
 library(INLA)
 library(reshape2)
+library(rgeos)
 
 
 # Need to run several models...

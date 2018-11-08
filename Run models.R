@@ -7,13 +7,8 @@ library(INLA)
 library(reshape2)
 library(deldir)
 library(rgeos)
-
-
-# Need to run several models...
-# 1) unstructured only
-# 2) structured only
-# 3) joint model
-
+library(fields)
+  
 #preparation - mesh construction - use the loc.domain argument
 
 mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
@@ -23,31 +18,30 @@ plot(mesh)
 ##set the spde representation to be the mesh just created
 spde <- inla.spde2.matern(mesh)
 
-#make A matrix for structured data
-structured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(structured_data[,2:3]))
-
 #make A matrix for unstructured data
 unstructured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(unstructured_data[,1:2]))
 
 #make integration stack for unstructured data
 
-loc.d <- t(matrix(c(0,0,max(biasfield$x),0,max(biasfield$x),max(biasfield$y),0,max(biasfield$y),0,0), 2))
+#get dimensions
+max_x <- max(biasfield$x)
+max_y <- max(biasfield$y)
+
+loc.d <- t(matrix(c(0,0,max_x,0,max_x,max_y,0,max_y,0,0), 2))
 
 #make dual mesh
 dd <- deldir::deldir(mesh$loc[, 1], mesh$loc[, 2])
 tiles <- deldir::tile.list(dd)
 
 #make domain into spatial polygon
-domainSP <- SpatialPolygons(list(Polygons(
-  list(Polygon(loc.d)), '0')))
+domainSP <- SpatialPolygons(list(Polygons(list(Polygon(loc.d)), '0')))
 
 #intersection between domain and dual mesh
 
 poly.gpc <- as(domainSP@polygons[[1]]@Polygons[[1]]@coords, "gpc.poly")
 
 # w now contains area of voronoi polygons
-w <- sapply(tiles, function(p) rgeos::area.poly(rgeos::intersect(as(cbind(p$x, 
-                                                                          p$y), "gpc.poly"), poly.gpc)))
+w <- sapply(tiles, function(p) rgeos::area.poly(rgeos::intersect(as(cbind(p$x,p$y), "gpc.poly"), poly.gpc)))
 
 #check some have 0 weight
 table(w>0)
@@ -69,9 +63,9 @@ y.pp <- rep(0:1, c(nv, n))
 e.pp <- c(w, rep(0, n))
 
 #diagonal matrix for integration point A matrix
-
 imat <- Diagonal(nv, rep(1, nv))
 
+#combine integration point A matrix with data A matrix
 A.pp <- rbind(imat, unstructured_data_A)
 
 
@@ -82,38 +76,40 @@ covariate = dat1$gridcov[Reduce('cbind', nearest.pixel(
   im(dat1$gridcov)))]
 
 
-# Unstructured only
-
-
+# Create data stack
 stk_unstructured_data <- inla.stack(data=list(y=y.pp, e = e.pp),
                       effects=list(list(data.frame(interceptB=rep(1,nv+n)), env = c(covariate,unstructured_data$env)), list(Bnodes=1:spde$n.spde)),
                       A=list(1,A.pp),
                       tag="unstructured_data")	
 
+source("Create prediction stack.R")
+
+join.stack <- create_prediction_stack(stk_unstructured_data, c(10,10))
 
 formulaN = y ~  interceptB + env + f(Bnodes, model = spde) -1
 
 
 result <- inla(formulaN,family="poisson",
-               data=inla.stack.data(stk_unstructured_data),
-               control.predictor=list(A=inla.stack.A(stk_unstructured_data)),
+               data=inla.stack.data(join.stack),
+               control.predictor=list(A=inla.stack.A(join.stack), compute=TRUE),
                control.family = list(link = "log")
 )
 
 result$summary.fixed
 
-##project the mesh onto the initial simulated grid 100x100 cells in dimension
-proj1<- inla.mesh.projector(mesh,ylim=c(1,300),xlim=c(1,100),dims=c(100,300))
-##pull out the mean of the random field for the NPMS model
+##project the mesh onto the initial simulated grid 
+proj1<- inla.mesh.projector(mesh,ylim=c(1,max_y),xlim=c(1,max_x),dims=c(max_x,max_y))
+##pull out the mean of the random field 
 xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
 
 ##plot the estimated random field 
 # plot with the original
-library(fields)
+
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
 image.plot(1:100,1:300,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
+#plot truth
 image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
 points(unstructured_data[,1:2], pch=16)
 
@@ -123,26 +119,7 @@ xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)
 image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
 
 
-#biased to bottom of grid
+#return from function
+return(list(join.stack = join.stack, result = result))
 
-
-#estimated intercept
-int_est <- result$summary.fixed[1,1]
-
-#estimated covariate value
-cov_est <- result$summary.fixed[2,1]
-
-library(reshape2)
-truefield <- melt(dat1$rf.s)
-estimatedfield <- melt(xmean1)
-covartable <- melt(dat1$gridcov)
-
-# this looks almost like someone's ribcage 
-# shows the difference between estimate and true value?
-plot(exp(int_est + cov_est*covartable$value + estimatedfield$value) ~ truefield$value, col = covartable$value*2)
-
-# Structured only
-
-
-# Joint (multiple versions possible)
-
+}

@@ -1,4 +1,4 @@
-create_prediction_stack <- function(data_stack, resolution){
+create_prediction_stack <- function(data_stack, resolution, biasfield, dat1){
   
   pred.grid <- expand.grid(x=seq(resolution[1]/2,max(biasfield$x),resolution[1]), y=seq(resolution[2]/2, max(biasfield$y),resolution[2])) # make grid
   dim(pred.grid) # 300,2 = much better than before

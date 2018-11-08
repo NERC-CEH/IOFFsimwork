@@ -1,6 +1,6 @@
 # function to make a grid of the truth data to compare to predicted
 # will be the average intensity of each grid square
-make_truth_grid <- function(resolution, dat1, dimensions){
+make_truth_grid <- function(resolution, dat1, dimensions, type=c('truth', 'grid')){
   
   grid = matrix(NA, nrow=dimensions[2], ncol=dimensions[1])
   grid_numbers <- 1:prod(dimensions/resolution)
@@ -22,5 +22,6 @@ make_truth_grid <- function(resolution, dat1, dimensions){
     marker <- which(grid==i)
     output[i] <- mean(data[marker])
   }
-  return(output)
+  if(type=='truth'){return(output)}
+  if(type=='grid'){return(grid)}
 }

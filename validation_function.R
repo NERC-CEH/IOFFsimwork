@@ -11,10 +11,15 @@ validation_function <- function(result, resolution, join_stack, model_type = c("
                              structured_data=NULL, dat1,
                              plot = F, summary_results = F){
 
-index.pred.response <- inla.stack.index(join.stack, tag="pred.response")$data
+index.pred.response <- inla.stack.index(join_stack, tag="pred.response")$data
 
 m.prd <- result$summary.fitted.values$mean[index.pred.response]
 sd.prd <- result$summary.fitted.values$sd[index.pred.response]
+
+# calculate differences
+source('make_truth_grid.R')
+truth_grid <- make_truth_grid(c(10,10), dat1, c(100,300), type='truth') # grid truth and take averaged
+differences <- (exp(m.prd)-mean(exp(m.prd)))-truth_grid # calculate differences
 
 if(plot == T){
 par(mfrow=c(1,4))
@@ -29,19 +34,18 @@ image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolu
 image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
            matrix(exp(sd.prd), ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
 # relative differences
-source('make_truth_grid.R')
-truth_grid <- make_truth_grid(c(10,10), dat1, c(100,300)) # grid truth and take averaged
-differences <- (exp(m.prd)-mean(exp(m.prd)))-truth_grid # calculate differences
 image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
            matrix(differences, ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Relative differences",asp=1)
 }
 
 if(summary_results == T){
+  RSE_differences <- sqrt(differences^2)
+  grid <- make_truth_grid(c(10,10), dat1, c(100,300), type='grid')
   summary_results = list(data.frame(Model = model_type,
-                     RMSE = mean(sqrt(differences^2))),
+                     RMSE = mean(RSE_differences)),
                differences,
-               worst_areas <- unique(grid[which(abs(differences)>(mean(abs(differences))+(2*sd(abs(differences)))))]),
-               best_areas <- unique(grid[which(abs(differences)>(mean(abs(differences))-(2*sd(abs(differences)))))])
+               worst_areas <- unique(grid[which(RSE_differences>(mean(RSE_differences)+sd(RSE_differences)))]),
+               best_areas <- unique(grid[which(RMSE_differences>(mean(RMSE_differences)-sd(RMSE_differences)))])
                )
   names(summary_results) <- c("Proto-table", "All_differences", "Worst_grid_cells", "Best_grid_cells")
   return(summary_results)

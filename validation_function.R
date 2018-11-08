@@ -1,17 +1,17 @@
 # FUNCTION FOR VALIDATION
 # result = model output
 # resolution = c(x,y)
-# join_stack = joint stack of data and predictions
+# join.stack = joint stack of data and predictions
 # model_type = indication which model result came from
 # dat1 = original spatial field (truth)
 # unstructured_data 
 # structured_data
 # choose table and/or plot
-validation_function <- function(result, resolution, join_stack, model_type = c("unstructured", "structured", "joint"), unstructured_data=NULL,
+validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "structured", "joint"), unstructured_data=NULL,
                              structured_data=NULL, dat1,
                              plot = F, summary_results = F){
 
-index.pred.response <- inla.stack.index(join_stack, tag="pred.response")$data
+index.pred.response <- inla.stack.index(join.stack, tag="pred.response")$data
 
 m.prd <- result$summary.fitted.values$mean[index.pred.response]
 sd.prd <- result$summary.fitted.values$sd[index.pred.response]

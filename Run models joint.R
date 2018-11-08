@@ -113,7 +113,7 @@ formulaJ = y ~  interceptB + interceptA + env + f(Bnodes, model = spde) -1
 
 result <- inla(formulaJ,family=c("poisson", "binomial"),
                data=inla.stack.data(join.stack),
-               control.predictor=list(A=inla.stack.A(join.stack)),
+               control.predictor=list(A=inla.stack.A(join.stack), compute=TRUE),
                control.family = list(list(link = "log"), 
                                      list(link = "cloglog")),
                E = inla.stack.data(join.stack)$e,

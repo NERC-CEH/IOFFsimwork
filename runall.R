@@ -19,7 +19,7 @@ source("setParams.R")
 
 #e.g. we want to simulate a point process with a smaller mean intensity
 
-lambda <- 2
+lambda <- 5
 
 #' ## Generate data from parameters.
 #' 
@@ -52,14 +52,19 @@ source("Functions to generate data and sample.R")
 #' 
 source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield)
+validation_tab
 
 source("Run models.R")
 mod_2 <- unstructured_model(unstructured_data, dat1, biasfield)
+source("validation_function.R")
+validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
+                                    unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T)
 
 #' Run joint model
 source("Run models joint.R")
 mod_joint <- joint_model(structured_data, unstructured_data, dat1, biasfield)
-
+result = mod_joint[[2]]
+join.stack = mod_joint[[1]]
 
 
 

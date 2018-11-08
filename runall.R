@@ -52,7 +52,8 @@ source("Functions to generate data and sample.R")
 #' 
 source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield)
-validation_tab
+validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
+                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T)
 
 source("Run models.R")
 mod_2 <- unstructured_model(unstructured_data, dat1, biasfield)
@@ -63,8 +64,10 @@ validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join
 #' Run joint model
 source("Run models joint.R")
 mod_joint <- joint_model(structured_data, unstructured_data, dat1, biasfield)
-result = mod_joint[[2]]
-join.stack = mod_joint[[1]]
+source("validation_function.R")
+validation_3 <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, plot=T, summary_results=T)
 
 
 

@@ -29,6 +29,8 @@ Scripts sourced by [Functions to generate data and sample.R](https://github.com/
 
 [addSpatialBias.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/addSpatialBias.R) : This function uses the strata created with 'Generate strata levels Lam.R' and assigns probabilities of sampling (thinning) used to generate the unstructured data. The user can specify these probabilites with a vector equal in length to the number of strata or they can be randomly generated
 
+[make_truth_grid.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/make_truth_grid.R) : This function averages the true intensity within grid squares. The center of each grid square corresponds to a predicted point in prediction data.
+
 [thinData.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/thinData.R) : This function uses the output of 'genData.R' with the output of 'addSpatialBias.R' to thin the point pattern to create the unstructured data
 
 [sampleStructured.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/sampleStructured.R) : This function uses the output of 'genData.R' and the output of 'Generate strata levels Lam.R' to take stratified random points from the domain using the 'sampleStrata' function from 'Sample from strata.R' then creates structured presence/absence data by assessing overlap between the stratified random points (and the 5 by 5 neighbourhood around each point) and a new realisation from the point process generated with 'genData.R'.
@@ -42,6 +44,8 @@ Scripts sourced by [Functions to generate data and sample.R](https://github.com/
 [Run models structured.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20structured.R) : This function runs a structured data only SDM model in INLA. Data are assumed to come from a binomial distribution
 
 [Run models joint.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20joint.R) : This function jointly models structured and unstructured data assuming structured data come from a binomial and unstructured data are Poisson distributed.
+
+[validation_function.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/validation_function.R) : This function runs our validation procedures on any fitted model. Outputs produced are: PLOT - of the truth inc data, predicted mean intensity, standard deviation of predicted intensity, and the relative differences between estimate and truth. SUMMARY_RESULTS - the beginnings of an output table. List includes RMSE, model name, all differences, the worst performing grid squares, and the best (i.e. lowest relative difference).
 
 ## Steps to code
 

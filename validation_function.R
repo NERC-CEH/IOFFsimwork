@@ -9,7 +9,7 @@
 # choose table and/or plot
 validation_function <- function(result, resolution, join_stack, model_type = c("unstructured", "structured", "joint"), unstructured_data=NULL,
                              structured_data=NULL, dat1,
-                             plot = F, table = F){
+                             plot = F, summary_results = F){
 
 index.pred.response <- inla.stack.index(join.stack, tag="pred.response")$data
 
@@ -36,15 +36,15 @@ image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolu
            matrix(differences, ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Relative differences",asp=1)
 }
 
-if(table == T){
-  table = list(data.frame(Model = model_type,
+if(summary_results == T){
+  summary_results = list(data.frame(Model = model_type,
                      RMSE = mean(sqrt(differences^2))),
                differences,
-               worst_areas <- unique(grid[which(differences>(mean(differences)+sd(differences)))]),
-               best_areas <- unique(grid[which(differences<(mean(differences)-sd(differences)))])
+               worst_areas <- unique(grid[which(abs(differences)>(mean(abs(differences))+(2*sd(abs(differences)))))]),
+               best_areas <- unique(grid[which(abs(differences)>(mean(abs(differences))-(2*sd(abs(differences)))))])
                )
-  names(table) <- c("Error", "All_differences", "Worst_grid_cells", "Best_grid_cells")
-  return(table)
+  names(summary_results) <- c("Proto-table", "All_differences", "Worst_grid_cells", "Best_grid_cells")
+  return(summary_results)
 }
 
 }

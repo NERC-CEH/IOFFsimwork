@@ -7,7 +7,7 @@
 # unstructured_data 
 # structured_data
 # choose table and/or plot
-validation <- function(result, resolution, join_stack, model_type = c("unstructured", "structured", "joint"), unstructured_data=NULL,
+validation_function <- function(result, resolution, join_stack, model_type = c("unstructured", "structured", "joint"), unstructured_data=NULL,
                              structured_data=NULL, dat1,
                              plot = F, table = F){
 
@@ -29,6 +29,7 @@ image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolu
 image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
            matrix(exp(sd.prd), ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
 # relative differences
+source('make_truth_grid.R')
 truth_grid <- make_truth_grid(c(10,10), dat1, c(100,300)) # grid truth and take averaged
 differences <- (exp(m.prd)-mean(exp(m.prd)))-truth_grid # calculate differences
 image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 

@@ -105,19 +105,19 @@ stk <- inla.stack(stk_unstructured_data, stk_structured_data)
 
 source("Create prediction stack.R")
 
-join.stack <- create_prediction_stack(stk, c(10,10), biasfield = biasfield, dat1 = dat1)
+join.stack <- create_prediction_stack(stk, c(10,10), biasfield = biasfield, dat1 = dat1, mesh, spde)
 
 
 formulaJ = y ~  interceptB + interceptA + env + f(Bnodes, model = spde) -1
 
 
 result <- inla(formulaJ,family=c("poisson", "binomial"),
-               data=inla.stack.data(stk),
-               control.predictor=list(A=inla.stack.A(stk)),
+               data=inla.stack.data(join.stack),
+               control.predictor=list(A=inla.stack.A(join.stack), compute=TRUE),
                control.family = list(list(link = "log"), 
                                      list(link = "cloglog")),
-               E = inla.stack.data(stk)$e,
-               Ntrials = inla.stack.data(stk)$Ntrials
+               E = inla.stack.data(join.stack)$e,
+               Ntrials = inla.stack.data(join.stack)$Ntrials
 )
 
 

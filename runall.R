@@ -80,15 +80,20 @@ legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 #+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
 source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield)
+validation_tab
 
 #+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
 source("Run models.R")
 mod_2 <- unstructured_model(unstructured_data, dat1, biasfield)
+source("validation_function.R")
+validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
+                                    unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T)
 
 #+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
 source("Run models joint.R")
 mod_joint <- joint_model(structured_data, unstructured_data, dat1, biasfield)
-
+result = mod_joint[[2]]
+join.stack = mod_joint[[1]]
 
 
 

@@ -146,28 +146,3 @@ plot(exp(int_est + cov_est*covartable$value + estimatedfield$value) ~ truefield$
 
 # Joint (multiple versions possible)
 
-return(result)
-
-
-
-
-### Attempt at validation
-# Spatial prediction
-
-# set up prediction grid, same size as original
-pred.grid <- expand.grid(x=seq(1,100,1), y=seq(1,300,1))
-dim(pred.grid)
-
-A.pred <- inla.spde.make.A(mesh, loc=as.matrix(pred.grid))
-dim(A.pred)
-
-Aest <- inla.spde.make.A(mesh, loc=unstructured_data[,1:2])
-
-# make inla stack using proper tag (pred.latent)
-s.index <- inla.spde.make.index(name="spatial_field", n.spde = spde$n.spde)
-stack.pred.latent <- inla.stack(data=list(y=NA),
-                                A=list(A.pred),
-                                effects=list(c(s.index, list(intercept=1))),
-                                tag='pred.response')
-
-}

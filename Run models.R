@@ -84,7 +84,7 @@ stk_unstructured_data <- inla.stack(data=list(y=y.pp, e = e.pp),
 
 source("Create prediction stack.R")
 
-join.stack <- create_prediction_stack(stk_unstructured_data, c(10,10))
+join.stack <- create_prediction_stack(stk_unstructured_data, c(10,10), biasfield = biasfield, dat1 = dat1)
 
 formulaN = y ~  interceptB + env + f(Bnodes, model = spde) -1
 

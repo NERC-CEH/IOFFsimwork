@@ -38,11 +38,12 @@ stk_structured <- inla.stack(data=list(y=structured_data$presence, Ntrials = rep
 
 source("Create prediction stack.R")
 
-join.stack <- create_prediction_stack(stk_structured, c(10,10), biasfield = biasfield, dat1 = dat1)
+join.stack <- create_prediction_stack(stk_structured, c(10,10), biasfield = biasfield, dat1 = dat1, mesh, spde)
 
 
 # what is Bnodes?
 formulaN = y ~  interceptA + env + f(Bnodes, model = spde) -1
+
 
 # Binomial cloglog link model
 result.struct.binom <- inla(formulaN,family="binomial",

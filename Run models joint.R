@@ -112,12 +112,12 @@ formulaJ = y ~  interceptB + interceptA + env + f(Bnodes, model = spde) -1
 
 
 result <- inla(formulaJ,family=c("poisson", "binomial"),
-               data=inla.stack.data(stk),
-               control.predictor=list(A=inla.stack.A(stk)),
+               data=inla.stack.data(join.stack),
+               control.predictor=list(A=inla.stack.A(join.stack)),
                control.family = list(list(link = "log"), 
                                      list(link = "cloglog")),
-               E = inla.stack.data(stk)$e,
-               Ntrials = inla.stack.data(stk)$Ntrials
+               E = inla.stack.data(join.stack)$e,
+               Ntrials = inla.stack.data(join.stack)$Ntrials
 )
 
 

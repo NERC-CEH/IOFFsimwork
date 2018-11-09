@@ -134,6 +134,8 @@ library(fields)
 par(mfrow=c(1,3))
 image.plot(1:max_x,1:max_y,exp(xmean1), col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
+points(structured_data[structured_data[,4] %in% 0,2:3], pch=16, col='white') #absences
+points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')
 
 ##plot the standard deviation of random field
 xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)

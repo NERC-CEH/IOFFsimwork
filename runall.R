@@ -33,7 +33,7 @@ lambda <- 5
 #' 
 #' 4. Sample the new points over an area (roughly speaking) by generating stratified random points (to ensure global coverage) and then denoting presence as the presence of one or more point process realisation in the 5x5 neighbourhood surrounding the stratified random points. Absence is denoted as the absence of any point process realisation in this "quadrat".
 #' 
-#+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
+#+ warning = FALSE, message = FALSE, error = FALSE, include = FALSE
 source("Functions to generate data and sample.R")
 
 #' Visualise the random field and covariate pattern
@@ -77,21 +77,42 @@ legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 #' 
 #' 4. In joint models the true species occurrence can be represented with a shared random spatial field
 #' 
-#+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
+#' 
+#' ## Model outputs
+#' 
+#' Model outputs follow below (in the order of structured only, unstructured only, and then the joint model):
+#' 
+#' 1) The mean of the estimated intensity from the model AFTER accounting for the environment
+#' 2) The 'true' species intensity driven by environmental covariate
+#' 3) The standard deviation of the estimated intensity from the model AFTER accounting for the evnironment
+#' 
+#' Then we have some model validation plots:
+#' 
+#' 4) The 'true' species intensity driven by environmental covariate
+#' 5) The predicted mean intensity back in environmental space
+#' 6) The predicted standard deviation of intensity in environmental space
+#' 7) The relative difference between the 'true intensity' and the predicted intensity in environmental space. 
+#' 
+#' Relative differences are calculated for 10X10 squares across the space. 
+#' Predictions generated at centre of these squares.
+#' True intensity averaged across each square.
+#' Both have mean intensity subtracted, then deviation from mean compared. 
+#' 
+#+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield)
 source("validation_function.R")
 validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
                                     structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T)
 
-#+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
+#+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models.R")
 mod_2 <- unstructured_model(unstructured_data, dat1, biasfield)
 source("validation_function.R")
 validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
                                     unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T)
 
-#+ warnings = FALSE, message = FALSE, error = FALSE, results = "hide"
+#+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models joint.R")
 mod_joint <- joint_model(structured_data, unstructured_data, dat1, biasfield)
 source("validation_function.R")

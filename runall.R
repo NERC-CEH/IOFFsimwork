@@ -46,6 +46,7 @@ image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Cova
 #' Visualise the strata and associated probabilities of sampling
 #+ echo = FALSE 
 par(mfrow=c(1,1), xpd = TRUE) 
+par(mar=c(4,4,4,7))
 plot(strata1$y ~ strata1$x, col = strata1$stratum)
 legend(110,300, fill = unique(strata1$stratum), legend = probs, title = "Probability")
 
@@ -98,7 +99,7 @@ legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 #' True intensity averaged across each square.
 #' Both have mean intensity subtracted, then deviation from mean compared. 
 #' 
-#+ warning = FALSE, message = FALSE, error = FALSE
+#+ warning = FALSE, message = FALSE, error = FALSE, figure.align = "center"
 source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield)
 source("validation_function.R")

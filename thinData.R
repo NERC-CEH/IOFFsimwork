@@ -7,7 +7,6 @@
 
 thinData <- function(PPdat = PPdat, bias = bias){
 
-
   #put points on same scale as strata
   pp1 <- as.data.frame(PPdat$xy*100)
   names(pp1) <- c("x", "y")

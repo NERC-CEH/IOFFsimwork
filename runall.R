@@ -83,16 +83,21 @@ legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 #' 
 #' Model outputs follow below (in the order of structured only, unstructured only, and then the joint model):
 #' 
-#' 1) The mean of the estimated intensity from the model AFTER accounting for the environment
-#' 2) The 'true' species intensity driven by environmental covariate
-#' 3) The standard deviation of the estimated intensity from the model AFTER accounting for the evnironment
+#' 1. The mean of the estimated intensity from the model AFTER accounting for the environment
+#' 
+#' 2. The 'true' species intensity driven by environmental covariate
+#' 
+#' 3. The standard deviation of the estimated intensity from the model AFTER accounting for the evnironment
 #' 
 #' Then we have some model validation plots:
 #' 
-#' 4) The 'true' species intensity driven by environmental covariate
-#' 5) The predicted mean intensity back in environmental space
-#' 6) The predicted standard deviation of intensity in environmental space
-#' 7) The relative difference between the 'true intensity' and the predicted intensity in environmental space. 
+#' 4. The 'true' species intensity driven by environmental covariate
+#' 
+#' 5. The predicted mean intensity back in environmental space
+#' 
+#' 6. The predicted standard deviation of intensity in environmental space
+#' 
+#' 7. The relative difference between the 'true intensity' and the predicted intensity in environmental space. 
 #' 
 #' Relative differences are calculated for 10X10 squares across the space. 
 #' Predictions generated at centre of these squares.

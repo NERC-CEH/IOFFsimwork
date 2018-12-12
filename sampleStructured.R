@@ -6,8 +6,6 @@ sampleStructured <- function(PPdat, biasfield, nsamp = 50, plotdat = TRUE){
   source("Sample from strata.R")
   biasfield$sim2 <- biasfield$sim1 #no extra error added
   
-  
-  
   s1 <- sampleStrata(biasfield, nsamp = nsamp, type = "Stratified")
   
   s1$Stratified$samp_id <- 1:nrow(s1$Stratified)
@@ -66,13 +64,6 @@ sampleStructured <- function(PPdat, biasfield, nsamp = 50, plotdat = TRUE){
   }
   
   return(struct_dat)
-
-  
-  
-  
-  
-  
-
 
 
 }

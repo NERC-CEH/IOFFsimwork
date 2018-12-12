@@ -68,7 +68,7 @@ genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE
   # can convert this to a Poisson point process with below
   ppLam <- rpoispp(Lam)
   
-  # plot the intensity and the points (realisations?)
+  # plot the intensity and the points
   if(plotdat == TRUE){
     par(mfrow=c(1,1)) 
     library(fields) 

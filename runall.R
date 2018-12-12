@@ -126,5 +126,7 @@ validation_3 <- validation_function(result=mod_joint[[2]], resolution=c(10,10), 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
                                     dat1 = dat1, plot=T, summary_results=T)
 
-
+validation_1$'Proto-table'
+validation_2$'Proto-table'
+validation_3$'Proto-table'
 

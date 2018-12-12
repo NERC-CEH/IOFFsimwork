@@ -66,14 +66,14 @@ genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE
   Lam <- attr(lg.s, 'Lambda') 
   summary(as.vector(rf.s <- log(Lam$v)))
   # can convert this to a Poisson point process with below
-  ppLam <- rpoispp(Lam)
+  #ppLam <- rpoispp(Lam)
   
-  # plot the intensity and the points
+  # plot the intensity and the points (don't think we do need to plot the points here - only sampled points)
   if(plotdat == TRUE){
     par(mfrow=c(1,1)) 
     library(fields) 
     image.plot(list(x=Lam$xcol, y=Lam$yrow, z=t(rf.s)), main='log-Lambda', asp=1) 
-    points(xy, pch=19)
+    #points(xy, pch=19)
   }
   
   if (plotdat == TRUE & !is.null(env.beta)){

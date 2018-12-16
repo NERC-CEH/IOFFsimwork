@@ -1,7 +1,8 @@
 
 ##data generation 
 
-source("genData.R")
+#source("genData.R")
+source("genData_stochastic.R")
 
 #dat1 <- genData(lambda = 5, env.beta = NULL, seed = 1)
 

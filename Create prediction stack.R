@@ -17,13 +17,13 @@ create_prediction_stack <- function(data_stack, resolution, biasfield, dat1, mes
   if(length(data_stack$data$names$y) > 1){
     ys <- cbind(rep(NA, nrow(pred.grid)), rep(NA, nrow(pred.grid)))
     stack.pred.response <- inla.stack(data=list(y=ys),
-                                      effects = list(list(data.frame(interceptP=rep(1,np))), env = pred.grid$cov, list(Bnodes=1:spde$n.spde)),
-                                      A=list(1,1,A.pred),
+                                      effects = list(list(data.frame(interceptP=rep(1,np))), list(Bnodes=1:spde$n.spde)),
+                                      A=list(1,A.pred),
                                       tag='pred.response')
   } else {
     stack.pred.response <- inla.stack(data=list(y=NA),
-                                      effects = list(list(data.frame(interceptP=rep(1,np))), env = pred.grid$cov, list(Bnodes=1:spde$n.spde)),
-                                      A=list(1,1,A.pred),
+                                      effects = list(list(data.frame(interceptB=rep(1,np))), list(Bnodes=1:spde$n.spde)),
+                                      A=list(1,A.pred),
                                       tag='pred.response')
       }
   

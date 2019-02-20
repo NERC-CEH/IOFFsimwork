@@ -32,7 +32,7 @@ if(is.null(structured_data)==FALSE){points(structured_data[structured_data[,4] %
   points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')}
 #predicted mean
 image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
-           matrix(transformation(m.prd), ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Predicted mean intensity",asp=1)
+           matrix(m.prd, ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Predicted mean intensity",asp=1)
 image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
            matrix(transformation(sd.prd), ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
 # relative differences

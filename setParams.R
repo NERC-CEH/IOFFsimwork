@@ -2,12 +2,12 @@
 
 #genData
 dim = c(100,300)
-lambda = 5
-env.beta = 0.2
+lambda = -3
+env.beta = NULL
 plotdat = TRUE
-seed = 1
-sigma2x = 0.2
-kappa = 0.3
+seed = NULL
+sigma2x = 5
+kappa = 0.005
 
 #genStrataLam
 strata = 3
@@ -16,7 +16,7 @@ cols = 1
 plot = TRUE
 
 #addSpatialBias
-probs = c(0.2, 0.8, 0.5)
+probs = c(1, 1, 1)
 
 #sampleStructured
 nsamp = 50

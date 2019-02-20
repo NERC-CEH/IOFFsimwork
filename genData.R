@@ -20,7 +20,7 @@ genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE
   library(spatstat) 
   # owin creates an object of class "owin" which is an observation window in 2D
   # specify x and y coordinates
-  win <- owin(c(0,dim[1]/100), c(0,dim[2]/100)) # keeping this rectangular is really important to check for errors in the code - otherwise easy to get x and y confused
+  win <- owin(c(0,dim[1]), c(0,dim[2])) # keeping this rectangular is really important to check for errors in the code - otherwise easy to get x and y confused
   
   # set number of pixels
   spatstat.options(npixel=c(dim[1],dim[2]))

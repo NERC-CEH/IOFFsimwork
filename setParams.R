@@ -6,8 +6,8 @@ lambda = -3
 env.beta = NULL
 plotdat = TRUE
 seed = NULL
-sigma2x = 5
-kappa = 0.005
+sigma2x = 2
+kappa = 0.05
 
 #genStrataLam
 strata = 3

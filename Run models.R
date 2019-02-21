@@ -86,17 +86,22 @@ source("Create prediction stack.R")
 
 join.stack <- create_prediction_stack(stk_unstructured_data, c(10,10), biasfield = biasfield, dat1 = dat1, mesh, spde)
 
-formulaN = y ~  interceptB + f(Bnodes, model = spde) -1
+formulaN = y ~  -1 + interceptB + f(Bnodes, model = spde)
 
 
 result <- inla(formulaN,family="poisson",
                data=inla.stack.data(join.stack),
                control.predictor=list(A=inla.stack.A(join.stack), compute=TRUE),
                control.family = list(link = "log"),
-               E = inla.stack.data(join.stack)$e.pp
+               E = inla.stack.data(join.stack)$e
 )
 
 result$summary.fixed
+
+plot(result$marginals.fix[[1]], type='l', 
+     xlab="Log-lambda", ylab='Density') 
+abline(v=lambda, col=2) 
+
 
 ##project the mesh onto the initial simulated grid 
 proj1<- inla.mesh.projector(mesh,ylim=c(1,max_y),xlim=c(1,max_x),dims=c(max_x,max_y))

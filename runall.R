@@ -19,7 +19,7 @@ source("setParams.R")
 
 #e.g. we want to simulate a point process with a smaller mean intensity
 
-lambda <- 5
+#lambda <- 5
 
 #' ## Generate data from parameters.
 #' 

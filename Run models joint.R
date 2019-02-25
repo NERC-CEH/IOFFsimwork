@@ -86,7 +86,7 @@ covariate = dat1$gridcov[Reduce('cbind', nearest.pixel(mesh$loc[,1], mesh$loc[,2
 #unstructured data stack with integration points
 
 stk_unstructured_data <- inla.stack(data=list(y=cbind(y.pp, NA), e = e.pp),
-                      effects=list(list(data.frame(interceptB=rep(1,nv+n)), env = c(covariate,unstructured_data$env)), list(Bnodes=1:spde$n.spde)),
+                      effects=list(list(data.frame(interceptA=rep(1,nv+n))), list(Bnodes=1:spde$n.spde)),
                       A=list(1,A.pp),
                       tag="unstructured_data")	
 
@@ -94,8 +94,7 @@ stk_unstructured_data <- inla.stack(data=list(y=cbind(y.pp, NA), e = e.pp),
 #note intercept with different name
 
 stk_structured_data <- inla.stack(data=list(y=cbind(NA, structured_data$presence), Ntrials = rep(1, nrow(structured_data))),
-                      effects=list(data.frame(interceptA=rep(1,length(structured_data$x)), env = structured_data$env), 
-                                   Bnodes=1:spde$n.spde),
+                      effects=list(list(data.frame(interceptA=rep(1,length(structured_data$x)))), list(Bnodes=1:spde$n.spde)),
                       A=list(1,structured_data_A),
                       tag="structured_data")
 
@@ -103,12 +102,14 @@ stk_structured_data <- inla.stack(data=list(y=cbind(NA, structured_data$presence
 
 stk <- inla.stack(stk_unstructured_data, stk_structured_data)
 
+# join.stack <- stk
+
 source("Create prediction stack.R")
 
 join.stack <- create_prediction_stack(stk, c(10,10), biasfield = biasfield, dat1 = dat1, mesh, spde)
 
 
-formulaJ = y ~  interceptB + interceptA + env + f(Bnodes, model = spde) -1
+formulaJ = y ~  interceptA + f(Bnodes, model = spde) -1
 
 
 result <- inla(formulaJ,family=c("poisson", "binomial"),
@@ -132,7 +133,7 @@ library(fields)
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
-image.plot(1:max_x,1:max_y,exp(xmean1), col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
+image.plot(1:max_x,1:max_y,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
 points(structured_data[structured_data[,4] %in% 0,2:3], pch=16, col='white') #absences
 points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')

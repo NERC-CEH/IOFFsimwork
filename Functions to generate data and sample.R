@@ -52,7 +52,7 @@ unstructured_data <- thin1
 
 source("sampleStructured.R")
 
-structured_data <- sampleStructured(dat1, biasfield, nsamp = nsamp, plotdat = plotdat)
+structured_data <- sampleStructured(dat1, biasfield, nsamp = nsamp, plotdat = plotdat, qsize = qsize)
   
   
 

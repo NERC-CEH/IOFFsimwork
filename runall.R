@@ -60,7 +60,7 @@ points(thin1$x/100, thin1$y/100, pch = 20)#note rescale again - plotting back on
 #+ echo = FALSE  
 par(mfrow=c(1,1))
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Structured data', asp=1) 
-points(structured_data$x/100,structured_data$y/100, pch = 21, bg = structured_data$presence, col = "black")
+points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black")
 legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1))
 
 
@@ -109,7 +109,7 @@ source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield)
 source("validation_function.R")
 validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
-                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T)
+                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5)
 
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models.R")

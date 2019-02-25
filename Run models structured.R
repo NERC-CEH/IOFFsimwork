@@ -30,7 +30,7 @@ structured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(structured_da
 
 # create stack including presence data from structured, have Ntrials instead of expected
 stk_structured <- inla.stack(data=list(y=structured_data$presence, Ntrials = rep(1, nrow(structured_data))),
-                         effects=list(data.frame(interceptA=rep(1,length(structured_data$x)), env = structured_data$env), 
+                         effects=list(data.frame(interceptA=rep(1,length(structured_data$x))), 
                                       Bnodes=1:spde$n.spde),
                          A=list(1,structured_data_A),
                          tag="structured")
@@ -42,7 +42,7 @@ join.stack <- create_prediction_stack(stk_structured, c(10,10), biasfield = bias
 
 
 # what is Bnodes?
-formulaN = y ~  interceptA + env + f(Bnodes, model = spde) -1
+formulaN = y ~  interceptA + f(Bnodes, model = spde) -1
 
 
 # Binomial cloglog link model
@@ -55,11 +55,13 @@ result.struct.binom <- inla(formulaN,family="binomial",
 
 
 ##project the mesh onto the initial simulated grid 
-loglog <- function(x){return(1-exp(-exp(x)))}
+#loglog <- function(x){return(1-exp(-exp(x)))}
 
 proj1.struct.binom <- inla.mesh.projector(mesh,ylim=c(1,max_y),xlim=c(1,max_x),dims=c(max_x,max_y))
 # need to maybe back transform in both ways - the cloglog = we want x back so just cloglog conversion
-xmean1.struct.binom <- loglog(inla.mesh.project(proj1.struct.binom, result.struct.binom$summary.random$Bnodes$mean))
+# xmean1.struct.binom <- loglog(inla.mesh.project(proj1.struct.binom, result.struct.binom$summary.random$Bnodes$mean))
+
+xmean1.struct.binom <- inla.mesh.project(proj1.struct.binom, result.struct.binom$summary.random$Bnodes$mean)
 
 ##plot the estimated random field 
 # plot with the original
@@ -68,7 +70,7 @@ xmean1.struct.binom <- loglog(inla.mesh.project(proj1.struct.binom, result.struc
 # scales and col.region did nothing on my version
 par(mfrow=c(1,3))
 image.plot(1:max_x,1:max_y,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
-image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
 points(structured_data[structured_data[,4] %in% 0,2:3], pch=16, col='white') # many absences, few presences
 points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')
 

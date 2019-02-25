@@ -20,11 +20,17 @@ create_prediction_stack <- function(data_stack, resolution, biasfield, dat1, mes
                                       effects = list(list(data.frame(interceptP=rep(1,np))), list(Bnodes=1:spde$n.spde)),
                                       A=list(1,A.pred),
                                       tag='pred.response')
+  } else if("Ntrials" %in% data_stack$data$names) {
+    stack.pred.response <- inla.stack(data=list(y=NA, Ntrials = rep(1,np)),
+                                      effects = list(list(data.frame(interceptA=rep(1,np))), list(Bnodes=1:spde$n.spde)),
+                                      A=list(1,A.pred),
+                                      tag='pred.response')
   } else {
     stack.pred.response <- inla.stack(data=list(y=NA),
                                       effects = list(list(data.frame(interceptB=rep(1,np))), list(Bnodes=1:spde$n.spde)),
                                       A=list(1,A.pred),
-                                      tag='pred.response')
+                                      tag='pred.response')   
+    
       }
   
   

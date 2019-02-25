@@ -1,7 +1,7 @@
 #function to generate structured data samples equally split between strata
 
 
-sampleStructured <- function(PPdat, biasfield, nsamp = 50, plotdat = TRUE){
+sampleStructured <- function(PPdat, biasfield, nsamp = 50, qsize = 5, plotdat = TRUE){
 
   source("Sample from strata.R")
   biasfield$sim2 <- biasfield$sim1 #no extra error added
@@ -12,9 +12,12 @@ sampleStructured <- function(PPdat, biasfield, nsamp = 50, plotdat = TRUE){
   
   #add neighbourhood - these reflect the sampling areas
   
+  buffer <- (qsize-1)/2
+  
+  
   s2 <- data.frame()
   for(i in 1:nrow(s1$Stratified)){
-    s3 <- biasfield[biasfield$x %in% seq(s1$Stratified$x[i]-2, s1$Stratified$x[i]+2) & biasfield$y %in% seq(s1$Stratified$y[i]-2, s1$Stratified$y[i]+2),]
+    s3 <- biasfield[biasfield$x %in% seq(s1$Stratified$x[i]-buffer, s1$Stratified$x[i]+buffer) & biasfield$y %in% seq(s1$Stratified$y[i]-buffer, s1$Stratified$y[i]+buffer),]
     s3$samp_id <- s1$Stratified$samp_id[i]
     s2 <- rbind(s2, s3)
   }

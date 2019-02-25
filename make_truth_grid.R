@@ -17,7 +17,7 @@ make_truth_grid <- function(resolution, dat1, dimensions, type=c('truth', 'grid'
   
   # sum average abundance by grid square for truth
   output <- rep(NA, length(1:max(grid)))
-  data <- dat1$rf.s-mean(dat1$rf.s)
+  data <- dat1$rf.s
   for(i in 1:max(grid)){
     marker <- which(grid==i)
     output[i] <- mean(data[marker])

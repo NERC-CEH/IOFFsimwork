@@ -86,7 +86,7 @@ covariate = dat1$gridcov[Reduce('cbind', nearest.pixel(mesh$loc[,1], mesh$loc[,2
 #unstructured data stack with integration points
 
 stk_unstructured_data <- inla.stack(data=list(y=cbind(y.pp, NA), e = e.pp),
-                      effects=list(list(data.frame(interceptA=rep(1,nv+n))), list(Bnodes=1:spde$n.spde)),
+                      effects=list(list(data.frame(interceptB=rep(1,nv+n))), list(Bnodes=1:spde$n.spde)),
                       A=list(1,A.pp),
                       tag="unstructured_data")	
 
@@ -109,7 +109,7 @@ source("Create prediction stack.R")
 join.stack <- create_prediction_stack(stk, c(10,10), biasfield = biasfield, dat1 = dat1, mesh, spde)
 
 
-formulaJ = y ~  interceptA + f(Bnodes, model = spde) -1
+formulaJ = y ~  interceptA + interceptB + f(Bnodes, model = spde) -1
 
 
 result <- inla(formulaJ,family=c("poisson", "binomial"),

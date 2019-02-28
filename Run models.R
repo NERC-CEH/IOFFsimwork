@@ -13,7 +13,7 @@ library(fields)
 
 mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
 #plot the mesh to see what it looks like
-plot(mesh)
+#plot(mesh)
 
 ##set the spde representation to be the mesh just created
 spde <- inla.spde2.matern(mesh)
@@ -46,11 +46,11 @@ w <- sapply(tiles, function(p) rgeos::area.poly(rgeos::intersect(as(cbind(p$x,p$
 #check some have 0 weight
 table(w>0)
 
-##plot stuff
-par(mfrow=c(1,1))
-plot(mesh$loc, asp=1, col=(w==0)+1, pch=19, xlab='', ylab='')
-plot(dd, add=TRUE)
-lines(loc.d, col=3)
+# ##plot stuff
+# par(mfrow=c(1,1))
+# plot(mesh$loc, asp=1, col=(w==0)+1, pch=19, xlab='', ylab='')
+# plot(dd, add=TRUE)
+# lines(loc.d, col=3)
 
 nv <- mesh$n
 n <- nrow(unstructured_data)
@@ -98,9 +98,9 @@ result <- inla(formulaN,family="poisson",
 
 result$summary.fixed
 
-plot(result$marginals.fix[[1]], type='l', 
-     xlab="Log-lambda", ylab='Density') 
-abline(v=lambda, col=2) 
+# plot(result$marginals.fix[[1]], type='l', 
+#      xlab="Log-lambda", ylab='Density') 
+# abline(v=lambda, col=2) 
 
 
 ##project the mesh onto the initial simulated grid 

@@ -16,7 +16,7 @@ max_y <- max(biasfield$y)
 
 mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
 #plot the mesh to see what it looks like
-plot(mesh)
+#plot(mesh)
 
 ##set the spde representation to be the mesh just created
 spde <- inla.spde2.matern(mesh)
@@ -58,10 +58,10 @@ w <- sapply(tiles, function(p) rgeos::area.poly(rgeos::intersect(as(cbind(p$x, p
 table(w>0)
 
 ##plot stuff
-par(mfrow=c(1,1))
-plot(mesh$loc, asp=1, col=(w==0)+1, pch=19, xlab='', ylab='')
-plot(dd, add=TRUE)
-lines(loc.d, col=3)
+# par(mfrow=c(1,1))
+# plot(mesh$loc, asp=1, col=(w==0)+1, pch=19, xlab='', ylab='')
+# plot(dd, add=TRUE)
+# lines(loc.d, col=3)
 
 nv <- mesh$n
 n <- nrow(unstructured_data)
@@ -86,7 +86,7 @@ covariate = dat1$gridcov[Reduce('cbind', nearest.pixel(mesh$loc[,1], mesh$loc[,2
 #unstructured data stack with integration points
 
 stk_unstructured_data <- inla.stack(data=list(y=cbind(y.pp, NA), e = e.pp),
-                      effects=list(list(data.frame(interceptB=rep(1,nv+n))), list(Bnodes=1:spde$n.spde)),
+                      effects=list(list(data.frame(interceptB=rep(1,nv+n))), list(uns_field=1:spde$n.spde)),
                       A=list(1,A.pp),
                       tag="unstructured_data")	
 
@@ -94,7 +94,7 @@ stk_unstructured_data <- inla.stack(data=list(y=cbind(y.pp, NA), e = e.pp),
 #note intercept with different name
 
 stk_structured_data <- inla.stack(data=list(y=cbind(NA, structured_data$presence), Ntrials = rep(1, nrow(structured_data))),
-                      effects=list(list(data.frame(interceptA=rep(1,length(structured_data$x)))), list(Bnodes=1:spde$n.spde)),
+                      effects=list(list(data.frame(interceptA=rep(1,length(structured_data$x)))), list(str_field=1:spde$n.spde)),
                       A=list(1,structured_data_A),
                       tag="structured_data")
 
@@ -103,13 +103,13 @@ stk_structured_data <- inla.stack(data=list(y=cbind(NA, structured_data$presence
 stk <- inla.stack(stk_unstructured_data, stk_structured_data)
 
 # join.stack <- stk
-
+# 
 source("Create prediction stack.R")
 
 join.stack <- create_prediction_stack(stk, c(10,10), biasfield = biasfield, dat1 = dat1, mesh, spde)
 
 
-formulaJ = y ~  interceptA + interceptB + f(Bnodes, model = spde) -1
+formulaJ = y ~  interceptA + interceptB + f(uns_field, model = spde) + f(str_field, copy = "uns_field", fixed = TRUE) -1
 
 
 result <- inla(formulaJ,family=c("poisson", "binomial"),
@@ -125,7 +125,7 @@ result <- inla(formulaJ,family=c("poisson", "binomial"),
 ##project the mesh onto the initial simulated grid 100x100 cells in dimension
 proj1<-inla.mesh.projector(mesh,ylim=c(1,max_y),xlim=c(1,max_x),dims=c(max_x,max_y))
 ##pull out the mean of the random field for the NPMS model
-xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
+xmean1 <- inla.mesh.project(proj1, result$summary.random$uns_field$mean)
 
 ##plot the estimated random field 
 # plot with the original
@@ -139,7 +139,7 @@ points(structured_data[structured_data[,4] %in% 0,2:3], pch=16, col='white') #ab
 points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')
 
 ##plot the standard deviation of random field
-xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)
+xsd1 <- inla.mesh.project(proj1, result$summary.random$uns_field$sd)
 
 image.plot(1:max_x,1:max_y,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
 

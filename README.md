@@ -23,7 +23,7 @@ The following changes have been made in this branch which are not found in the m
 
 8.	Added function to adjust for the quadrat/site size in structured model output – i.e. calculate the per-unit area occupancy probability from the occupancy probability in the quadrat/site
 
-9.	Forced both datasets to share an intercept in the joint model for easier prediction BUT may need to change this to account for the differing areas of survey
+9.	Forced both datasets to share an intercept in the joint model for easier prediction BUT may need to change this to account for the differing areas of survey. Update - removed this constraint for now but still thinking about best way to do this. I've changed the joint model to use the copy function for the spatial field, according to the green book you can then specify a hyperparameter on this for one of the datasets to account for the fact that the pattern should be shared but the values might differ (e.g. if they are measured at different spatial resolutions). So far this doesn't make much difference and I'm still not 100% sure how to specify this.
 
 
 

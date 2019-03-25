@@ -19,7 +19,7 @@ m.prd <- result$summary.fitted.values$mean[index.pred.response]
 sd.prd <- result$summary.fitted.values$sd[index.pred.response]
 
 if(model_type == "structured"){
-  EZ <- 1-exp(-exp(m.prd))
+  EZ <- (1-exp(-exp(m.prd)))-0.00000000000000008 #minus tiny number to avoid infinite values
   psi <- (1-(1-EZ)^(1/(qsize^2)))
   m.prd <- log(-log(1-psi))
   }

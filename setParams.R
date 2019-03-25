@@ -19,7 +19,7 @@ plot = TRUE
 probs = c(1, 1, 1)
 
 #sampleStructured
-nsamp = 50
+nsamp = 500
 plotdat = TRUE
 qsize = 5
 

@@ -7,19 +7,22 @@ source("setParams.R")
 #' The default parameters are as follows:
 #' 
 #' - simulation is conducted on a grid of 100*300  
-#' - environmental covariate coefficient of 0.2  
-#' - scale parameter kappa for matern covariance of 0.3  
-#' - variance parameter sigma2x of matern covariance of 0.2  
-#' - mean intensity of point process of 5  
-#' - 50 structured samples  
+#' - environmental covariate coefficient of NULL
+#' - scale parameter kappa for matern covariance of 0.05  
+#' - variance parameter sigma2x of matern covariance of 2  
+#' - mean log intensity of point process of -3  
+#' - 500 structured samples  - to simulate "perfect" coverage
 #' - 3 strata  
-#' - probability of sampling strata at 0.2, 0.8 and 0.5 used for thinning point process  
+#' - probability of sampling strata at 1, 1 and 1 used for thinning point process (i.e no thinning)  
+#' - qsize of 5
 
 #' Here we can change default parameters:
 
 #e.g. we want to simulate a point process with a smaller mean intensity
 
-#probs <- c(1, 0.8, 0.6)
+qsize = 1
+probs = c(0.01, 0.1, 0.1)
+nsamp = 50
 
 #' ## Generate data from parameters.
 #' 
@@ -54,7 +57,7 @@ legend(110,300, fill = unique(strata1$stratum), legend = probs, title = "Probabi
 #+ echo = FALSE 
 par(mfrow=c(1,1))
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Thinned unstructured data', asp=1) 
-points(thin1$x/100, thin1$y/100, pch = 20)#note rescale again - plotting back on original
+points(thin1$x, thin1$y, pch = 20)#note rescale again - plotting back on original
 
 #' Visualise structured data
 #+ echo = FALSE  

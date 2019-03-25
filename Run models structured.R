@@ -30,7 +30,7 @@ structured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(structured_da
 
 # create stack including presence data from structured, have Ntrials instead of expected
 stk_structured <- inla.stack(data=list(y=structured_data$presence, Ntrials = rep(1, nrow(structured_data))),
-                         effects=list(data.frame(interceptA=rep(1,length(structured_data$x))), 
+                         effects=list(data.frame(interceptA=rep(1,length(structured_data$x)), env = structured_data$env), 
                                       Bnodes=1:spde$n.spde),
                          A=list(1,structured_data_A),
                          tag="structured")
@@ -42,7 +42,7 @@ join.stack <- create_prediction_stack(stk_structured, c(10,10), biasfield = bias
 
 
 # what is Bnodes?
-formulaN = y ~  interceptA + f(Bnodes, model = spde) -1
+formulaN = y ~  interceptA + env + f(Bnodes, model = spde) -1
 
 
 # Binomial cloglog link model

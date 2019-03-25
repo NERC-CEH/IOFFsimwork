@@ -86,7 +86,7 @@ covariate = dat1$gridcov[Reduce('cbind', nearest.pixel(mesh$loc[,1], mesh$loc[,2
 #unstructured data stack with integration points
 
 stk_unstructured_data <- inla.stack(data=list(y=cbind(y.pp, NA), e = e.pp),
-                      effects=list(list(data.frame(interceptB=rep(1,nv+n))), list(uns_field=1:spde$n.spde)),
+                      effects=list(list(data.frame(interceptB=rep(1,nv+n)), env = c(covariate, unstructured_data$env)), list(uns_field=1:spde$n.spde)),
                       A=list(1,A.pp),
                       tag="unstructured_data")	
 
@@ -94,7 +94,7 @@ stk_unstructured_data <- inla.stack(data=list(y=cbind(y.pp, NA), e = e.pp),
 #note intercept with different name
 
 stk_structured_data <- inla.stack(data=list(y=cbind(NA, structured_data$presence), Ntrials = rep(1, nrow(structured_data))),
-                      effects=list(list(data.frame(interceptA=rep(1,length(structured_data$x)))), list(str_field=1:spde$n.spde)),
+                      effects=list(list(data.frame(interceptA=rep(1,length(structured_data$x)), env = structured_data$env)), list(str_field=1:spde$n.spde)),
                       A=list(1,structured_data_A),
                       tag="structured_data")
 
@@ -109,7 +109,7 @@ source("Create prediction stack.R")
 join.stack <- create_prediction_stack(stk, c(10,10), biasfield = biasfield, dat1 = dat1, mesh, spde)
 
 
-formulaJ = y ~  interceptA + interceptB + f(uns_field, model = spde) + f(str_field, copy = "uns_field", fixed = TRUE) -1
+formulaJ = y ~  interceptA + interceptB + env + f(uns_field, model = spde) + f(str_field, copy = "uns_field", fixed = TRUE) -1
 
 
 result <- inla(formulaJ,family=c("poisson", "binomial"),

@@ -9,7 +9,7 @@
 # choose table and/or plot
 validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "structured", "joint"), unstructured_data=NULL,
                              structured_data=NULL, dat1,
-                             plot = F, summary_results = F, qsize = qsize){
+                             plot = F, summary_results = F, qsize = qsize, method = c("absolute", "relative"), dim = dim){
   
 if(model_type == "structured"){transformation <- function(x){1-exp(-exp(x))}}else{transformation <- function(x){exp(x)}}
   
@@ -28,31 +28,45 @@ if(model_type == "structured"){
 
 # calculate differences
 source('make_truth_grid.R')
-truth_grid <- make_truth_grid(c(10,10), dat1, c(100,300), type='truth') # grid truth and take averaged
-differences <- m.prd-truth_grid # calculate differences
+truth_grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='truth', method = method) # grid truth and take averaged
+if(method == "absolute"){
+  differences <- m.prd-truth_grid # calculate differences
+  title = "Predicted intensity"
+}
+if(method == "relative"){
+  differences <- (transformation(m.prd)-mean(transformation(m.prd)))-truth_grid
+  m.prd <- transformation(m.prd)
+  sd.prd <- transformation(sd.prd)
+  title = "Predicted relative intensity"
+  }
+
+
 
 if(plot == T){
+  png(paste0(model_type, " validation.png"), height = 1000, width = 3100, pointsize = 30)
 par(mfrow=c(1,4))
+par(mar = c(5.1, 4.1, 4.1, 3.5))
 # #truth
 # image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
 # if(is.null(unstructured_data)==FALSE){points(unstructured_data[,1:2], pch=16, col="grey")}
 # if(is.null(structured_data)==FALSE){points(structured_data[structured_data[,4] %in% 0,2:3], pch=16, col='white') #absences
 #   points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')}
-image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
-             matrix(truth_grid, ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Averaged truth",asp=1)
+image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
+             matrix(truth_grid, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main="Averaged truth",asp=1)
 #predicted mean
-image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
-           matrix(m.prd, ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Predicted log lambda",asp=1)
-image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
-           matrix(sd.prd, ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
+image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
+           matrix(m.prd, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main=title,asp=1)
+image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
+           matrix(sd.prd, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
 # relative differences
-image.plot(seq(resolution[1]/2,100,resolution[1]),seq(resolution[2]/2,300,resolution[2]), 
-           matrix(differences, ncol=30, nrow=10), col=tim.colors(),xlab='', ylab='',main="Relative differences",asp=1)
+image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
+           matrix(differences, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main="Relative differences",asp=1)
+dev.off()
 }
 
 if(summary_results == T){
   RSE_differences <- sqrt(differences^2)
-  grid <- make_truth_grid(c(10,10), dat1, c(100,300), type='grid')
+  grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='grid')
   coefficients <- result$summary.fixed
   #back transform all of the coefficient values so they are comparable
   if(length(which(row.names(coefficients) %in% "interceptA")==T)>0){coefficients[row.names(coefficients) %in% "interceptA",] <- 

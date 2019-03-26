@@ -20,10 +20,6 @@ source("setParams.R")
 
 #e.g. we want to simulate a point process with a smaller mean intensity
 
-qsize = 1
-probs = c(0.01, 0.1, 0.1)
-nsamp = 50
-
 #' ## Generate data from parameters.
 #' 
 #' This script generates data using the parameters specified above. The key steps are:
@@ -112,14 +108,14 @@ source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield)
 source("validation_function.R")
 validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
-                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5)
+                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5, method = "absolute", dim = dim)
 
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models.R")
-mod_2 <- unstructured_model(unstructured_data, dat1, biasfield)
+mod_2 <- unstructured_model(unstructured_data, dat1, biasfield, dim = dim)
 source("validation_function.R")
 validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
-                                    unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T)
+                                    unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
 
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models joint.R")
@@ -127,7 +123,7 @@ mod_joint <- joint_model(structured_data, unstructured_data, dat1, biasfield)
 source("validation_function.R")
 validation_3 <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
-                                    dat1 = dat1, plot=T, summary_results=T)
+                                    dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
 
 validation_1$'Proto-table'
 validation_2$'Proto-table'

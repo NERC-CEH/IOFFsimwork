@@ -1,25 +1,25 @@
 ###Set parameters
 
 #genData
-dim = c(100,300)
+dim = c(300,300)
 lambda = -3
-env.beta = NULL
+env.beta = 1.2
 plotdat = TRUE
 seed = NULL
-sigma2x = 2
+sigma2x = 0.5
 kappa = 0.05
 
 #genStrataLam
-strata = 3
-rows = 3
-cols = 1
+strata = 25
+rows = 5
+cols = 5
 plot = TRUE
 
 #addSpatialBias
-probs = c(1, 1, 1)
+probs = rep(c(0.5, 0.3, 0.1, 0.05, 0.01),5)
 
 #sampleStructured
-nsamp = 500
+nsamp = 150
 plotdat = TRUE
-qsize = 5
+qsize = 1
 

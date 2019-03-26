@@ -6,7 +6,7 @@ source("genData.R")
 
 #dat1 <- genData(lambda = 5, env.beta = NULL, seed = 1)
 
-dat1 <- genData(lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x)
+dat1 <- genData(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x)
 
 ######## PREPARATION #########
 

@@ -15,7 +15,7 @@ max_y <- max(biasfield$y)
 
 #preparation - mesh construction - use the loc.domain argument
 
-mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
+mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(20,40),cutoff=2, offset = c(5,20))
 #plot the mesh to see what it looks like
 #plot(mesh)
 
@@ -68,6 +68,7 @@ xmean1.struct.binom <- inla.mesh.project(proj1.struct.binom, result.struct.binom
 
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
+png("structured model.png", height= 1000, width = 2500, pointsize = 30)
 par(mfrow=c(1,3))
 image.plot(1:max_x,1:max_y,xmean1.struct.binom, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
@@ -78,7 +79,7 @@ points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')
 xsd1 <- inla.mesh.project(proj1.struct.binom, result.struct.binom$summary.random$Bnodes$sd)
 #library(fields)
 image.plot(1:max_x,1:max_y,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
-
+dev.off()
 
 #biased to bottom of grid 
 

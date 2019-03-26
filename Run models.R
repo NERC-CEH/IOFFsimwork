@@ -1,6 +1,6 @@
 ## Models with simulated data
 
-unstructured_model <- function(unstructured_data, dat1, biasfield){
+unstructured_model <- function(unstructured_data, dat1, biasfield, dim = dim){
 
 #packages
 library(INLA)
@@ -11,7 +11,7 @@ library(fields)
   
 #preparation - mesh construction - use the loc.domain argument
 
-mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(10,20),cutoff=2, offset = c(5,20))
+mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(20,40),cutoff=2, offset = c(5,20))
 #plot the mesh to see what it looks like
 #plot(mesh)
 
@@ -113,8 +113,9 @@ xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
 
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
+png("unstructured model.png", height = 1000, width = 2500, pointsize = 30)
 par(mfrow=c(1,3))
-image.plot(1:100,1:300,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
+image.plot(1:dim[1],1:dim[2],xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 #plot truth
 image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
 points(unstructured_data[,1:2], pch=16)
@@ -122,8 +123,8 @@ points(unstructured_data[,1:2], pch=16)
 ##plot the standard deviation of random field
 xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)
 #library(fields)
-image.plot(1:100,1:300,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
-
+image.plot(1:dim[1],1:dim[2],xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
+dev.off()
 
 #return from function
 return(list(join.stack = join.stack, result = result))

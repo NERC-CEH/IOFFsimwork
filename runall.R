@@ -20,6 +20,7 @@ source("setParams.R")
 
 #e.g. we want to simulate a point process with a smaller mean intensity
 
+
 #' ## Generate data from parameters.
 #' 
 #' This script generates data using the parameters specified above. The key steps are:
@@ -129,3 +130,56 @@ validation_1$'Proto-table'
 validation_2$'Proto-table'
 validation_3$'Proto-table'
 
+
+##joint model with second spatial field
+source("Run models joint second field.R")
+mod_joint2 <- joint_model2(structured_data, unstructured_data, dat1, biasfield)
+source("validation_function.R")
+validation_4 <- validation_function(result=mod_joint2[[2]], resolution=c(10,10), join.stack=mod_joint2[[1]], model_type="joint2", 
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
+
+validation_3$'Proto-table'
+validation_4$'Proto-table'
+
+
+#relative validation
+
+source("validation_function.R")
+validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
+                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5, method = "relative", dim = dim)
+
+validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
+                                    unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
+
+
+validation_3_r <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
+
+
+validation_4_r <- validation_function(result=mod_joint2[[2]], resolution=c(10,10), join.stack=mod_joint2[[1]], model_type="joint2", 
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
+
+validation_1_r$'Proto-table'
+validation_2_r$'Proto-table'
+validation_3_r$'Proto-table'
+validation_4_r$'Proto-table'
+
+
+mod_1$result$summary.fixed
+mod_2$result$summary.fixed
+mod_joint$result$summary.fixed
+mod_joint2$result$summary.fixed
+
+
+validation_1$correlation
+validation_2$correlation
+validation_3$correlation
+validation_4$correlation
+
+validation_1_r$correlation
+validation_2_r$correlation
+validation_3_r$correlation
+validation_4_r$correlation

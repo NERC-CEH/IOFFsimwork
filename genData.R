@@ -15,7 +15,7 @@
 
 
 
-genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE, seed = 1, sigma2x = 0.2, kappa = 2){
+genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE, seed = NULL, sigma2x = 0.2, kappa = 2){
  
   library(spatstat) 
   # owin creates an object of class "owin" which is an observation window in 2D

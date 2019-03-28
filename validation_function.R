@@ -7,12 +7,15 @@
 # unstructured_data 
 # structured_data
 # choose table and/or plot
-validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "structured", "joint"), unstructured_data=NULL,
+validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "structured", "joint", "joint2"), unstructured_data=NULL,
                              structured_data=NULL, dat1,
                              plot = F, summary_results = F, qsize = qsize, method = c("absolute", "relative"), dim = dim){
   
-if(model_type == "structured"){transformation <- function(x){1-exp(-exp(x))}}else{transformation <- function(x){exp(x)}}
-  
+#if(model_type == "structured"){transformation <- function(x){1-exp(-exp(x))}}else{transformation <- function(x){exp(x)}}
+
+#temporarily remove transformation  
+  transformation <- function(x) x 
+   
 index.pred.response <- inla.stack.index(join.stack, tag="pred.response")$data
 
 m.prd <- result$summary.fitted.values$mean[index.pred.response]
@@ -35,15 +38,15 @@ if(method == "absolute"){
 }
 if(method == "relative"){
   differences <- (transformation(m.prd)-mean(transformation(m.prd)))-truth_grid
-  m.prd <- transformation(m.prd)
-  sd.prd <- transformation(sd.prd)
+  m.prd <- transformation(m.prd) - mean(transformation(m.prd))
+  sd.prd <- transformation(sd.prd) - mean(transformation(sd.prd))
   title = "Predicted relative intensity"
   }
 
 
 
 if(plot == T){
-  png(paste0(model_type, " validation.png"), height = 1000, width = 3100, pointsize = 30)
+  png(paste0(model_type, " ", method, " validation.png"), height = 1000, width = 3100, pointsize = 30)
 par(mfrow=c(1,4))
 par(mar = c(5.1, 4.1, 4.1, 3.5))
 # #truth
@@ -66,6 +69,7 @@ dev.off()
 
 if(summary_results == T){
   RSE_differences <- sqrt(differences^2)
+  correlation <- cor(m.prd, truth_grid)
   grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='grid')
   coefficients <- result$summary.fixed
   #back transform all of the coefficient values so they are comparable
@@ -79,12 +83,13 @@ if(summary_results == T){
   
   summary_results = list(data.frame(Model = model_type,
                      RMSE = mean(RSE_differences)),
+                     correlation = correlation,
                coefficients = coefficients[,c(1,3,5,6)],     
                differences,
                worst_areas = unique(grid[which(RSE_differences>(mean(RSE_differences)+sd(RSE_differences)))]),
                best_areas = unique(grid[which(RSE_differences<(mean(RSE_differences)-sd(RSE_differences)))])
                )
-  names(summary_results) <- c("Proto-table", "coefficients", "All_differences", "Worst_grid_cells", "Best_grid_cells")
+  names(summary_results) <- c("Proto-table", "correlation", "coefficients", "All_differences", "Worst_grid_cells", "Best_grid_cells")
   return(summary_results)
 }
 

@@ -20,6 +20,8 @@ source("setParams.R")
 
 #e.g. we want to simulate a point process with a smaller mean intensity
 
+nsamp = 250
+probs = c(rep(0.5,5), rep(0.3, 5), rep(0.1,5), rep(0.05,5), rep(0.01,5))
 
 #' ## Generate data from parameters.
 #' 
@@ -38,10 +40,11 @@ source("Functions to generate data and sample.R")
 
 #' Visualise the random field and covariate pattern
 #+ echo = FALSE 
-par(mfrow=c(1,2)) 
+par(mfrow=c(1,3)) 
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='log-Lambda', asp=1) 
 points(dat1$xy, pch=19)
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Covariate', asp=1)
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(biascov)), main='Bias covariate', asp=1)
 
 #' Visualise the strata and associated probabilities of sampling
 #+ echo = FALSE 
@@ -179,7 +182,3 @@ validation_2$correlation
 validation_3$correlation
 validation_4$correlation
 
-validation_1_r$correlation
-validation_2_r$correlation
-validation_3_r$correlation
-validation_4_r$correlation

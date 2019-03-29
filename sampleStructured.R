@@ -2,9 +2,12 @@
 
 
 sampleStructured <- function(PPdat, biasfield, nsamp = 50, qsize = 5, plotdat = TRUE){
-
   source("Sample from strata.R")
   biasfield$sim2 <- biasfield$sim1 #no extra error added
+  
+  success <- FALSE
+  
+  while(!success) {
   
   s1 <- sampleStrata(biasfield, nsamp = nsamp, type = "Stratified")
   
@@ -24,11 +27,13 @@ sampleStructured <- function(PPdat, biasfield, nsamp = 50, qsize = 5, plotdat = 
   
   ##need to generate new points! - otherwise we assume the same individuals are observed with both processes which is unrealistic. 
   
+  
+  
   newpoints <- rpoispp(lambda = PPdat$Lam)
   #see which points are observed 	
   newpoints_sc <- data.frame(x1 = round(newpoints$x), y1 = round(newpoints$y))
   dat2 <- merge(newpoints_sc, s2, by.x = c("x1", "y1"), by.y = c("x","y"))
-  names(dat2) <- c("x1", "y1", "sim1", "stratum", "stratprobs", "sim2","samp_id")
+  names(dat2) <- c("x1", "y1", "sim1", "stratum", "stratprobs", "covariate", "sim2","samp_id")
   #head(dat2)
   dat2$x_sc <- dat2$x
   dat2$y_sc <- dat2$y
@@ -49,6 +54,9 @@ sampleStructured <- function(PPdat, biasfield, nsamp = 50, qsize = 5, plotdat = 
   struct_dat$presence[!is.na(struct_dat$presence)] <- 1 #convert to p/a
   struct_dat$presence[is.na(struct_dat$presence)] <- 0
   
+  success <- sum(struct_dat$presence) > 0
+  
+  }
   
   #add env covariate to structured data
   if(!is.null(PPdat$gridcov)){

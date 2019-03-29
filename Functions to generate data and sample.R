@@ -27,6 +27,11 @@ biasfield <- addSpatialBias(strata1, probs = probs)
 #biasfield <- addSpatialBias(strata1, probs = c(0.8, 0.5, 0.2))
 
 
+#make spatial bias covariate
+biascov <- xtabs(covariate ~ y + x, data = biasfield)
+
+
+
 ####### UNSTRUCTURED DATA ##########
 
 ##thinning
@@ -40,6 +45,10 @@ thin1 <- thinData(dat1, biasfield)
 
 #add env covariate
 thin1$env <- dat1$gridcov[as.matrix(thin1[,2:1])]
+
+#add bias covariate
+thin1$bias <- biascov[as.matrix(thin1[,2:1])]
+
 
 #use thinned data as the unstructured data sample
 unstructured_data <- thin1

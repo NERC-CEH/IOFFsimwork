@@ -36,6 +36,8 @@ source("setParams.R")
 #+ warning = FALSE, message = FALSE, error = FALSE, include = FALSE
 source("Functions to generate data and sample.R")
 
+#### SOMETHING HERE MAKES A RECTANGLE!
+
 #' Visualise the random field and covariate pattern
 #+ echo = FALSE 
 par(mfrow=c(1,2)) 
@@ -55,6 +57,8 @@ legend(110,300, fill = unique(strata1$stratum), legend = probs, title = "Probabi
 par(mfrow=c(1,1))
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Thinned unstructured data', asp=1) 
 points(thin1$x, thin1$y, pch = 20)#note rescale again - plotting back on original
+
+#### CLEARLY HAVE THE BIAS FIELD IN OPERATION
 
 #' Visualise structured data
 #+ echo = FALSE  
@@ -110,6 +114,10 @@ mod_1 <- structured_model(structured_data, dat1, biasfield)
 source("validation_function.R")
 validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
                                     structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5, method = "absolute", dim = dim)
+
+### CHECK METHOD IF CLAUSE - ABSOLUTE AND RELATIVE ARE NOT DIFFERENT!
+
+### CHANGE PLOT TITLES
 
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models.R")

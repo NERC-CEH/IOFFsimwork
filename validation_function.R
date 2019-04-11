@@ -1,4 +1,5 @@
 # FUNCTION FOR VALIDATION
+
 # result = model output
 # resolution = c(x,y)
 # join.stack = joint stack of data and predictions
@@ -7,87 +8,80 @@
 # unstructured_data 
 # structured_data
 # choose table and/or plot
+
 validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "structured", "joint", "joint2"), unstructured_data=NULL,
                              structured_data=NULL, dat1,
-                             plot = F, summary_results = F, qsize = qsize, method = c("absolute", "relative"), dim = dim){
+                             plotting = FALSE, summary_results = FALSE, qsize = qsize, absolute = TRUE, dim = dim){
   
-#if(model_type == "structured"){transformation <- function(x){1-exp(-exp(x))}}else{transformation <- function(x){exp(x)}}
-
-#temporarily remove transformation  
-  transformation <- function(x) x 
-   
+#think it makes most sense to compare all predictions on same scale!
+#to do this we need to take the exp of predictions, to have back on intensity scale
+#otherwise truth and predictions are different  
+  
+# create index to extract predictions
 index.pred.response <- inla.stack.index(join.stack, tag="pred.response")$data
 
-m.prd <- result$summary.fitted.values$mean[index.pred.response]
+# find the mean of the result and the standard deviation of predictions
+m.prd <- exp(result$summary.fitted.values$mean[index.pred.response])
 sd.prd <- result$summary.fitted.values$sd[index.pred.response]
 
-if(model_type == "structured"){
-  EZ <- (1-exp(-exp(m.prd)))-0.00000000000000008 #minus tiny number to avoid infinite values
-  psi <- (1-(1-EZ)^(1/(qsize^2)))
-  m.prd <- log(-log(1-psi))
-  }
-
+# if the model was structured then need to account for area it represents
+# if we use 1 - should not be problem
+#if(model_type == "structured"){
+  #EZ <- (1-exp(-exp(m.prd)))-0.00000000000000008 #minus tiny number to avoid infinite values
+  #psi <- (1-(1-EZ)^(1/(qsize^2)))
+  #m.prd <- log(-log(1-psi))
+  #}
 
 
 # calculate differences
 source('make_truth_grid.R')
-truth_grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='truth', method = method) # grid truth and take averaged
-if(method == "absolute"){
+truth_grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='truth', absolute=absolute) # grid truth and take averaged
+
+if(absolute == TRUE){
   differences <- m.prd-truth_grid # calculate differences
-  title = "Predicted intensity"
+  method = "Absolute"
 }
-if(method == "relative"){
+if(absolute == FALSE){
   differences <- (transformation(m.prd)-mean(transformation(m.prd)))-truth_grid
   m.prd <- transformation(m.prd) - mean(transformation(m.prd))
   sd.prd <- transformation(sd.prd) - mean(transformation(sd.prd))
-  title = "Predicted relative intensity"
+  method = "Relative"
   }
 
 
 
-if(plot == T){
-  png(paste0(model_type, " ", method, " validation.png"), height = 1000, width = 3100, pointsize = 30)
+if(plotting == TRUE){
+png(paste0(model_type, " ", method, " validation.png"), height = 1000, width = 3100, pointsize = 30)
 par(mfrow=c(1,4))
 par(mar = c(5.1, 4.1, 4.1, 3.5))
-# #truth
-# image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
-# if(is.null(unstructured_data)==FALSE){points(unstructured_data[,1:2], pch=16, col="grey")}
-# if(is.null(structured_data)==FALSE){points(structured_data[structured_data[,4] %in% 0,2:3], pch=16, col='white') #absences
-#   points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')}
+# Plot truth on grid scale
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
-             matrix(truth_grid, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main="Averaged truth",asp=1)
+             matrix(truth_grid, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(), xlab='', ylab='',main="Averaged truth",asp=1)
 #predicted mean
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
-           matrix(m.prd, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main=title,asp=1)
+           matrix(m.prd, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main="Predicted mean intensity",asp=1)
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
            matrix(sd.prd, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
 # relative differences
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
-           matrix(differences, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main="Relative differences",asp=1)
+           matrix(differences, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main=paste0(model_type, " ", method, "differences"),asp=1)
 dev.off()
 }
 
-if(summary_results == T){
-  RSE_differences <- sqrt(differences^2)
+if(summary_results == TRUE){
+  MAE_differences <- abs(differences)
   correlation <- cor(m.prd, truth_grid)
   grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='grid')
   coefficients <- result$summary.fixed
-  #back transform all of the coefficient values so they are comparable
-  if(length(which(row.names(coefficients) %in% "interceptA")==T)>0){coefficients[row.names(coefficients) %in% "interceptA",] <- 
-    1-exp(-exp(coefficients[row.names(coefficients) %in% "interceptA",]))}
-  if(length(which(row.names(coefficients) %in% "interceptB")==T)>0){coefficients[row.names(coefficients) %in% "interceptB",] <- 
-    exp(coefficients[row.names(coefficients) %in% "interceptB",])}
-  if(length(which(row.names(coefficients) %in% "interceptB")==T)==0){coefficients[row.names(coefficients) %in% "env",] <- 
-    1-exp(-exp(coefficients[row.names(coefficients) %in% "env",]))}else{coefficients[row.names(coefficients) %in% "env",] <- 
-      exp(coefficients[row.names(coefficients) %in% "env",])}
+  #ONLY want to transform predictions NOT coefficients
   
   summary_results = list(data.frame(Model = model_type,
-                     RMSE = mean(RSE_differences)),
+                     MAE = mean(MAE_differences)),
                      correlation = correlation,
                coefficients = coefficients[,c(1,3,5,6)],     
                differences,
-               worst_areas = unique(grid[which(RSE_differences>(mean(RSE_differences)+sd(RSE_differences)))]),
-               best_areas = unique(grid[which(RSE_differences<(mean(RSE_differences)-sd(RSE_differences)))])
+               worst_areas = unique(grid[which(MAE_differences>(mean(MAE_differences)+sd(MAE_differences)))]),
+               best_areas = unique(grid[which(MAE_differences<(mean(MAE_differences)-sd(MAE_differences)))])
                )
   names(summary_results) <- c("Proto-table", "correlation", "coefficients", "All_differences", "Worst_grid_cells", "Best_grid_cells")
   return(summary_results)

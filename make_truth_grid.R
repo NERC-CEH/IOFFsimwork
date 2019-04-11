@@ -1,6 +1,6 @@
 # function to make a grid of the truth data to compare to predicted
 # will be the average intensity of each grid square
-make_truth_grid <- function(resolution, dat1, dimensions, type=c('truth', 'grid'), method = c("absolute", "relative")){
+make_truth_grid <- function(resolution, dat1, dimensions, type=c('truth', 'grid'), absolute = TRUE){
   
   grid = matrix(NA, nrow=dimensions[2], ncol=dimensions[1])
   grid_numbers <- 1:prod(dimensions/resolution)
@@ -18,10 +18,10 @@ make_truth_grid <- function(resolution, dat1, dimensions, type=c('truth', 'grid'
   
   # sum average abundance by grid square for truth
   output <- rep(NA, length(1:max(grid)))
-  if(method == "absolute"){
+  if(absolute == TRUE){
     data <- dat1$rf.s
   }
-  if(method == "relative"){
+  if(absolute == FALSE){
     data <- dat1$rf.s-mean(dat1$rf.s)
   }
   for(i in 1:max(grid)){

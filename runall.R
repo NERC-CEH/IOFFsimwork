@@ -113,11 +113,7 @@ source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield)
 source("validation_function.R")
 validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
-                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5, method = "absolute", dim = dim)
-
-### CHECK METHOD IF CLAUSE - ABSOLUTE AND RELATIVE ARE NOT DIFFERENT!
-
-### CHANGE PLOT TITLES
+                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 1, absolute=TRUE, dim = dim)
 
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models.R")

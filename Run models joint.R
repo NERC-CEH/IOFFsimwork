@@ -1,6 +1,6 @@
-## Models with simulated data
+## Function to run joint models with simulated data
 
-joint_model <- function(structured_data, unstructured_data, dat1, biasfield){
+joint_model <- function(structured_data, unstructured_data, dat1, biasfield, plotting=FALSE){
 
 #packages
 library(INLA)
@@ -16,7 +16,7 @@ max_y <- max(biasfield$y)
 
 mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(20,40),cutoff=2, offset = c(5,20))
 #plot the mesh to see what it looks like
-#plot(mesh)
+if(plotting == TRUE){plot(mesh)}
 
 ##set the spde representation to be the mesh just created
 spde <- inla.spde2.matern(mesh)
@@ -57,11 +57,6 @@ w <- sapply(tiles, function(p) rgeos::area.poly(rgeos::intersect(as(cbind(p$x, p
 #check some have 0 weight
 table(w>0)
 
-##plot stuff
-# par(mfrow=c(1,1))
-# plot(mesh$loc, asp=1, col=(w==0)+1, pch=19, xlab='', ylab='')
-# plot(dd, add=TRUE)
-# lines(loc.d, col=3)
 
 nv <- mesh$n
 n <- nrow(unstructured_data)
@@ -132,7 +127,7 @@ xmean1 <- inla.mesh.project(proj1, result$summary.random$uns_field$mean)
 library(fields)
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
-png("joint model.png", height = 1000, width = 2500, pointsize = 30)
+if(plotting == TRUE){png("joint_model.png", height = 1000, width = 2500, pointsize = 30)
 par(mfrow=c(1,3))
 image.plot(1:max_x,1:max_y,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
@@ -143,7 +138,7 @@ points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')
 xsd1 <- inla.mesh.project(proj1, result$summary.random$uns_field$sd)
 
 image.plot(1:max_x,1:max_y,xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
-dev.off()
+dev.off()}
 
 result$summary.fixed
 

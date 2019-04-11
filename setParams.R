@@ -16,6 +16,7 @@ cols = 5
 plot = TRUE
 
 #addSpatialBias
+# this is where we can control bias
 probs = rep(c(0.5, 0.3, 0.1, 0.05, 0.01),5)
 
 #sampleStructured

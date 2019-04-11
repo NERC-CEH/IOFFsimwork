@@ -13,7 +13,7 @@ library(fields)
 
 mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(20,40),cutoff=2, offset = c(5,20))
 #plot the mesh to see what it looks like
-if(plotting == TURE){plot(mesh)}
+if(plotting == TRUE){plot(mesh)}
 
 ##set the spde representation to be the mesh just created
 spde <- inla.spde2.matern(mesh)

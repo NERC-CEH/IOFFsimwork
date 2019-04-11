@@ -1,6 +1,6 @@
-## Models with simulated data
+## Function to run unstructured only models with simulated data
 
-unstructured_model <- function(unstructured_data, dat1, biasfield, dim = dim){
+unstructured_model <- function(unstructured_data, dat1, biasfield, dim = dim, plotting=FALSE){
 
 #packages
 library(INLA)
@@ -13,7 +13,7 @@ library(fields)
 
 mesh <- inla.mesh.2d(loc.domain = biasfield[,c(1,2)],max.edge=c(20,40),cutoff=2, offset = c(5,20))
 #plot the mesh to see what it looks like
-#plot(mesh)
+if(plotting == TURE){plot(mesh)}
 
 ##set the spde representation to be the mesh just created
 spde <- inla.spde2.matern(mesh)
@@ -45,12 +45,6 @@ w <- sapply(tiles, function(p) rgeos::area.poly(rgeos::intersect(as(cbind(p$x,p$
 
 #check some have 0 weight
 table(w>0)
-
-# ##plot stuff
-# par(mfrow=c(1,1))
-# plot(mesh$loc, asp=1, col=(w==0)+1, pch=19, xlab='', ylab='')
-# plot(dd, add=TRUE)
-# lines(loc.d, col=3)
 
 nv <- mesh$n
 n <- nrow(unstructured_data)
@@ -98,10 +92,6 @@ result <- inla(formulaN,family="poisson",
 
 result$summary.fixed
 
-# plot(result$marginals.fix[[1]], type='l', 
-#      xlab="Log-lambda", ylab='Density') 
-# abline(v=lambda, col=2) 
-
 
 ##project the mesh onto the initial simulated grid 
 proj1<- inla.mesh.projector(mesh,ylim=c(1,max_y),xlim=c(1,max_x),dims=c(max_x,max_y))
@@ -113,7 +103,7 @@ xmean1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$mean)
 
 # some of the commands below were giving warnings as not graphical parameters - I have fixed what I can
 # scales and col.region did nothing on my version
-png("unstructured model.png", height = 1000, width = 2500, pointsize = 30)
+if(plotting == TRUE){png("unstructured_model.png", height = 1000, width = 2500, pointsize = 30)
 par(mfrow=c(1,3))
 image.plot(1:dim[1],1:dim[2],xmean1, col=tim.colors(),xlab='', ylab='',main="mean of r.f",asp=1)
 #plot truth
@@ -124,7 +114,7 @@ points(unstructured_data[,1:2], pch=16)
 xsd1 <- inla.mesh.project(proj1, result$summary.random$Bnodes$sd)
 #library(fields)
 image.plot(1:dim[1],1:dim[2],xsd1, col=tim.colors(),xlab='', ylab='', main="sd of r.f",asp=1)
-dev.off()
+dev.off()}
 
 #return from function
 return(list(join.stack = join.stack, result = result))

@@ -1,15 +1,13 @@
+# Code that calls other functions to generate observed data
 
-##data generation 
+## 'truth' data generation 
 
 source("genData.R")
-#source("genData_stochastic.R")
-
-#dat1 <- genData(lambda = 5, env.beta = NULL, seed = 1)
+#source("genData_stochastic.R") # stochastic version for multiple runs
 
 dat1 <- genData(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x)
 
 ######## PREPARATION #########
-
 
 ##sampling bias
 source('Generate strata levels Lam.R')
@@ -36,8 +34,6 @@ source("thinData.R")
 #thin data according to biasfield
 thin1 <- thinData(dat1, biasfield)
 
-
-
 #add env covariate
 thin1$env <- dat1$gridcov[as.matrix(thin1[,2:1])]
 
@@ -45,10 +41,9 @@ thin1$env <- dat1$gridcov[as.matrix(thin1[,2:1])]
 unstructured_data <- thin1
 
 
-
-
 ####### STRUCTURED DATA ##########
 
+# Set up structured sample, depends on number of samples and quadrat size
 
 source("sampleStructured.R")
 

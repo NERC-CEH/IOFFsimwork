@@ -13,15 +13,13 @@ validation_function <- function(result, resolution, join.stack, model_type = c("
                              structured_data=NULL, dat1,
                              plotting = FALSE, summary_results = FALSE, qsize = qsize, absolute = TRUE, dim = dim){
   
-#think it makes most sense to compare all predictions on same scale!
-#to do this we need to take the exp of predictions, to have back on intensity scale
-#otherwise truth and predictions are different  
+#All comparisons are on the same scale as the truth is logged too!
   
 # create index to extract predictions
 index.pred.response <- inla.stack.index(join.stack, tag="pred.response")$data
 
 # find the mean of the result and the standard deviation of predictions
-m.prd <- exp(result$summary.fitted.values$mean[index.pred.response])
+m.prd <- result$summary.fitted.values$mean[index.pred.response]
 sd.prd <- result$summary.fitted.values$sd[index.pred.response]
 
 # if the model was structured then need to account for area it represents
@@ -51,7 +49,7 @@ if(absolute == FALSE){
 
 
 if(plotting == TRUE){
-png(paste0(model_type, " ", method, " validation.png"), height = 1000, width = 3100, pointsize = 30)
+#png(paste0(model_type, " ", method, " validation.png"), height = 1000, width = 3100, pointsize = 30)
 par(mfrow=c(1,4))
 par(mar = c(5.1, 4.1, 4.1, 3.5))
 # Plot truth on grid scale
@@ -65,7 +63,7 @@ image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],
 # relative differences
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
            matrix(differences, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main=paste0(model_type, " ", method, "differences"),asp=1)
-dev.off()
+#dev.off()
 }
 
 if(summary_results == TRUE){

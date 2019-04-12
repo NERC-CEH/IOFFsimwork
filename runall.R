@@ -6,7 +6,7 @@ source("setParams.R")
 
 #' The default parameters are as follows:
 #' 
-#' - simulation is conducted on a grid of 100*300  
+#' - simulation is conducted on a grid of 300*300  
 #' - environmental covariate coefficient of NULL
 #' - scale parameter kappa for matern covariance of 0.05  
 #' - variance parameter sigma2x of matern covariance of 2  
@@ -14,13 +14,12 @@ source("setParams.R")
 #' - 500 structured samples  - to simulate "perfect" coverage
 #' - 3 strata  
 #' - probability of sampling strata at 1, 1 and 1 used for thinning point process (i.e no thinning)  
-#' - qsize of 5
+#' - qsize of 1
 
 #' Here we can change default parameters:
-
-#e.g. we want to simulate a point process with a smaller mean intensity
-
-
+#' 
+#' e.g. we want to simulate a point process with a smaller mean intensity
+#' 
 #' ## Generate data from parameters.
 #' 
 #' This script generates data using the parameters specified above. The key steps are:
@@ -33,10 +32,11 @@ source("setParams.R")
 #' 
 #' 4. Sample the new points over an area (roughly speaking) by generating stratified random points (to ensure global coverage) and then denoting presence as the presence of one or more point process realisation in the 5x5 neighbourhood surrounding the stratified random points. Absence is denoted as the absence of any point process realisation in this "quadrat".
 #' 
+#' 
+#' ### Plots of the data generation process
+#' 
 #+ warning = FALSE, message = FALSE, error = FALSE, include = FALSE
 source("Functions to generate data and sample.R")
-
-#### SOMETHING HERE MAKES A RECTANGLE!
 
 #' Visualise the random field and covariate pattern
 #+ echo = FALSE 
@@ -58,15 +58,12 @@ par(mfrow=c(1,1))
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Thinned unstructured data', asp=1) 
 points(thin1$x, thin1$y, pch = 20)#note rescale again - plotting back on original
 
-#### CLEARLY HAVE THE BIAS FIELD IN OPERATION
-
 #' Visualise structured data
 #+ echo = FALSE  
 par(mfrow=c(1,1))
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Structured data', asp=1) 
 points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black")
 legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1))
-
 
 #' ## Run individual data models
 #' 
@@ -82,7 +79,6 @@ legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 #' 
 #' 4. In joint models the true species occurrence can be represented with a shared random spatial field
 #' 
-#' 
 #' ## Model outputs
 #' 
 #' Model outputs follow below (in the order of structured only, unstructured only, and then the joint model):
@@ -97,16 +93,17 @@ legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 #' 
 #' 4. The 'true' species intensity driven by environmental covariate
 #' 
-#' 5. The predicted mean intensity back in environmental space
+#' 5. The predicted mean intensity back in environmental space (averaged on a grid system)
 #' 
-#' 6. The predicted standard deviation of intensity in environmental space
+#' 6. The predicted standard deviation of intensity in environmental space (averaged on a grid system)
 #' 
-#' 7. The relative difference between the 'true intensity' and the predicted intensity in environmental space. 
+#' 7. The relative difference between the 'true intensity' and the predicted intensity in environmental space (averaged on a grid system)
 #' 
 #' Relative differences are calculated for 10X10 squares across the space. 
 #' Predictions generated at centre of these squares.
 #' True intensity averaged across each square.
-#' Both have mean intensity subtracted, then deviation from mean compared. 
+#' 
+#' ### Structured model 
 #' 
 #+ warning = FALSE, message = FALSE, error = FALSE, figure.align = "center"
 source("Run models structured.R")
@@ -114,14 +111,23 @@ mod_1 <- structured_model(structured_data, dat1, biasfield)
 source("validation_function.R")
 validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
                                     structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 1, absolute=TRUE, dim = dim)
+validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
+                                      structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5, method = "relative", dim = dim)
 
+#' ### Unstructured model 
+#' 
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models.R")
 mod_2 <- unstructured_model(unstructured_data, dat1, biasfield, dim = dim)
 source("validation_function.R")
 validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
                                     unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
+validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
+                                      unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
 
+
+#' ### Joint model 
+#' 
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models joint.R")
 mod_joint <- joint_model(structured_data, unstructured_data, dat1, biasfield)
@@ -129,61 +135,70 @@ source("validation_function.R")
 validation_3 <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
                                     dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
+validation_3_r <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
+                                      unstructured_data = unstructured_data, structured_data = structured_data,
+                                      dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
 
+#' ### Comparison of validations
+#'
+#+ warning = FALSE, message = FALSE, error = FALSE
+#Differences between grids
 validation_1$'Proto-table'
+validation_1_r$'Proto-table'
 validation_2$'Proto-table'
+validation_2_r$'Proto-table'
 validation_3$'Proto-table'
+validation_3_r$'Proto-table'
+
+#Coefficients
+mod_1$result$summary.fixed
+mod_2$result$summary.fixed
+mod_joint$result$summary.fixed
+
+#Correlation between grid averages
+validation_1$correlation
+validation_1_r$correlation
+validation_2$correlation
+validation_2_r$correlation
+validation_3$correlation
+validation_3_r$correlation
 
 
-##joint model with second spatial field
+#' ### Joint model with second spatial field
+#' 
+#+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models joint second field.R")
 mod_joint2 <- joint_model2(structured_data, unstructured_data, dat1, biasfield)
 source("validation_function.R")
 validation_4 <- validation_function(result=mod_joint2[[2]], resolution=c(10,10), join.stack=mod_joint2[[1]], model_type="joint2", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
                                     dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
-
-validation_3$'Proto-table'
-validation_4$'Proto-table'
-
-
-#relative validation
-
-source("validation_function.R")
-validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
-                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5, method = "relative", dim = dim)
-
-validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
-                                    unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
-
-
-validation_3_r <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
-                                    unstructured_data = unstructured_data, structured_data = structured_data,
-                                    dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
-
-
 validation_4_r <- validation_function(result=mod_joint2[[2]], resolution=c(10,10), join.stack=mod_joint2[[1]], model_type="joint2", 
-                                    unstructured_data = unstructured_data, structured_data = structured_data,
-                                    dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
+                                      unstructured_data = unstructured_data, structured_data = structured_data,
+                                      dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
 
-validation_1_r$'Proto-table'
-validation_2_r$'Proto-table'
+#Differences between grids
+validation_3$'Proto-table'
 validation_3_r$'Proto-table'
+validation_4$'Proto-table'
 validation_4_r$'Proto-table'
 
-
-mod_1$result$summary.fixed
-mod_2$result$summary.fixed
+#Coefficients
 mod_joint$result$summary.fixed
 mod_joint2$result$summary.fixed
 
-
-validation_1$correlation
-validation_2$correlation
+#Correlation between grid averages
 validation_3$correlation
-validation_4$correlation
-
-validation_1_r$correlation
-validation_2_r$correlation
 validation_3_r$correlation
+validation_4$correlation
 validation_4_r$correlation
+
+#' ## Interpretation and summary
+#' 
+#' 
+
+
+
+
+
+

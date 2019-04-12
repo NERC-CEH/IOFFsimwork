@@ -18,10 +18,10 @@ strata1 <- genStrataLam(dat1$Lam, strata = strata, rows = rows, cols = cols)
 
 
 source("addSpatialBias.R")
-#no spatial bias
-#biasfield <- addSpatialBias(strata1, probs = c(0.5, 0.5, 0.5))
+
 #spatial bias not correlated with environmental covariate
 biasfield <- addSpatialBias(strata1, probs = probs)
+
 #spatial bias correlated with environmental covariate
 #biasfield <- addSpatialBias(strata1, probs = c(0.8, 0.5, 0.2))
 

@@ -33,16 +33,17 @@ sd.prd <- result$summary.fitted.values$sd[index.pred.response]
 
 # calculate differences
 source('make_truth_grid.R')
-truth_grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='truth', absolute=absolute) # grid truth and take averaged
+if(absolute == TRUE){truth_grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='truth', absolute=TRUE)}
+else{truth_grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='truth', absolute=FALSE)}
 
 if(absolute == TRUE){
   differences <- m.prd-truth_grid # calculate differences
   method = "Absolute"
 }
 if(absolute == FALSE){
-  differences <- (transformation(m.prd)-mean(transformation(m.prd)))-truth_grid
-  m.prd <- transformation(m.prd) - mean(transformation(m.prd))
-  sd.prd <- transformation(sd.prd) - mean(transformation(sd.prd))
+  differences <- (m.prd-mean(m.prd))-truth_grid
+  m.prd <- m.prd - mean(m.prd)
+  sd.prd <- sd.prd - mean(sd.prd)
   method = "Relative"
   }
 
@@ -50,7 +51,7 @@ if(absolute == FALSE){
 
 if(plotting == TRUE){
 #png(paste0(model_type, " ", method, " validation.png"), height = 1000, width = 3100, pointsize = 30)
-par(mfrow=c(1,4))
+par(mfrow=c(2,2))
 par(mar = c(5.1, 4.1, 4.1, 3.5))
 # Plot truth on grid scale
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
@@ -62,7 +63,7 @@ image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],
            matrix(sd.prd, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
 # relative differences
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
-           matrix(differences, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main=paste0(model_type, " ", method, "differences"),asp=1)
+           matrix(differences, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main=paste0(model_type, " ", method, "\ndifferences"),asp=1)
 #dev.off()
 }
 

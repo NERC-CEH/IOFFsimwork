@@ -122,63 +122,73 @@ validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join
                                     unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
 
 #+ warning = FALSE, message = FALSE, error = FALSE
+#joint model (no covariate on bias)
 source("Run models joint.R")
-mod_joint <- joint_model(structured_data, unstructured_data, dat1, biasfield)
+mod_3 <- joint_model(structured_data, unstructured_data, dat1, biasfield)
 source("validation_function.R")
-validation_3 <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
+validation_3 <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_3[[1]], model_type="joint", 
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
+
+#joint model (covariate on bias)
+source("Run models joint covariate for bias.R")
+mod_4 <- joint_model_cov(structured_data, unstructured_data, dat1, biasfield)
+source("validation_function.R")
+validation_4 <- validation_function(result=mod_4[[2]], resolution=c(10,10), join.stack=mod_4[[1]], model_type="jointcov", 
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
+
+
+##joint model with second spatial field
+source("Run models joint second field.R")
+mod_5 <- joint_model2(structured_data, unstructured_data, dat1, biasfield)
+source("validation_function.R")
+validation_5 <- validation_function(result=mod_5[[2]], resolution=c(10,10), join.stack=mod_5[[1]], model_type="joint2", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
                                     dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
 
 validation_1$'Proto-table'
 validation_2$'Proto-table'
 validation_3$'Proto-table'
-
-
-##joint model with second spatial field
-source("Run models joint second field.R")
-mod_joint2 <- joint_model2(structured_data, unstructured_data, dat1, biasfield)
-source("validation_function.R")
-validation_4 <- validation_function(result=mod_joint2[[2]], resolution=c(10,10), join.stack=mod_joint2[[1]], model_type="joint2", 
-                                    unstructured_data = unstructured_data, structured_data = structured_data,
-                                    dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
-
-validation_3$'Proto-table'
 validation_4$'Proto-table'
-
-
-#relative validation
-
-source("validation_function.R")
-validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
-                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5, method = "relative", dim = dim)
-
-validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
-                                    unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
-
-
-validation_3_r <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
-                                    unstructured_data = unstructured_data, structured_data = structured_data,
-                                    dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
-
-
-validation_4_r <- validation_function(result=mod_joint2[[2]], resolution=c(10,10), join.stack=mod_joint2[[1]], model_type="joint2", 
-                                    unstructured_data = unstructured_data, structured_data = structured_data,
-                                    dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
-
-validation_1_r$'Proto-table'
-validation_2_r$'Proto-table'
-validation_3_r$'Proto-table'
-validation_4_r$'Proto-table'
-
+validation_5$'Proto-table'
 
 mod_1$result$summary.fixed
 mod_2$result$summary.fixed
-mod_joint$result$summary.fixed
-mod_joint2$result$summary.fixed
-
+mod_3$result$summary.fixed
+mod_4$result$summary.fixed
+mod_5$result$summary.fixed
 
 validation_1$correlation
 validation_2$correlation
 validation_3$correlation
 validation_4$correlation
+validation_5$correlation
+
+# #relative validation
+# 
+# source("validation_function.R")
+# validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
+#                                     structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5, method = "relative", dim = dim)
+# 
+# validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
+#                                     unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
+# 
+# 
+# validation_3_r <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
+#                                     unstructured_data = unstructured_data, structured_data = structured_data,
+#                                     dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
+# 
+# 
+# validation_4_r <- validation_function(result=mod_joint2[[2]], resolution=c(10,10), join.stack=mod_joint2[[1]], model_type="joint2", 
+#                                     unstructured_data = unstructured_data, structured_data = structured_data,
+#                                     dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
+# 
+# validation_1_r$'Proto-table'
+# validation_2_r$'Proto-table'
+# validation_3_r$'Proto-table'
+# validation_4_r$'Proto-table'
+
+
+
 

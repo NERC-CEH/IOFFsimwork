@@ -7,7 +7,7 @@
 # unstructured_data 
 # structured_data
 # choose table and/or plot
-validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "structured", "joint", "joint2"), unstructured_data=NULL,
+validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "structured", "joint", "jointcov","joint2"), unstructured_data=NULL,
                              structured_data=NULL, dat1,
                              plot = F, summary_results = F, qsize = qsize, method = c("absolute", "relative"), dim = dim){
   

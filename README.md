@@ -3,6 +3,35 @@ title: "README"
 output: html_document
 ---
 
+## Changes in basic-test branch
+
+The following changes have been made in this branch which are not found in the master branch:
+
+1.	Default parameters in setParams changed to simulate unbiased sampling of the unstructured data and no environmental covariate
+
+2.	Unstructured models corrected to correctly use the expectation calculated from the mesh
+
+3.	All models changed to ignore environmental covariate
+
+4.	Dimensions of grid increased to the same as the resolution of the grid (also changes to sigma2x and kappa defaults to provide a surface of reasonable complexity, added ability to specify sigma2x in data generation)
+
+5.	Validation changed to a) calculate absolute instead of relative differences for easier inspection b) show the truth on a grid for easier comparison c) present untransformed values
+
+6.	Function to generate prediction stack changed to provide different stacks for different model types
+
+7.	Added ability to change “quadrat” (i.e. site) size of the structured sample
+
+8.	Added function to adjust for the quadrat/site size in structured model output – i.e. calculate the per-unit area occupancy probability from the occupancy probability in the quadrat/site
+
+9.	Forced both datasets to share an intercept in the joint model for easier prediction BUT may need to change this to account for the differing areas of survey. Update - removed this constraint for now but still thinking about best way to do this. I've changed the joint model to use the copy function for the spatial field, according to the green book you can then specify a hyperparameter on this for one of the datasets to account for the fact that the pattern should be shared but the values might differ (e.g. if they are measured at different spatial resolutions). So far this doesn't make much difference and I'm still not 100% sure how to specify this.
+
+
+
+
+
+
+
+
 ## Code to run simulations for the IOFF project.
 
 This repository hosts functions to simulate structured and unstructured data and to run species distribution models on these to evaluate under which scenarios integrated/joint models perform better than individual dataset models. 

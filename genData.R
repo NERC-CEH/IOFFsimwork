@@ -1,31 +1,32 @@
 # Function to generate data for simulations
 
-#function returns a simulated log cox gaussian process with or without the mean of this process related to an environmental variable. 
+# Function returns a simulated log cox gaussian process with or without the mean of this process related to an environmental variable. 
 
-#inputs:
+## Inputs:
+
+#dim - dimensions of the window
 #lambda - mean of random field
 #env.beta - coefficient of env variable
 #plotdat - logical, plot data or not
 #seed - value to set seed
+#sigma2x and kappa = parameters for the matern field
 
-###Functionality to add:
+## Extra functionality
 
 # - env correlated with spatial bias or not
-# - vary complexity of environmental surface(?)
 
 
-
-genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE, seed = 1, sigma2x = 0.2, kappa = 2){
+genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE, seed = NULL, sigma2x = 0.2, kappa = 2){
  
   library(spatstat) 
   # owin creates an object of class "owin" which is an observation window in 2D
   # specify x and y coordinates
-  win <- owin(c(0,dim[1]/100), c(0,dim[2]/100)) # keeping this rectangular is really important to check for errors in the code - otherwise easy to get x and y confused
+  win <- owin(c(0,dim[1]), c(0,dim[2])) # keeping this rectangular is really important to check for errors in the code - otherwise easy to get x and y confused
   
   # set number of pixels
   spatstat.options(npixel=c(dim[1],dim[2]))
   
-  ##Creating environmental covariate and altering truth based on this
+  ## Creating environmental covariate and altering truth based on this
   # using Simpson tutorial again
   
   # can add covariate at the beginning - create arificial covariate
@@ -35,7 +36,13 @@ genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE
   x0 <- seq(win$xrange[1], win$xrange[2],
             length=spatstat.options()$npixel[1])
   # bit of a fudge but rounding this does work to give 3 levels (0,1,2)
-  gridcov <- round(outer(y0, x0, function(x,y) cos(x) - sin(y-2))) 
+  # gridcov <- round(outer(y0, x0, function(x,y) cos(x/100) - sin((y/100)-2))) 
+  
+  # to make this more complex, changed to a continuous gradient from the bottom to the top with values from 0 to 1
+  multiplier <- 1/dim[2]
+  
+  gridcov <- outer(y0,x0, function (x,y) multiplier*x + 0*y)
+  
   
   
   beta0 <- lambda # intercept/mu (increased to 5 to increase no.obs)

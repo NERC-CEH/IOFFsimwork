@@ -18,11 +18,21 @@ addSpatialBias <- function(strata = strata, probs = NULL){
     lookup$probs <- probs
   }
   
+  covar_levels <- length(unique(probs))
+  covar_unique <- seq(0,1,length.out = covar_levels)
+  lookup_cov <- data.frame(probs = sort(unique(probs)), covar_unique = sort(covar_unique))
+  
+  lookup$covariate <- lookup_cov$covar_unique[match(lookup$probs, lookup_cov$probs)]
+  
+  
   #add probabilites to strata output
   
   for(i in 1:nstrata){
     strata$stratprobs[strata$stratum == i] <- lookup$probs[i]
+    strata$covariate[strata$stratum == i] <- lookup$covariate[i]
   }
+  
+  
   
   # add detection probability per point defined by which grid square it is in
   return(strata)

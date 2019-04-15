@@ -1,7 +1,17 @@
-create_prediction_stack <- function(data_stack, resolution, biasfield, dat1, mesh, spde, structured_only=F){
+# Function to create the prediction stack
+
+## Inputs:
+
+#data_stack - stack of data for model
+#resolution
+#biasfield
+#dat1 - original datafile of environmental covariate and bias
+#spde
+
+create_prediction_stack <- function(data_stack, resolution, biasfield, dat1, mesh, spde){
   
   pred.grid <- expand.grid(x=seq(resolution[1]/2,max(biasfield$x),resolution[1]), y=seq(resolution[2]/2, max(biasfield$y),resolution[2])) # make grid
-  dim(pred.grid) # 300,2 = much better than before
+  dim(pred.grid) 
   
   # extract covariate values at these points
   pred.grid$cov <- dat1$gridcov[Reduce('cbind', nearest.pixel(
@@ -14,6 +24,7 @@ create_prediction_stack <- function(data_stack, resolution, biasfield, dat1, mes
   
   A.pred <- inla.spde.make.A(mesh, loc=as.matrix(pred.grid[,1:2]))
   
+  # if clauses to automate correct creation depending on what is in the data stack
   if(length(data_stack$data$names$y) > 1){
     ys <- cbind(rep(NA, nrow(pred.grid)), rep(NA, nrow(pred.grid)))
     stack.pred.response <- inla.stack(data=list(y=ys),

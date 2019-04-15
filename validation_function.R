@@ -49,7 +49,7 @@ if(absolute == FALSE){
 
 
 if(plotting == TRUE){
-#png(paste0(model_type, " ", method, " validation.png"), height = 1000, width = 3100, pointsize = 30)
+png(paste0(model_type, " ", method, " validation.png"), height = 1000, width = 1000, pointsize = 25)
 par(mfrow=c(2,2))
 par(mar = c(5.1, 4.1, 4.1, 3.5))
 # Plot truth on grid scale
@@ -63,7 +63,7 @@ image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],
 # relative differences
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
            matrix(differences, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main=paste0(model_type, " ", method, "\ndifferences"),asp=1)
-#dev.off()
+dev.off()
 }
 
 if(summary_results == TRUE){

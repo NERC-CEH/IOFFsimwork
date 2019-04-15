@@ -109,10 +109,10 @@ legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 #' 
 #+ warning = FALSE, message = FALSE, error = FALSE, figure.align = "center"
 source("Run models structured.R")
-mod_1 <- structured_model(structured_data, dat1, biasfield)
+mod_1 <- structured_model(structured_data, dat1, biasfield, plotting = TRUE)
 source("validation_function.R")
 validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
-                                    structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 1, absolute=TRUE, dim = dim)
+                                    structured_data = structured_data, dat1 = dat1, summary_results=T, qsize = 1, absolute=TRUE, dim = dim, plotting = TRUE)
 validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
                                       structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 1, absolute=FALSE, dim = dim)
 
@@ -120,10 +120,10 @@ validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), jo
 #' 
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models.R")
-mod_2 <- unstructured_model(unstructured_data, dat1, biasfield, dim = dim)
+mod_2 <- unstructured_model(unstructured_data, dat1, biasfield, dim = dim, plotting = TRUE)
 source("validation_function.R")
 validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
-                                    unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, absolute=TRUE, dim = dim)
+                                    unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
 validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
                                       unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, absolute=FALSE, dim = dim)
 
@@ -137,8 +137,8 @@ mod_3 <- joint_model(structured_data, unstructured_data, dat1, biasfield)
 source("validation_function.R")
 validation_3 <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_3[[1]], model_type="joint", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
-                                    dat1 = dat1, plot=T, summary_results=T, absolute=TRUE, dim = dim)
-validation_3_r <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
+                                    dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
+validation_3_r <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
                                       unstructured_data = unstructured_data, structured_data = structured_data,
                                       dat1 = dat1, plot=T, summary_results=T, absolute=FALSE, dim = dim)
 
@@ -149,7 +149,7 @@ mod_4 <- joint_model_cov(structured_data, unstructured_data, dat1, biasfield)
 source("validation_function.R")
 validation_4 <- validation_function(result=mod_4[[2]], resolution=c(10,10), join.stack=mod_4[[1]], model_type="jointcov", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
-                                    dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
+                                    dat1 = dat1, summary_results=T, absolute = TRUE, dim = dim, plotting = TRUE)
 
 
 ##joint model with second spatial field
@@ -158,7 +158,7 @@ mod_5 <- joint_model2(structured_data, unstructured_data, dat1, biasfield)
 source("validation_function.R")
 validation_5 <- validation_function(result=mod_5[[2]], resolution=c(10,10), join.stack=mod_5[[1]], model_type="joint2", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
-                                    dat1 = dat1, plot=T, summary_results=T, method = "absolute", dim = dim)
+                                    dat1 = dat1, summary_results=T, absolute = TRUE, dim = dim, plotting = TRUE)
 
 validation_1$'Proto-table'
 validation_2$'Proto-table'

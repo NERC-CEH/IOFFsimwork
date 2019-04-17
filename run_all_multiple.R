@@ -18,10 +18,10 @@ registerDoParallel(cl)
 source("setParams.R")
 source("run_function_multiple.R")
 
-simulation_output_structured = foreach(i=1:100,.combine = c,.errorhandling = 'pass') %dopar% { 
+simulation_output_structured = foreach(i=1:10,.combine = c,.errorhandling = 'pass') %dopar% { 
   run_function_multiple(resolution=c(10,10), model_type="structured", 
                         structured_data = structured_data, dat1 = dat1, 
-                        plot=F, summary_results=T)
+                        plotting=FALSE, summary_results=TRUE, biasfield = biasfield)
 }
 
 stopCluster(cl)
@@ -35,10 +35,10 @@ registerDoParallel(cl)
 source("setParams.R")
 source("run_function_multiple.R")
 
-simulation_output_unstructured = foreach(i=1:2,.combine = c,.packages=c("rgeos"),.errorhandling = 'pass') %dopar% { 
+simulation_output_unstructured = foreach(i=1:10,.combine = c,.packages=c("rgeos"),.errorhandling = 'pass') %dopar% { 
   run_function_multiple(resolution=c(10,10), model_type="unstructured", 
                         unstructured_data = unstructured_data, dat1 = dat1, 
-                        plot=F, summary_results=T, biasfield = biasfield)
+                        plotting=FALSE, summary_results=TRUE, biasfield = biasfield)
 }
 
 stopCluster(cl)
@@ -52,10 +52,10 @@ registerDoParallel(cl)
 source("setParams.R")
 source("run_function_multiple.R")
 
-simulation_output_joint = foreach(i=1:2,.combine = c,.errorhandling = 'pass') %dopar% { 
+simulation_output_joint = foreach(i=1:10,.combine = c,.errorhandling = 'pass') %dopar% { 
   run_function_multiple(resolution=c(10,10), model_type="joint", 
                         unstructured_data = unstructured_data, structured_data = structured_data,dat1 = dat1, 
-                        plot=F, summary_results=T, biasfield = biasfield)
+                        plotting=FALSE, summary_results=TRUE, biasfield = biasfield)
 }
 
 stopCluster(cl)

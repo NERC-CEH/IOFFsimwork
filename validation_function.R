@@ -66,6 +66,10 @@ image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],
 #dev.off()
 }
 
+if(plotting == FALSE){
+  output <- list(truth_grid, m.prd)
+}
+
 if(summary_results == TRUE){
   MAE_differences <- abs(differences)
   correlation <- cor(m.prd, truth_grid)
@@ -82,7 +86,7 @@ if(summary_results == TRUE){
                best_areas = unique(grid[which(MAE_differences<(mean(MAE_differences)-sd(MAE_differences)))])
                )
   names(summary_results) <- c("Proto-table", "correlation", "coefficients", "All_differences", "Worst_grid_cells", "Best_grid_cells")
-  return(summary_results)
+  if(plotting == TRUE){return(summary_results)}else{return(c(summary_results, output))}
 }
 
 }

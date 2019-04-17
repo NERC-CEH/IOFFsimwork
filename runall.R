@@ -114,7 +114,7 @@ source("validation_function.R")
 validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
                                     structured_data = structured_data, dat1 = dat1, summary_results=T, qsize = 1, absolute=TRUE, dim = dim, plotting = TRUE)
 validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
-                                      structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 1, absolute=FALSE, dim = dim)
+                                      structured_data = structured_data, dat1 = dat1, summary_results=T, qsize = 1, absolute=FALSE, dim = dim, plotting = TRUE)
 
 #' ### Unstructured model 
 #' 
@@ -125,7 +125,7 @@ source("validation_function.R")
 validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
                                     unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
 validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
-                                      unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, absolute=FALSE, dim = dim)
+                                      unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=FALSE, dim = dim, plotting = TRUE)
 
 
 #' ### Joint model 
@@ -140,7 +140,7 @@ validation_3 <- validation_function(result=mod_3[[2]], resolution=c(10,10), join
                                     dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
 validation_3_r <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_3[[1]], model_type="joint", 
                                       unstructured_data = unstructured_data, structured_data = structured_data,
-                                      dat1 = dat1, plot=T, summary_results=T, absolute=FALSE, dim = dim)
+                                      dat1 = dat1, summary_results=T, absolute=FALSE, dim = dim, plotting = TRUE)
 
 
 #joint model (covariate on bias)

@@ -138,7 +138,7 @@ source("validation_function.R")
 validation_3 <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_3[[1]], model_type="joint", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
                                     dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
-validation_3_r <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
+validation_3_r <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_3[[1]], model_type="joint", 
                                       unstructured_data = unstructured_data, structured_data = structured_data,
                                       dat1 = dat1, plot=T, summary_results=T, absolute=FALSE, dim = dim)
 

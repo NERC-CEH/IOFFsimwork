@@ -3,34 +3,23 @@ title: "README"
 output: html_document
 ---
 
-## Changes in basic-test branch
+## New master branch
 
-The following changes have been made in this branch which are not found in the master branch:
+The following changes have been made in this branch which are added to the master branch:
 
 1.	Default parameters in setParams changed to simulate unbiased sampling of the unstructured data and no environmental covariate
 
 2.	Unstructured models corrected to correctly use the expectation calculated from the mesh
 
-3.	All models changed to ignore environmental covariate
+3.	Dimensions of grid increased to the same as the resolution of the grid (also changes to sigma2x and kappa defaults to provide a surface of reasonable complexity, added ability to specify sigma2x in data generation)
 
-4.	Dimensions of grid increased to the same as the resolution of the grid (also changes to sigma2x and kappa defaults to provide a surface of reasonable complexity, added ability to specify sigma2x in data generation)
+4.	Validation changed to a) have the option for either absolute or relative validation b) show the truth on a grid for easier comparison c) present untransformed values
 
-5.	Validation changed to a) calculate absolute instead of relative differences for easier inspection b) show the truth on a grid for easier comparison c) present untransformed values
+5.	Function to generate prediction stack changed to provide different stacks for different model types
 
-6.	Function to generate prediction stack changed to provide different stacks for different model types
+6.	Added ability to change “quadrat” (i.e. site) size of the structured sample (qsize)
 
-7.	Added ability to change “quadrat” (i.e. site) size of the structured sample
-
-8.	Added function to adjust for the quadrat/site size in structured model output – i.e. calculate the per-unit area occupancy probability from the occupancy probability in the quadrat/site
-
-9.	Forced both datasets to share an intercept in the joint model for easier prediction BUT may need to change this to account for the differing areas of survey. Update - removed this constraint for now but still thinking about best way to do this. I've changed the joint model to use the copy function for the spatial field, according to the green book you can then specify a hyperparameter on this for one of the datasets to account for the fact that the pattern should be shared but the values might differ (e.g. if they are measured at different spatial resolutions). So far this doesn't make much difference and I'm still not 100% sure how to specify this.
-
-
-
-
-
-
-
+7.	Added function to adjust for the quadrat/site size in structured model output – i.e. calculate the per-unit area occupancy probability from the occupancy probability in the quadrat/site
 
 ## Code to run simulations for the IOFF project.
 
@@ -52,7 +41,7 @@ All data generation and sampling functions can be run using [setParams.R](https:
 
 Scripts sourced by [Functions to generate data and sample.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Functions%20to%20generate%20data%20and%20sample.R) : 
 
-[genData.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/genData.R) : Simulate a log Cox Gaussian process using the rLCGP function from the spatstat package. This can be with or without an environmental covariate effect on the simulated intensity. The user can also specify the domain, the variance and shape parameters of the matern covariance and the mean of the intensity
+[genData.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/genData.R) : Simulate a log Cox Gaussian process using the rLCGP function from the spatstat package. This can be with or without an environmental covariate effect on the simulated intensity. The user can also specify the domain, the variance and shape parameters of the matern covariance and the mean of the intensity. Seed can be specified to make repeatable or left as NULL to be stochastic
 
 [Generate strata levels Lam.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Generate%20strata%20levels%20Lam.R) : This function splits the domain specified in 'genData.R' into a number of strata, the number and pattern of which can be specified by the user. These strata are used to represent areas which may have different thinning probabilities and are used to ensure equal coverage in the structured data sampling
 
@@ -73,6 +62,10 @@ Scripts sourced by [Functions to generate data and sample.R](https://github.com/
 [Run models structured.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20structured.R) : This function runs a structured data only SDM model in INLA. Data are assumed to come from a binomial distribution
 
 [Run models joint.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20joint.R) : This function jointly models structured and unstructured data assuming structured data come from a binomial and unstructured data are Poisson distributed.
+
+[run_function_multiple.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/run_function_multiple.R) : This function has the option to run structured, unstructured or joint models with validation steps and returns absolute and relative validation as well as truth and predicted datasets.
+
+[run_all_multiple.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/run_all_multiple.R) : Script to run in parallel many realisations of each model.
 
 [validation_function.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/validation_function.R) : This function runs our validation procedures on any fitted model. Outputs produced are: PLOT - of the truth inc data, predicted mean intensity, standard deviation of predicted intensity, and the relative differences between estimate and truth. SUMMARY_RESULTS - the beginnings of an output table. List includes RMSE, model name, all differences, the worst performing grid squares, and the best (i.e. lowest relative difference).
 

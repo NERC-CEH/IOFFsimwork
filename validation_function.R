@@ -9,7 +9,7 @@
 # structured_data
 # choose table and/or plot
 
-validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "structured", "joint", "jointcov", "joint2"), unstructured_data=NULL, structured_data=NULL, dat1,
+validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "unstructuredcov", "structured", "joint", "jointcov", "joint2"), unstructured_data=NULL, structured_data=NULL, dat1,
                              plotting = FALSE, summary_results = FALSE, qsize = qsize, absolute = TRUE, dim = dim){
   
 #All comparisons are on the same scale as the truth is logged too!
@@ -49,7 +49,7 @@ if(absolute == FALSE){
 
 
 if(plotting == TRUE){
-#png(paste0(model_type, " ", method, " validation.png"), height = 1000, width = 1000, pointsize = 25)
+png(paste0(model_type, " ", method, " validation.png"), height = 1000, width = 1000, pointsize = 25)
 par(mfrow=c(2,2))
 par(mar = c(5.1, 4.1, 4.1, 3.5))
 # Plot truth on grid scale
@@ -63,7 +63,7 @@ image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],
 # relative differences
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
            matrix(differences, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main=paste0(model_type, " ", method, "\ndifferences"),asp=1)
-#dev.off()
+dev.off()
 }
 
 if(plotting == FALSE){

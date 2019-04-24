@@ -21,6 +21,7 @@ The following changes have been made in this branch which are added to the maste
 
 7.	Added function to adjust for the quadrat/site size in structured model output – i.e. calculate the per-unit area occupancy probability from the occupancy probability in the quadrat/site
 
+
 ## Code to run simulations for the IOFF project.
 
 This repository hosts functions to simulate structured and unstructured data and to run species distribution models on these to evaluate under which scenarios integrated/joint models perform better than individual dataset models. 
@@ -57,11 +58,17 @@ Scripts sourced by [Functions to generate data and sample.R](https://github.com/
 
 ## Modelling
 
-[Run models.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models.R) : This function runs a structured data only model in INLA. Data are modelled as point Poisson following the Simpson 2016 approach
+[Run models.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models.R) : This function runs an unstructured data only model in INLA. Data are modelled as point Poisson following the Simpson 2016 approach
+
+[Run models covariate for bias.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20covariate%20for%20bias.R) : This function runs a unstructured data only model in INLA including a covariate on the bias in the data. Data are modelled as point Poisson following the Simpson 2016 approach
 
 [Run models structured.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20structured.R) : This function runs a structured data only SDM model in INLA. Data are assumed to come from a binomial distribution
 
 [Run models joint.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20joint.R) : This function jointly models structured and unstructured data assuming structured data come from a binomial and unstructured data are Poisson distributed.
+
+[Run models joint covariate for bias.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20joint%20covariate%20for%20bias.R) : This model adds a covariate for the bias in the unstructured data to the joint model described above.
+
+[run models joint second field.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/run%20models%20joint%20second%20field.R) : This joint model does not include a covariate on the bias in the unstructured data but instead includes a second spatial field with the aim that this spatial field can capture residual variation in the unstructured data that is not shared with the structured data.
 
 [run_function_multiple.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/run_function_multiple.R) : This function has the option to run structured, unstructured or joint models with validation steps and returns absolute and relative validation as well as truth and predicted datasets.
 
@@ -89,12 +96,12 @@ These steps are largely taken from the pipeline diagram
 - [x] Simulate spatial bias in unstructured sampling (currently this uses the strata to determine a probability of visit which is used to thin the point process, may want to change this to make a continuous spatial effort surface)  
 - [x] Allow spatial bias in unstructured sampling (i.e. effort) to vary (this can be adjusted currently by changing stratum sampling probabilities)   
 - [x] Allow spatial bias in unstructured sampling to be correlated with an environmental covariate  
-- [ ] Allow detection probability to vary non-spatially in structured data  
-- [ ] Allow detection probability to vary non-spatially in unstructured data  
 
 These are now lower priority:  
 - [ ] Allow coverage of structured survey to change  
-- [ ] Vary coverage in relation to environmental gradient length  
+- [ ] Vary coverage in relation to environmental gradient length
+- [ ] Allow detection probability to vary non-spatially in structured data  
+- [ ] Allow detection probability to vary non-spatially in unstructured data  
 
 ### Modelling
 
@@ -102,17 +109,20 @@ These are now lower priority:
 - [x] Model for structured data only  
 - [x] Model for unstructured data only  
 - [x] Joint model with continuous data  
-- [ ] Allow models to have different knowledge of covariates  
-- [ ] Allow models to have a second spatial field  
+- [x] Allow models to have different knowledge of covariates  
+- [x] Allow models to have a second spatial field  
 
 
 ### Evaluation
 
 
-- [ ] Extract and compare parameters (covariate effects...)  
+- [x] Extract and compare parameters (covariate effects...) 
+- [x] Mean absolute error by grid
+- [x] Correlation by grid
+- [ ] Cross validation by grid (on?)  
 - [ ] Cross validation by grid (on?)  
 - [ ] Cross validation by AUC  
-- [ ] Visual bias inspection  
+- [x] Visual bias inspection  
  
 
 

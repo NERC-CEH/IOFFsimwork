@@ -164,6 +164,9 @@ source("validation_function.R")
 validation_5 <- validation_function(result=mod_5[[2]], resolution=c(10,10), join.stack=mod_5[[1]], model_type="jointcov", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
                                     dat1 = dat1, summary_results=T, absolute = TRUE, dim = dim, plotting = TRUE)
+validation_5_r <- validation_function(result=mod_5[[2]], resolution=c(10,10), join.stack=mod_5[[1]], model_type="jointcov", 
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
 
 
 ##joint model with second spatial field
@@ -173,13 +176,17 @@ source("validation_function.R")
 validation_6 <- validation_function(result=mod_6[[2]], resolution=c(10,10), join.stack=mod_6[[1]], model_type="joint2", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
                                     dat1 = dat1, summary_results=T, absolute = TRUE, dim = dim, plotting = TRUE)
+validation_6_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), join.stack=mod_6[[1]], model_type="joint2", 
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
 
-validation_1$'Proto-table'
-validation_2$'Proto-table'
-validation_3$'Proto-table'
-validation_4$'Proto-table'
-validation_5$'Proto-table'
-validation_6$'Proto-table'
+
+validation_1_r$'Proto-table'
+validation_2_r$'Proto-table'
+validation_3_r$'Proto-table'
+validation_4_r$'Proto-table'
+validation_5_r$'Proto-table'
+validation_6_r$'Proto-table'
 
 mod_1$result$summary.fixed
 mod_2$result$summary.fixed
@@ -188,12 +195,12 @@ mod_4$result$summary.fixed
 mod_5$result$summary.fixed
 mod_6$result$summary.fixed
 
-validation_1$correlation
-validation_2$correlation
-validation_3$correlation
-validation_4$correlation
-validation_5$correlation
-validation_6$correlation
+validation_1_r$correlation
+validation_2_r$correlation
+validation_3_r$correlation
+validation_4_r$correlation
+validation_5_r$correlation
+validation_6_r$correlation
 
 # #relative validation
 # 

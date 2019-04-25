@@ -181,12 +181,28 @@ validation_6_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), jo
                                     dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
 
 
+#' ### Unstructured model with second spatial field
+#' 
+#+ warning = FALSE, message = FALSE, error = FALSE
+source("Run models unstructured second field.R")
+mod_7 <- unstructured_model_sf(unstructured_data, dat1, biasfield, dim = dim, plotting = TRUE)
+source("validation_function.R")
+validation_7 <- validation_function(result=mod_7[[2]], resolution=c(10,10), join.stack=mod_7[[1]], model_type="unstructuredsf", 
+                                    unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
+validation_7_r <- validation_function(result=mod_7[[2]], resolution=c(10,10), join.stack=mod_7[[1]], model_type="unstructuredsf", 
+                                      unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=FALSE, dim = dim, plotting = TRUE)
+
+
+
+#note these are now from the relative validation
+
 validation_1_r$'Proto-table'
 validation_2_r$'Proto-table'
 validation_3_r$'Proto-table'
 validation_4_r$'Proto-table'
 validation_5_r$'Proto-table'
 validation_6_r$'Proto-table'
+validation_7_r$'Proto-table'
 
 mod_1$result$summary.fixed
 mod_2$result$summary.fixed
@@ -194,6 +210,7 @@ mod_3$result$summary.fixed
 mod_4$result$summary.fixed
 mod_5$result$summary.fixed
 mod_6$result$summary.fixed
+mod_7$result$summary.fixed
 
 validation_1_r$correlation
 validation_2_r$correlation
@@ -201,6 +218,8 @@ validation_3_r$correlation
 validation_4_r$correlation
 validation_5_r$correlation
 validation_6_r$correlation
+validation_7_r$correlation
+
 
 # #relative validation
 # 

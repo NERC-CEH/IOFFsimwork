@@ -9,7 +9,7 @@
 # structured_data
 # choose table and/or plot
 
-validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "unstructuredcov", "structured", "joint", "jointcov", "joint2"), unstructured_data=NULL, structured_data=NULL, dat1,
+validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "unstructuredcov", "unstructuredsf", "structured", "joint", "jointcov", "joint2"), unstructured_data=NULL, structured_data=NULL, dat1,
                              plotting = FALSE, summary_results = FALSE, qsize = qsize, absolute = TRUE, dim = dim){
   
 #All comparisons are on the same scale as the truth is logged too!

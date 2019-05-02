@@ -26,7 +26,10 @@
 source('parallel_summary.R')
 load('unstructured_output_parallel.RData')
 
-unstructured_summary_R <- rowMeans(mapply(parallel_summary, simulation_output_unstructured[seq(1,100,2)], SIMPLIFY = T))
+unstructured_summary_R_raw <- mapply(parallel_summary, simulation_output_unstructured[seq(1,100,2)],
+                                     MoreArgs = list(type = "single"), MoreArgs = list(type = "single"), SIMPLIFY = T)
+unstructured_summary_R <- rowMeans(mapply(parallel_summary, simulation_output_unstructured[seq(1,100,2)], 
+                                          MoreArgs = list(type = "single"), SIMPLIFY = T))
 unstructured_summary_R <- data.frame(MAE = unstructured_summary_R[1],
                                      Correlation = unstructured_summary_R[2], 
                                      MeanENV = unstructured_summary_R[3], 
@@ -39,7 +42,9 @@ unstructured_summary_R <- data.frame(MAE = unstructured_summary_R[1],
 #### Structured model
 load('structured_output_high_parallel.RData')
 
-structured_summary_R_high <- rowMeans(mapply(parallel_summary, simulation_output_structured_high[seq(1,100,2)], SIMPLIFY = T))
+structured_summary_R_high_raw <- mapply(parallel_summary, simulation_output_structured_high[seq(1,100,2)], 
+                                             MoreArgs = list(type = "single"), SIMPLIFY = T)
+structured_summary_R_high <- rowMeans(structured_summary_R_high_raw)
 structured_summary_R_high <- data.frame(MAE = structured_summary_R_high[1],
                                      Correlation = structured_summary_R_high[2], 
                                      MeanENV = structured_summary_R_high[3], 
@@ -48,7 +53,9 @@ structured_summary_R_high <- data.frame(MAE = structured_summary_R_high[1],
 
 load('structured_output_mid_parallel.RData')
 
-structured_summary_R_mid <- rowMeans(mapply(parallel_summary, simulation_output_structured_mid[seq(1,100,2)], SIMPLIFY = T))
+structured_summary_R_mid_raw <- mapply(parallel_summary, simulation_output_structured_mid[seq(1,100,2)], 
+                                        MoreArgs = list(type = "single"), SIMPLIFY = T)
+structured_summary_R_mid <- rowMeans(structured_summary_R_mid_raw)
 structured_summary_R_mid <- data.frame(MAE = structured_summary_R_mid[1],
                                         Correlation = structured_summary_R_mid[2], 
                                         MeanENV = structured_summary_R_mid[3], 
@@ -57,7 +64,9 @@ structured_summary_R_mid <- data.frame(MAE = structured_summary_R_mid[1],
 
 load('structured_output_low_parallel.RData')
 
-structured_summary_R_low <- rowMeans(mapply(parallel_summary, simulation_output_structured_low[seq(1,100,2)], SIMPLIFY = T))
+structured_summary_R_low_raw <- mapply(parallel_summary, simulation_output_structured_low[seq(1,100,2)], 
+                                        MoreArgs = list(type = "single"), SIMPLIFY = T)
+structured_summary_R_low <- rowMeans(structured_summary_R_low_raw)
 structured_summary_R_low <- data.frame(MAE = structured_summary_R_low[1],
                                        Correlation = structured_summary_R_low[2], 
                                        MeanENV = structured_summary_R_low[3], 
@@ -66,7 +75,9 @@ structured_summary_R_low <- data.frame(MAE = structured_summary_R_low[1],
 
 load('joint_output_high_parallel.RData')
 
-joint_summary_R_high <- rowMeans(mapply(parallel_summary, simulation_output_joint_high[seq(1,100,2)], SIMPLIFY = T))
+joint_summary_R_high_raw <- mapply(parallel_summary, simulation_output_joint_high[seq(1,100,2)], 
+                                        MoreArgs = list(type = "joint"), SIMPLIFY = T)
+joint_summary_R_high <- rowMeans(joint_summary_R_high_raw)
 joint_summary_R_high <- data.frame(MAE = joint_summary_R_high[1],
                                   Correlation = joint_summary_R_high[2], 
                                   MeanENV = joint_summary_R_high[3], 
@@ -76,7 +87,9 @@ joint_summary_R_high <- data.frame(MAE = joint_summary_R_high[1],
 
 load('joint_output_mid_parallel.RData')
 
-joint_summary_R_mid <- rowMeans(mapply(parallel_summary, simulation_output_joint_mid[seq(1,100,2)], SIMPLIFY = T))
+joint_summary_R_mid_raw <- mapply(parallel_summary, simulation_output_joint_mid[seq(1,100,2)], 
+                                   MoreArgs = list(type = "joint"), SIMPLIFY = T)
+joint_summary_R_mid <- rowMeans(joint_summary_R_mid_raw)
 joint_summary_R_mid <- data.frame(MAE = joint_summary_R_mid[1],
                                   Correlation = joint_summary_R_mid[2], 
                                   MeanENV = joint_summary_R_mid[3], 
@@ -85,7 +98,9 @@ joint_summary_R_mid <- data.frame(MAE = joint_summary_R_mid[1],
 
 load('joint_output_low_parallel.RData')
 
-joint_summary_R_low <- rowMeans(mapply(parallel_summary, simulation_output_joint_low[seq(1,100,2)], SIMPLIFY = T))
+joint_summary_R_low_raw <- mapply(parallel_summary, simulation_output_joint_low[seq(1,100,2)], 
+                                   MoreArgs = list(type = "joint"), SIMPLIFY = T)
+joint_summary_R_low <- rowMeans(joint_summary_R_low_raw)
 joint_summary_R_low <- data.frame(MAE = joint_summary_R_low[1],
                                        Correlation = joint_summary_R_low[2], 
                                        MeanENV = joint_summary_R_low[3], 
@@ -94,7 +109,9 @@ joint_summary_R_low <- data.frame(MAE = joint_summary_R_low[1],
 
 load('jointcov_output_high_parallel.RData')
 
-jointcov_summary_R_high <- rowMeans(mapply(parallel_summary, simulation_output_jointcov_high[seq(1,100,2)], SIMPLIFY = T))
+jointcov_summary_R_high_raw <- mapply(parallel_summary, simulation_output_jointcov_high[seq(1,100,2)], 
+                                   MoreArgs = list(type = "jointcov"), SIMPLIFY = T)
+jointcov_summary_R_high <- rowMeans(jointcov_summary_R_high_raw)
 jointcov_summary_R_high <- data.frame(MAE = jointcov_summary_R_high[1],
                                    Correlation = jointcov_summary_R_high[2], 
                                    MeanENV = jointcov_summary_R_high[3], 
@@ -104,7 +121,9 @@ jointcov_summary_R_high <- data.frame(MAE = jointcov_summary_R_high[1],
 
 load('jointcov_output_mid_parallel.RData')
 
-jointcov_summary_R_mid <- rowMeans(mapply(parallel_summary, simulation_output_jointcov_mid[seq(1,100,2)], SIMPLIFY = T))
+jointcov_summary_R_mid_raw <- mapply(parallel_summary, simulation_output_jointcov_mid[seq(1,100,2)], 
+                                      MoreArgs = list(type = "jointcov"), SIMPLIFY = T)
+jointcov_summary_R_mid <- rowMeans(jointcov_summary_R_mid_raw)
 jointcov_summary_R_mid <- data.frame(MAE = jointcov_summary_R_mid[1],
                                   Correlation = jointcov_summary_R_mid[2], 
                                   MeanENV = jointcov_summary_R_mid[3], 
@@ -113,7 +132,9 @@ jointcov_summary_R_mid <- data.frame(MAE = jointcov_summary_R_mid[1],
 
 load('jointcov_output_low_parallel.RData')
 
-jointcov_summary_R_low <- rowMeans(mapply(parallel_summary, simulation_output_jointcov_low[seq(1,100,2)], SIMPLIFY = T))
+jointcov_summary_R_low_raw <- mapply(parallel_summary, simulation_output_jointcov_low[seq(1,100,2)], 
+                                      MoreArgs = list(type = "jointcov"), SIMPLIFY = T)
+jointcov_summary_R_low <- rowMeans(jointcov_summary_R_low_raw)
 jointcov_summary_R_low <- data.frame(MAE = jointcov_summary_R_low[1],
                                   Correlation = jointcov_summary_R_low[2], 
                                   MeanENV = jointcov_summary_R_low[3], 
@@ -139,7 +160,7 @@ summary_table
 
 #load('joint2_output_high_parallel.RData')
 
-#joint2_summary_R_high <- rowMeans(mapply(parallel_summary, simulation_output_joint2_high[seq(2,100,2)], SIMPLIFY = T))
+#joint2_summary_R_high <- rowMeans(mapply(parallel_summary, simulation_output_joint2_high[seq(2,100,2)], MoreArgs = list(type = "single"), SIMPLIFY = T))
 #joint2_summary_R_high <- data.frame(MAE = joint2_summary_R_high[1],
  #                                  Correlation = joint2_summary_R_high[2], 
   #                                 MeanENV = joint2_summary_R_high[3], 
@@ -150,7 +171,7 @@ summary_table
 
 #load('joint2_output_mid_parallel.RData')
 
-#joint2_summary_R_mid <- rowMeans(mapply(parallel_summary, simulation_output_joint2_mid[seq(2,100,2)], SIMPLIFY = T))
+#joint2_summary_R_mid <- rowMeans(mapply(parallel_summary, simulation_output_joint2_mid[seq(2,100,2)], MoreArgs = list(type = "single"), SIMPLIFY = T))
 #joint2_summary_R_mid <- data.frame(MAE = joint2_summary_R_mid[1],
  #                                 Correlation = joint2_summary_R_mid[2], 
   #                                MeanENV = joint2_summary_R_mid[3], 
@@ -160,10 +181,60 @@ summary_table
 
 #load('joint2_output_low_parallel.RData')
 
-#joint2_summary_R_low <- rowMeans(mapply(parallel_summary, simulation_output_joint2_low[seq(2,100,2)], SIMPLIFY = T))
+#joint2_summary_R_low <- rowMeans(mapply(parallel_summary, simulation_output_joint2_low[seq(2,100,2)], MoreArgs = list(type = "single"), SIMPLIFY = T))
 #joint2_summary_R_low <- data.frame(MAE = joint2_summary_R_low[1],
  #                                 Correlation = joint2_summary_R_low[2], 
   #                                MeanENV = joint2_summary_R_low[3], 
    #                               LowerENV = joint2_summary_R_low[4], 
     #                              UpperENV = joint2_summary_R_low[5])
 #joint2_summary_R_low
+
+
+#' ## Box plots of everything
+#' 
+#+ warning = FALSE, message = FALSE, error = FALSE, include = TRUE, echo = FALSE
+par(mfrow=c(3,3))
+boxplot(structured_summary_R_low_raw[2,], ylab = "correlation", axes=F, main="low")
+axis(1)
+axis(2, las=1)
+boxplot(structured_summary_R_mid_raw[2,], ylab = "", axes=F, main="mid")
+axis(1)
+boxplot(structured_summary_R_high_raw[2,], ylab = "", axes=F, main="high")
+axis(1)
+boxplot(joint_summary_R_low_raw[2,], ylab = "correlation", axes=F, main="low")
+axis(1)
+axis(2, las=1)
+boxplot(joint_summary_R_mid_raw[2,], ylab = "", axes=F, main="mid")
+axis(1)
+boxplot(joint_summary_R_high_raw[2,], ylab = "", axes=F, main="high")
+axis(1)
+boxplot(jointcov_summary_R_low_raw[2,], ylab = "correlation", axes=F, main="low")
+axis(1)
+axis(2, las=1)
+boxplot(jointcov_summary_R_mid_raw[2,], ylab = "", axes=F, main="mid")
+axis(1)
+boxplot(jointcov_summary_R_high_raw[2,], ylab = "", axes=F, main="high")
+axis(1)
+
+par(mfrow=c(3,3))
+boxplot(structured_summary_R_low_raw[3,], ylab = "env", axes=F, main="low")
+axis(1)
+axis(2, las=1)
+boxplot(structured_summary_R_mid_raw[3,], ylab = "", axes=F, main="mid")
+axis(1)
+boxplot(structured_summary_R_high_raw[3,], ylab = "", axes=F, main="high")
+axis(1)
+boxplot(joint_summary_R_low_raw[3,], ylab = "env", axes=F, main="low")
+axis(1)
+axis(2, las=1)
+boxplot(joint_summary_R_mid_raw[3,], ylab = "", axes=F, main="mid")
+axis(1)
+boxplot(joint_summary_R_high_raw[3,], ylab = "", axes=F, main="high")
+axis(1)
+boxplot(jointcov_summary_R_low_raw[3,], ylab = "env", axes=F, main="low")
+axis(1)
+axis(2, las=1)
+boxplot(jointcov_summary_R_mid_raw[3,], ylab = "", axes=F, main="mid")
+axis(1)
+boxplot(jointcov_summary_R_high_raw[3,], ylab = "", axes=F, main="high")
+axis(1)

@@ -65,7 +65,8 @@ points(thin1$x, thin1$y, pch = 20)#note rescale again - plotting back on origina
 par(mfrow=c(1,1))
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Structured data', asp=1) 
 points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black")
-legend(1.2,2.5,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1))
+par(xpd = TRUE)
+legend(-10,360,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1))
 
 #' ## Run individual data models
 #' 

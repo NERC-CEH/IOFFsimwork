@@ -32,8 +32,7 @@ sd.prd <- result$summary.fitted.values$sd[index.pred.response]
 
 # calculate differences
 source('make_truth_grid.R')
-if(absolute == TRUE){truth_grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='truth', absolute=TRUE)}
-else{truth_grid <- make_truth_grid(c(10,10), dat1, c(dim[1],dim[2]), type='truth', absolute=FALSE)}
+if(absolute == TRUE){truth_grid <- make_truth_grid(resolution, dat1, c(dim[1],dim[2]), type='truth', absolute=TRUE)} else {truth_grid <- make_truth_grid(resolution, dat1, c(dim[1],dim[2]), type='truth', absolute=FALSE)}
 
 if(absolute == TRUE){
   differences <- m.prd-truth_grid # calculate differences
@@ -54,15 +53,15 @@ par(mfrow=c(2,2))
 par(mar = c(5.1, 4.1, 4.1, 3.5))
 # Plot truth on grid scale
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
-             matrix(truth_grid, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(), xlab='', ylab='',main="Averaged truth",asp=1)
+             matrix(truth_grid, ncol=dim[2]/resolution[2], nrow=dim[1]/resolution[1]), col=tim.colors(), xlab='', ylab='',main="Averaged truth",asp=1)
 #predicted mean
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
-           matrix(m.prd, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main="Predicted mean intensity",asp=1)
+           matrix(m.prd, ncol=dim[2]/resolution[2], nrow=dim[1]/resolution[1]), col=tim.colors(),xlab='', ylab='',main="Predicted mean intensity",asp=1)
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
-           matrix(sd.prd, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
+           matrix(sd.prd, ncol=dim[2]/resolution[2], nrow=dim[1]/resolution[1]), col=tim.colors(),xlab='', ylab='',main="Predicted sd intensity",asp=1)
 # relative differences
 image.plot(seq(resolution[1]/2,dim[1],resolution[1]),seq(resolution[2]/2,dim[2],resolution[2]), 
-           matrix(differences, ncol=dim[2]/10, nrow=dim[1]/10), col=tim.colors(),xlab='', ylab='',main=paste0(model_type, " ", method, "\ndifferences"),asp=1)
+           matrix(differences, ncol=dim[2]/resolution[2], nrow=dim[1]/resolution[2]), col=tim.colors(),xlab='', ylab='',main=paste0(model_type, " ", method, "\ndifferences"),asp=1)
 dev.off()
 }
 

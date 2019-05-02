@@ -2,8 +2,10 @@
 
 run_function_multiple <- function(resolution=c(10,10), model_type = c("unstructured", "structured", "joint", "unstructuredcov", "jointcov", "joint2"), unstructured_data=NULL,
                                    structured_data=NULL, dat1,
-                                   plotting = FALSE, summary_results = FALSE, biasfield = NULL){
-
+                                   plotting = FALSE, summary_results = FALSE, biasfield = NULL,
+                                   nsamp = 150, seed = NULL){
+  
+# removing so they can all have same truth
 source("Functions to generate data and sample.R")
 
 if(model_type == "structured"){
@@ -78,5 +80,5 @@ validation_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), join
                                         dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
 }
 
-return(list(validation, validation_r))
+return(list(validation_r, nsamp))
 }

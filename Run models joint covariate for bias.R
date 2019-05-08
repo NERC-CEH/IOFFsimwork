@@ -1,6 +1,6 @@
 ## Models with simulated data
 
-joint_model_cov <- function(structured_data, unstructured_data, dat1, biasfield){
+joint_model_cov <- function(structured_data, unstructured_data, dat1, biasfield, resolution = c(10,10)){
   
   #packages
   library(INLA)
@@ -107,7 +107,7 @@ joint_model_cov <- function(structured_data, unstructured_data, dat1, biasfield)
   # 
   source("Create prediction stack.R")
   
-  join.stack <- create_prediction_stack(stk, c(10,10), biasfield = biasfield, dat1 = dat1, mesh, spde)
+  join.stack <- create_prediction_stack(stk, resolution, biasfield = biasfield, dat1 = dat1, mesh, spde)
   
   
   formulaJ = y ~  interceptA + interceptB + env + bias + f(uns_field, model = spde) + f(str_field, copy = "uns_field", fixed = TRUE) -1

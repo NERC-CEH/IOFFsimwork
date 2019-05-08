@@ -3,7 +3,7 @@
 run_function_multiple <- function(resolution=c(10,10), model_type = c("unstructured", "structured", "joint", "unstructuredcov", "jointcov", "joint2"), unstructured_data=NULL,
                                    structured_data=NULL, dat1,
                                    plotting = FALSE, summary_results = FALSE, biasfield = NULL,
-                                   nsamp = 150, seed = NULL){
+                                   nsamp = NULL, seed = NULL){
   
 # removing so they can all have same truth
 source("Functions to generate data and sample.R")

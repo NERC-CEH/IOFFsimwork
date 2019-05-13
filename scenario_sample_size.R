@@ -26,7 +26,7 @@ cl = makeCluster(4)
 registerDoParallel(cl)
 strt = Sys.time()
 
-simulation_output_structured_v_low = foreach(i=1:50,
+simulation_output_structured_v_low = foreach(i=1:n_runs,
                                            .combine=c,
                                            .multicombine = TRUE,
                                            .packages=c("rgeos", "INLA", "reshape2", "fields"),

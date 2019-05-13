@@ -1,7 +1,7 @@
 #function to generate structured data samples equally split between strata
 
 
-sampleStructured <- function(PPdat, biasfield, nsamp = 50, qsize = 5, plotdat = TRUE){
+sampleStructured <- function(PPdat, biasfield, nsamp = NULL, qsize = NULL, plotdat = TRUE){
   source("Sample from strata.R")
   biasfield$sim2 <- biasfield$sim1 #no extra error added
   

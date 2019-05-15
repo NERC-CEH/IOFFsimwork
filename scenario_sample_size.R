@@ -14,11 +14,11 @@ library(doParallel)
 structured_sample <- c(25,50,100,150,500)
 
 #set number of runs desired here
-n_runs <- 50
+n_runs <- 4
 
 # create a randomly generated string of seeds
-seed <- sample(1:10000000000000,n_runs,replace=F)
-
+#seed <- sample(1:10000000000000,n_runs,replace=F)
+seed <- NULL
 
 
 ### STRUCTURED
@@ -57,8 +57,8 @@ simulation_output_structured_low = foreach(i=1:n_runs,
                                          source("setParams.R")
                                          source("run_function_multiple.R")
                                          run_function_multiple(resolution=c(10,10), model_type="structured", 
-                                                               structured_data = structured_data, dat1 = dat1, 
-                                                               plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                              
+                                                               plotting=FALSE, summary_results=TRUE, 
                                                                nsamp = structured_sample[2], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                        }
 
@@ -81,8 +81,8 @@ simulation_output_structured_mid = foreach(i=1:n_runs,
                                              source("setParams.R")
                                              source("run_function_multiple.R")
                                              run_function_multiple(resolution=c(10,10), model_type="structured", 
-                                                                   structured_data = structured_data, dat1 = dat1, 
-                                                                   plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                                   
+                                                                   plotting=FALSE, summary_results=TRUE,
                                                                    nsamp = structured_sample[3], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                            }
 
@@ -105,8 +105,8 @@ simulation_output_structured_high = foreach(i=1:n_runs,
                                              source("setParams.R")
                                              source("run_function_multiple.R")
                                              run_function_multiple(resolution=c(10,10), model_type="structured", 
-                                                                   structured_data = structured_data, dat1 = dat1, 
-                                                                   plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                                   
+                                                                   plotting=FALSE, summary_results=TRUE,
                                                                    nsamp = structured_sample[4], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                            }
 
@@ -129,8 +129,8 @@ simulation_output_structured_v_high = foreach(i=1:n_runs,
                                               source("setParams.R")
                                               source("run_function_multiple.R")
                                               run_function_multiple(resolution=c(10,10), model_type="structured", 
-                                                                    structured_data = structured_data, dat1 = dat1, 
-                                                                    plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                                   
+                                                                    plotting=FALSE, summary_results=TRUE, 
                                                                     nsamp = structured_sample[5], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                             }
 
@@ -157,8 +157,8 @@ simulation_output_unstructured = foreach(i=1:n_runs,
                                            source("setParams.R")
                                            source("run_function_multiple.R")                                         
                                            run_function_multiple(resolution=c(10,10), model_type="unstructured", 
-                                                                 unstructured_data = unstructured_data, dat1 = dat1, 
-                                                                 plotting=FALSE, summary_results=TRUE, biasfield = biasfield, 
+                                                               
+                                                                 plotting=FALSE, summary_results=TRUE, 
                                                                  seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                          }
 
@@ -184,8 +184,8 @@ simulation_output_joint_v_low = foreach(i=1:n_runs,
                                         source("setParams.R")
                                         source("run_function_multiple.R")                                    
                                         run_function_multiple(resolution=c(10,10), model_type="joint", 
-                                                              unstructured_data = unstructured_data, structured_data = structured_data,dat1 = dat1, 
-                                                              plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                             
+                                                              plotting=FALSE, summary_results=TRUE,
                                                               nsamp = structured_sample[1], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                       }
 
@@ -210,8 +210,8 @@ simulation_output_joint_low = foreach(i=1:n_runs,
                                     source("setParams.R")
                                     source("run_function_multiple.R")                                    
                                     run_function_multiple(resolution=c(10,10), model_type="joint", 
-                                                          unstructured_data = unstructured_data, structured_data = structured_data,dat1 = dat1, 
-                                                          plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                         
+                                                          plotting=FALSE, summary_results=TRUE,
                                                           nsamp = structured_sample[2], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                   }
 
@@ -236,8 +236,8 @@ simulation_output_joint_mid = foreach(i=1:n_runs,
                                         source("setParams.R")
                                         source("run_function_multiple.R")                                    
                                         run_function_multiple(resolution=c(10,10), model_type="joint", 
-                                                              unstructured_data = unstructured_data, structured_data = structured_data,dat1 = dat1, 
-                                                              plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                             
+                                                              plotting=FALSE, summary_results=TRUE, 
                                                               nsamp = structured_sample[3], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                       }
 
@@ -262,8 +262,8 @@ simulation_output_joint_high = foreach(i=1:n_runs,
                                         source("setParams.R")
                                         source("run_function_multiple.R")                                    
                                         run_function_multiple(resolution=c(10,10), model_type="joint", 
-                                                              unstructured_data = unstructured_data, structured_data = structured_data,dat1 = dat1, 
-                                                              plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                             
+                                                              plotting=FALSE, summary_results=TRUE,
                                                               nsamp = structured_sample[4], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                       }
 
@@ -288,8 +288,8 @@ simulation_output_joint_v_high = foreach(i=1:n_runs,
                                          source("setParams.R")
                                          source("run_function_multiple.R")                                    
                                          run_function_multiple(resolution=c(10,10), model_type="joint", 
-                                                               unstructured_data = unstructured_data, structured_data = structured_data,dat1 = dat1, 
-                                                               plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                              
+                                                               plotting=FALSE, summary_results=TRUE, 
                                                                nsamp = structured_sample[5], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                        }
 
@@ -316,8 +316,8 @@ simulation_output_jointcov_v_low = foreach(i=1:n_runs,
                                            source("setParams.R")
                                            source("run_function_multiple.R")                                    
                                            run_function_multiple(resolution=c(10,10), model_type="jointcov", 
-                                                                 unstructured_data = unstructured_data, structured_data = structured_data, dat1 = dat1, 
-                                                                 plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                                 
+                                                                 plotting=FALSE, summary_results=TRUE, 
                                                                  nsamp = structured_sample[1], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                          }
 
@@ -342,8 +342,8 @@ simulation_output_jointcov_low = foreach(i=1:n_runs,
                                        source("setParams.R")
                                        source("run_function_multiple.R")                                    
                                        run_function_multiple(resolution=c(10,10), model_type="jointcov", 
-                                                             unstructured_data = unstructured_data, structured_data = structured_data, dat1 = dat1, 
-                                                             plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                             
+                                                             plotting=FALSE, summary_results=TRUE, 
                                                              nsamp = structured_sample[2], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                      }
 
@@ -368,8 +368,8 @@ simulation_output_jointcov_mid = foreach(i=1:n_runs,
                                            source("setParams.R")
                                            source("run_function_multiple.R")                                    
                                            run_function_multiple(resolution=c(10,10), model_type="jointcov", 
-                                                                 unstructured_data = unstructured_data, structured_data = structured_data, dat1 = dat1, 
-                                                                 plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                                
+                                                                 plotting=FALSE, summary_results=TRUE,
                                                                  nsamp = structured_sample[3], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                          }
 
@@ -394,8 +394,8 @@ simulation_output_jointcov_high = foreach(i=1:n_runs,
                                            source("setParams.R")
                                            source("run_function_multiple.R")                                    
                                            run_function_multiple(resolution=c(10,10), model_type="jointcov", 
-                                                                 unstructured_data = unstructured_data, structured_data = structured_data, dat1 = dat1, 
-                                                                 plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                                  
+                                                                 plotting=FALSE, summary_results=TRUE, 
                                                                  nsamp = structured_sample[4], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                          }
 
@@ -420,8 +420,8 @@ simulation_output_jointcov_v_high = foreach(i=1:n_runs,
                                             source("setParams.R")
                                             source("run_function_multiple.R")                                    
                                             run_function_multiple(resolution=c(10,10), model_type="jointcov", 
-                                                                  unstructured_data = unstructured_data, structured_data = structured_data, dat1 = dat1, 
-                                                                  plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                                
+                                                                  plotting=FALSE, summary_results=TRUE, 
                                                                   nsamp = structured_sample[5], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                           }
 
@@ -447,8 +447,8 @@ simulation_output_joint2_v_low = foreach(i=1:n_runs,
                                          source("setParams.R")
                                          source("run_function_multiple.R")                                    
                                          run_function_multiple(resolution=c(10,10), model_type="joint2", 
-                                                               unstructured_data = unstructured_data, structured_data = structured_data, dat1 = dat1, 
-                                                               plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                               
+                                                               plotting=FALSE, summary_results=TRUE,
                                                                nsamp = structured_sample[1], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                        }
 
@@ -473,8 +473,8 @@ simulation_output_joint2_low = foreach(i=1:n_runs,
                                      source("setParams.R")
                                      source("run_function_multiple.R")                                    
                                      run_function_multiple(resolution=c(10,10), model_type="joint2", 
-                                                           unstructured_data = unstructured_data, structured_data = structured_data, dat1 = dat1, 
-                                                           plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                           
+                                                           plotting=FALSE, summary_results=TRUE, 
                                                            nsamp = structured_sample[2], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                    }
 
@@ -499,8 +499,8 @@ simulation_output_joint2_mid = foreach(i=1:n_runs,
                                      source("setParams.R")
                                      source("run_function_multiple.R")                                    
                                      run_function_multiple(resolution=c(10,10), model_type="joint2", 
-                                                           unstructured_data = unstructured_data, structured_data = structured_data, dat1 = dat1, 
-                                                           plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                           
+                                                           plotting=FALSE, summary_results=TRUE,
                                                            nsamp = structured_sample[3], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                    }
 
@@ -526,8 +526,8 @@ simulation_output_joint2_high = foreach(i=1:n_runs,
                                      nsamp <- structured_sample[3]
                                      source("run_function_multiple.R")                                    
                                      run_function_multiple(resolution=c(10,10), model_type="joint2", 
-                                                           unstructured_data = unstructured_data, structured_data = structured_data, dat1 = dat1, 
-                                                           plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                           
+                                                           plotting=FALSE, summary_results=TRUE,
                                                            nsamp = structured_sample[4], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                    }
 
@@ -553,8 +553,8 @@ simulation_output_joint2_v_high = foreach(i=1:n_runs,
                                           nsamp <- structured_sample[3]
                                           source("run_function_multiple.R")                                    
                                           run_function_multiple(resolution=c(10,10), model_type="joint2", 
-                                                                unstructured_data = unstructured_data, structured_data = structured_data, dat1 = dat1, 
-                                                                plotting=FALSE, summary_results=TRUE, biasfield = biasfield,
+                                                               
+                                                                plotting=FALSE, summary_results=TRUE, 
                                                                 nsamp = structured_sample[5], seed = seed[i],dim = dim, lambda = lambda, env.beta = env.beta, kappa = kappa,  sigma2x = sigma2x, strata = strata,  rows = rows,cols = cols,  probs = probs,  plot = FALSE,  plotdat = FALSE, qsize = qsize  )
                                         }
 

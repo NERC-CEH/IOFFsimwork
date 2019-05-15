@@ -1,5 +1,7 @@
 #' # Evaluation of first scenario run
 #' 
+#' # Try assigning nsamp to global env
+#' 
 #' ## Sample size of structured changes
 #' 
 #' This has so far been run with a different 'truth' for each model. I don't know if this is a problem or something we want to address.
@@ -31,6 +33,7 @@ n_by = 3
 
 load('unstructured_output_parallel.RData')
 
+
 unstructured_summary_R_raw <- mapply(parallel_summary, simulation_output_unstructured[seq(1,n_tot,n_by)],
                                      MoreArgs = list(type = "single"), SIMPLIFY = T)
 unstructured_summary_R <- rowMeans(mapply(parallel_summary, simulation_output_unstructured[seq(1,n_tot,n_by)], 
@@ -47,6 +50,7 @@ unstructured_summary_R <- data.frame(MAE = unstructured_summary_R[1],
 #### Structured model
 load('structured_output_v_high_parallel.RData')
 
+
 structured_summary_R_v_high_raw <- mapply(parallel_summary, simulation_output_structured_v_high[seq(1,12,3)], 
                                         MoreArgs = list(type = "single"), SIMPLIFY = T)
 structured_summary_R_v_high <- rowMeans(structured_summary_R_v_high_raw)
@@ -57,6 +61,7 @@ structured_summary_R_v_high <- data.frame(MAE = structured_summary_R_v_high[1],
                                         UpperENV = structured_summary_R_v_high[5])
 
 load('structured_output_high_parallel.RData')
+
 
 structured_summary_R_high_raw <- mapply(parallel_summary, simulation_output_structured_high[seq(1,n_tot,n_by)], 
                                              MoreArgs = list(type = "single"), SIMPLIFY = T)
@@ -69,6 +74,7 @@ structured_summary_R_high <- data.frame(MAE = structured_summary_R_high[1],
 
 load('structured_output_mid_parallel.RData')
 
+
 structured_summary_R_mid_raw <- mapply(parallel_summary, simulation_output_structured_mid[seq(1,n_tot,n_by)], 
                                         MoreArgs = list(type = "single"), SIMPLIFY = T)
 structured_summary_R_mid <- rowMeans(structured_summary_R_mid_raw)
@@ -79,6 +85,7 @@ structured_summary_R_mid <- data.frame(MAE = structured_summary_R_mid[1],
                                         UpperENV = structured_summary_R_mid[5])
 
 load('structured_output_low_parallel.RData')
+
 
 structured_summary_R_low_raw <- mapply(parallel_summary, simulation_output_structured_low[seq(1,n_tot,n_by)], 
                                         MoreArgs = list(type = "single"), SIMPLIFY = T)
@@ -91,6 +98,7 @@ structured_summary_R_low <- data.frame(MAE = structured_summary_R_low[1],
 
 load('structured_output_v_low_parallel.RData')
 
+
 structured_summary_R_v_low_raw <- mapply(parallel_summary, simulation_output_structured_v_low[seq(1,n_tot,n_by)], 
                                        MoreArgs = list(type = "single"), SIMPLIFY = T)
 structured_summary_R_v_low <- rowMeans(structured_summary_R_v_low_raw)
@@ -102,6 +110,7 @@ structured_summary_R_v_low <- data.frame(MAE = structured_summary_R_v_low[1],
 
 load('joint_output_v_high_parallel.RData')
 
+
 joint_summary_R_v_high_raw <- mapply(parallel_summary, simulation_output_joint_v_high[seq(1,n_tot,n_by)], 
                                    MoreArgs = list(type = "joint"), SIMPLIFY = T)
 joint_summary_R_v_high <- rowMeans(joint_summary_R_v_high_raw)
@@ -112,6 +121,7 @@ joint_summary_R_v_high <- data.frame(MAE = joint_summary_R_v_high[1],
                                    UpperENV = joint_summary_R_v_high[5])
 
 load('joint_output_high_parallel.RData')
+
 
 joint_summary_R_high_raw <- mapply(parallel_summary, simulation_output_joint_high[seq(1,n_tot,n_by)], 
                                         MoreArgs = list(type = "joint"), SIMPLIFY = T)
@@ -125,6 +135,7 @@ joint_summary_R_high <- data.frame(MAE = joint_summary_R_high[1],
 
 load('joint_output_mid_parallel.RData')
 
+
 joint_summary_R_mid_raw <- mapply(parallel_summary, simulation_output_joint_mid[seq(1,n_tot,n_by)], 
                                    MoreArgs = list(type = "joint"), SIMPLIFY = T)
 joint_summary_R_mid <- rowMeans(joint_summary_R_mid_raw)
@@ -135,6 +146,7 @@ joint_summary_R_mid <- data.frame(MAE = joint_summary_R_mid[1],
                                   UpperENV = joint_summary_R_mid[5])
 
 load('joint_output_low_parallel.RData')
+
 
 joint_summary_R_low_raw <- mapply(parallel_summary, simulation_output_joint_low[seq(1,n_tot,n_by)], 
                                    MoreArgs = list(type = "joint"), SIMPLIFY = T)
@@ -147,6 +159,7 @@ joint_summary_R_low <- data.frame(MAE = joint_summary_R_low[1],
 
 load('joint_output_v_low_parallel.RData')
 
+
 joint_summary_R_v_low_raw <- mapply(parallel_summary, simulation_output_joint_v_low[seq(1,n_tot,n_by)], 
                                   MoreArgs = list(type = "joint"), SIMPLIFY = T)
 joint_summary_R_v_low <- rowMeans(joint_summary_R_v_low_raw)
@@ -158,6 +171,7 @@ joint_summary_R_v_low <- data.frame(MAE = joint_summary_R_v_low[1],
 
 load('jointcov_output_v_high_parallel.RData')
 
+
 jointcov_summary_R_v_high_raw <- mapply(parallel_summary, simulation_output_jointcov_v_high[seq(1,n_tot,n_by)], 
                                       MoreArgs = list(type = "joint"), SIMPLIFY = T)
 jointcov_summary_R_v_high <- rowMeans(jointcov_summary_R_v_high_raw)
@@ -168,6 +182,7 @@ jointcov_summary_R_v_high <- data.frame(MAE = jointcov_summary_R_v_high[1],
                                       UpperENV = jointcov_summary_R_v_high[5])
 
 load('jointcov_output_high_parallel.RData')
+
 
 jointcov_summary_R_high_raw <- mapply(parallel_summary, simulation_output_jointcov_high[seq(1,n_tot,n_by)], 
                                    MoreArgs = list(type = "joint"), SIMPLIFY = T)
@@ -192,6 +207,7 @@ jointcov_summary_R_mid <- data.frame(MAE = jointcov_summary_R_mid[1],
 
 load('jointcov_output_low_parallel.RData')
 
+
 jointcov_summary_R_low_raw <- mapply(parallel_summary, simulation_output_jointcov_low[seq(1,n_tot,n_by)], 
                                       MoreArgs = list(type = "joint"), SIMPLIFY = T)
 jointcov_summary_R_low <- rowMeans(jointcov_summary_R_low_raw)
@@ -202,6 +218,7 @@ jointcov_summary_R_low <- data.frame(MAE = jointcov_summary_R_low[1],
                                   UpperENV = jointcov_summary_R_low[5])
 
 load('jointcov_output_v_low_parallel.RData')
+
 
 jointcov_summary_R_v_low_raw <- mapply(parallel_summary, simulation_output_jointcov_v_low[seq(1,n_tot,n_by)], 
                                      MoreArgs = list(type = "joint"), SIMPLIFY = T)

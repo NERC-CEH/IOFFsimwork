@@ -25,6 +25,7 @@ structured_data <- g1$structured_data
 unstructured_data <- g1$unstructured_data
 biasfield <- g1$biasfield
 dat1 <- g1$dat1
+biascov <- g1$biascov
 
 
 
@@ -76,7 +77,7 @@ validation_r <- validation_function(result=mod_4[[2]], resolution=c(10,10), join
   
 if(model_type == "jointcov"){
 source("Run models joint covariate for bias.R")
-mod_5 <- joint_model_cov(structured_data, unstructured_data, dat1, biasfield)
+mod_5 <- joint_model_cov(structured_data, unstructured_data, dat1, biasfield, biascov=biascov)
 
 source("validation_function.R")
 validation <- validation_function(result=mod_5[[2]], resolution=c(10,10), join.stack=mod_5[[1]], model_type="jointcov", 

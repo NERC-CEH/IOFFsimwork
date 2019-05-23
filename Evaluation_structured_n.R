@@ -26,7 +26,7 @@
 #+ warning = FALSE, message = FALSE, error = FALSE, include = TRUE, echo = FALSE
 #### Unstructured model
 source('parallel_summary.R')
-n_runs = 4
+n_runs = 2
 n_tot = n_runs*3
 n_by = 3
 
@@ -51,7 +51,7 @@ unstructured_summary_R <- data.frame(MAE = unstructured_summary_R[1],
 load('structured_output_v_high_parallel.RData')
 
 
-structured_summary_R_v_high_raw <- mapply(parallel_summary, simulation_output_structured_v_high[seq(1,12,3)], 
+structured_summary_R_v_high_raw <- mapply(parallel_summary, simulation_output_structured_v_high[seq(1,n_tot,n_by)], 
                                         MoreArgs = list(type = "single"), SIMPLIFY = T)
 structured_summary_R_v_high <- rowMeans(structured_summary_R_v_high_raw)
 structured_summary_R_v_high <- data.frame(MAE = structured_summary_R_v_high[1],

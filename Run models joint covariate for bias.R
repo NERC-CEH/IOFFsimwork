@@ -1,6 +1,6 @@
 ## Models with simulated data
 
-joint_model_cov <- function(structured_data, unstructured_data, dat1, biasfield, resolution = c(10,10)){
+joint_model_cov <- function(structured_data, unstructured_data, dat1, biasfield, resolution = c(10,10), biascov){
   
   #packages
   library(INLA)

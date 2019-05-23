@@ -77,7 +77,7 @@ source("sampleStructured.R")
 
 structured_data <- sampleStructured(dat1, biasfield, nsamp = nsamp, plotdat = plotdat, qsize = qsize)
   
-return(list(structured_data = structured_data, unstructured_data = unstructured_data, biasfield = biasfield, dat1 = dat1))
+return(list(structured_data = structured_data, unstructured_data = unstructured_data, biasfield = biasfield, dat1 = dat1, biascov = biascov))
 }
 
 

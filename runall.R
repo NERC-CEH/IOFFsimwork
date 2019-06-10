@@ -39,6 +39,16 @@ source("setParams.R")
 #+ warning = FALSE, message = FALSE, error = FALSE, include = FALSE
 source("Functions to generate data and sample.R")
 
+g1 <- genDataFunctions(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x, strata = strata, rows = rows, cols = cols, probs = probs, nsamp = nsamp, qsize = 1)
+
+structured_data <- g1$structured_data
+unstructured_data <- g1$unstructured_data
+biasfield <- g1$biasfield
+dat1 <- g1$dat1
+biascov <- g1$biascov
+strata1 <- g1$strata1
+
+
 #' Visualise the random field and covariate pattern
 #+ echo = FALSE 
 par(mfrow=c(1,3)) 
@@ -58,7 +68,7 @@ legend(110,300, fill = unique(strata1$stratum), legend = probs, title = "Probabi
 #+ echo = FALSE 
 par(mfrow=c(1,1))
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Thinned unstructured data', asp=1) 
-points(thin1$x, thin1$y, pch = 20)#note rescale again - plotting back on original
+points(unstructured_data$x, unstructured_data$y, pch = 20)#note rescale again - plotting back on original
 
 #' Visualise structured data
 #+ echo = FALSE  

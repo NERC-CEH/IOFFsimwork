@@ -12,7 +12,7 @@
 #' - environmental covariate coefficient of 1.2
 #' - scale parameter kappa for matern covariance of 0.05  
 #' - variance parameter sigma2x of matern covariance of 2  
-#' - mean log intensity of point process of -3  
+#' - mean log intensity of point process of 1  
 #' - 150 structured samples
 #' - probability of sampling strata rep(c(0.5, 0.3, 0.1, 0.05, 0.01),5) 
 #' - qsize of 1
@@ -26,10 +26,9 @@
 #+ warning = FALSE, message = FALSE, error = FALSE, include = TRUE, echo = FALSE
 #### Unstructured model
 source('parallel_summary.R')
-n_runs = 500
-n_tot = n_runs*3
-n_by = 3
-
+n_runs = 50
+n_by = 4
+n_tot = n_runs*n_by
 
 load('unstructured_output_parallel.RData')
 
@@ -103,7 +102,7 @@ structured_summary_R_mid <- data.frame(MAE = structured_summary_R_mid[1],
                                         LowerENV = structured_summary_R_mid[4], 
                                         UpperENV = structured_summary_R_mid[5])
 
-load('structured_output_low_parallel.RData')
+load('structured_output_low_parallel_TEST.RData')
 
 
 structured_summary_R_low_raw <- mapply(parallel_summary, simulation_output_structured_low[seq(1,n_tot,n_by)], 

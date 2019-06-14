@@ -14,7 +14,7 @@ library(doParallel)
 structured_sample <- c(26,50,100,150,500)
 
 #set number of runs desired here
-n_runs <- 500
+n_runs <- 2
 
 # create a randomly generated string of seeds
 # seed must be integer

@@ -34,6 +34,8 @@ n_by = 3
 load('unstructured_output_parallel.RData')
 
 library(matrixStats)
+library(RColorBrewer)
+library(ggplot2)
 
 unstructured_summary_R_raw <- mapply(parallel_summary, simulation_output_unstructured[seq(1,n_tot,n_by)],
                                      MoreArgs = list(type = "single"), SIMPLIFY = T)
@@ -446,7 +448,7 @@ correlation_data <- data.frame(correlation = c(unstructured_summary_R_raw[2,],
                                group2 = c(rep("Unstructured \nonly", n_runs), 
                                           rep("Structured \nonly", n_runs*5),
                                           rep("Joint", n_runs*5),
-                                          rep("Joint with \nenvironmental \ncovariate", n_runs*5),
+                                          rep("Joint with \nbias \ncovariate", n_runs*5),
                                           rep("Joint with \nsecond \nspatial field", n_runs*5)))
 # change levels of factor
 correlation_data$group <- factor(correlation_data$group, level = c("unstructured",
@@ -465,7 +467,7 @@ correlation_data$group <- factor(correlation_data$group, level = c("unstructured
 correlation_data$group2 <- factor(correlation_data$group2, level = c("Unstructured \nonly", 
                                                                      "Structured \nonly", 
                                                                      "Joint",
-                                                                    "Joint with \nenvironmental \ncovariate",
+                                                                    "Joint with \nbias \ncovariate",
                                                                     "Joint with \nsecond \nspatial field"))
 
 
@@ -474,14 +476,14 @@ manual_colours <- brewer.pal(5, "Paired")
 Correlation <- ggplot(correlation_data, aes(group, correlation))+
   scale_fill_manual(values=manual_colours, name = "",
                     labels = c("Unstructured only", "Structured only", "Joint",
-                               "Joint with \nenvironmental covariate", "Joint with \nsecond spatial field"))+
+                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
   geom_violin(aes(fill=as.factor(group2)), trim=FALSE)+
   geom_boxplot(width=0.1)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Structured sample size")+
   ylab("Correlation between prediction and truth")+
-  facet_wrap(.~as.factor(group2), nrow=1, scales="free_x")+
+  facet_wrap(~as.factor(group2), nrow=1, scales="free_x")+
   scale_x_discrete(labels=c("unstructured" = "", "structured_v_low" = "26",
                             "structured_low" = "50", "structured_mid" = "100", 
                             "structured_high" = "150", "structured_v_high" = "500",
@@ -547,7 +549,7 @@ environment_data <- data.frame(environment = c(unstructured_summary_R_raw[3,],
                                group2 = c(rep("Unstructured \nonly", n_runs), 
                                           rep("Structured \nonly", n_runs*5),
                                           rep("Joint", n_runs*5),
-                                          rep("Joint with \nenvironmental \ncovariate", n_runs*5),
+                                          rep("Joint with \nbias \ncovariate", n_runs*5),
                                           rep("Joint with \nsecond \nspatial field", n_runs*5)),
                                line = 0.3)
 # change levels of factor
@@ -567,13 +569,13 @@ environment_data$group <- factor(environment_data$group, level = c("unstructured
 environment_data$group2 <- factor(environment_data$group2, level = c("Unstructured \nonly", 
                                                                      "Structured \nonly", 
                                                                      "Joint",
-                                                                     "Joint with \nenvironmental \ncovariate",
+                                                                     "Joint with \nbias \ncovariate",
                                                                      "Joint with \nsecond \nspatial field"))
 
 Environment <- ggplot(environment_data, aes(group, environment))+
   scale_fill_manual(values=manual_colours, name = "",
                     labels = c("Unstructured only", "Structured only", "Joint",
-                               "Joint with \nenvironmental covariate", "Joint with \nsecond spatial field"))+
+                               "Joint with \nbias covariate", "Joint with \nsecond spatial field"))+
   geom_violin(aes(fill=as.factor(group2)), trim=FALSE)+
   ylim(c(-10,50))+
   geom_boxplot(width=0.1)+
@@ -581,7 +583,7 @@ Environment <- ggplot(environment_data, aes(group, environment))+
   theme(legend.position = "none")+
   xlab("Structured sample size")+
   ylab("Mean estimate of environment coefficient")+
-  facet_wrap(.~as.factor(group2), nrow=1, scales="free_x")+
+  facet_wrap(~as.factor(group2), nrow=1, scales="free_x")+
   scale_x_discrete(labels=c("unstructured" = "", "structured_v_low" = "26",
                             "structured_low" = "50", "structured_mid" = "100", 
                             "structured_high" = "150", "structured_v_high" = "500",

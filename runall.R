@@ -4,6 +4,8 @@
 #' 
 source("setParams.R")
 
+library(viridis)
+
 #' The default parameters are as follows:
 #' 
 #' - simulation is conducted on a grid of 300*300  
@@ -61,8 +63,9 @@ image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(biascov)), main='Bias cova
 #+ echo = FALSE 
 par(mfrow=c(1,1), xpd = TRUE) 
 par(mar=c(4,4,4,7))
-plot(strata1$y ~ strata1$x, col = strata1$stratum)
-legend(110,300, fill = unique(strata1$stratum), legend = probs, title = "Probability")
+palette(viridis(50))
+plot(biasfield$y ~ biasfield$x, col = biasfield$stratprobs*100)
+legend(330,300, col = c(50,40,30,20,10), pch = 20, legend = c("0.4-0.5", "0.3-0.4", "0.2-0.3", "0.1-0.2", "0.01-0.1"), title = "Probability")
 
 #' Visualise thinned unstructured data
 #+ echo = FALSE 

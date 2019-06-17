@@ -14,7 +14,7 @@ library(doParallel)
 structured_sample <- c(26,50,100,150,500)
 
 #set number of runs desired here
-n_runs <- 500
+n_runs <- 50
 
 # create a randomly generated string of seeds
 # seed must be integer
@@ -75,7 +75,7 @@ simulation_output_structured_low = foreach(i=1:n_runs,
 stopCluster(cl)
 print(Sys.time()-strt)
 
-save(simulation_output_structured_low, file="structured_output_low_parallel.RData")
+save(simulation_output_structured_low, file="structured_output_low_parallel_TEST.RData")
 
 cl = makeCluster(4)
 registerDoParallel(cl)

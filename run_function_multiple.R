@@ -26,7 +26,7 @@ unstructured_data <- g1$unstructured_data
 biasfield <- g1$biasfield
 dat1 <- g1$dat1
 biascov <- g1$biascov
-
+num_presence <- sum(structured_data$presence)
 
 
 if(model_type == "structured"){
@@ -101,5 +101,5 @@ validation_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), join
                                         dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
 }
 
-return(list(validation_r, nsamp, structured_data))
+return(list(validation_r, nsamp, structured_data, num_presence))
 }

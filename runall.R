@@ -170,7 +170,7 @@ validation_4_r <- validation_function(result=mod_4[[2]], resolution=c(10,10), jo
 
 #joint model (covariate on bias)
 source("Run models joint covariate for bias.R")
-mod_5 <- joint_model_cov(structured_data, unstructured_data, dat1, biasfield)
+mod_5 <- joint_model_cov(structured_data, unstructured_data, dat1, biasfield, resolution = c(10,10), biascov = biascov)
 source("validation_function.R")
 validation_5 <- validation_function(result=mod_5[[2]], resolution=c(10,10), join.stack=mod_5[[1]], model_type="jointcov", 
                                     unstructured_data = unstructured_data, structured_data = structured_data,
@@ -192,69 +192,33 @@ validation_6_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), jo
                                     dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
 
 
-#' ### Unstructured model with second spatial field
-#' 
-#+ warning = FALSE, message = FALSE, error = FALSE
-source("Run models unstructured second field.R")
-mod_7 <- unstructured_model_sf(unstructured_data, dat1, biasfield, dim = dim, plotting = TRUE)
-source("validation_function.R")
-validation_7 <- validation_function(result=mod_7[[2]], resolution=c(10,10), join.stack=mod_7[[1]], model_type="unstructuredsf", 
-                                    unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
-validation_7_r <- validation_function(result=mod_7[[2]], resolution=c(10,10), join.stack=mod_7[[1]], model_type="unstructuredsf", 
-                                      unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=FALSE, dim = dim, plotting = TRUE)
-
-
 
 #note these are now from the relative validation
 
+
+## Compare Mean Absolute Error between models
 validation_1_r$'Proto-table'
 validation_2_r$'Proto-table'
 validation_3_r$'Proto-table'
 validation_4_r$'Proto-table'
 validation_5_r$'Proto-table'
 validation_6_r$'Proto-table'
-validation_7_r$'Proto-table'
 
+## Compare estimation of environmental covariate between models
 mod_1$result$summary.fixed
 mod_2$result$summary.fixed
 mod_3$result$summary.fixed
 mod_4$result$summary.fixed
 mod_5$result$summary.fixed
 mod_6$result$summary.fixed
-mod_7$result$summary.fixed
 
+## Compare correlation of true vs estimated relative intensities
 validation_1_r$correlation
 validation_2_r$correlation
 validation_3_r$correlation
 validation_4_r$correlation
 validation_5_r$correlation
 validation_6_r$correlation
-validation_7_r$correlation
-
-
-# #relative validation
-# 
-# source("validation_function.R")
-# validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
-#                                     structured_data = structured_data, dat1 = dat1, plot=T, summary_results=T, qsize = 5, method = "relative", dim = dim)
-# 
-# validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
-#                                     unstructured_data = unstructured_data, dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
-# 
-# 
-# validation_3_r <- validation_function(result=mod_joint[[2]], resolution=c(10,10), join.stack=mod_joint[[1]], model_type="joint", 
-#                                     unstructured_data = unstructured_data, structured_data = structured_data,
-#                                     dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
-# 
-# 
-# validation_4_r <- validation_function(result=mod_joint2[[2]], resolution=c(10,10), join.stack=mod_joint2[[1]], model_type="joint2", 
-#                                     unstructured_data = unstructured_data, structured_data = structured_data,
-#                                     dat1 = dat1, plot=T, summary_results=T, method = "relative", dim = dim)
-# 
-# validation_1_r$'Proto-table'
-# validation_2_r$'Proto-table'
-# validation_3_r$'Proto-table'
-# validation_4_r$'Proto-table'
 
 
 

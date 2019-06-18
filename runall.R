@@ -19,7 +19,9 @@ source("setParams.R")
 #' Here we can change default parameters:
 #' 
 #' e.g. we want to simulate a point process with a smaller mean intensity
-#' 
+
+lambda <- -3
+
 #' ## Generate data from parameters
 
 #' 

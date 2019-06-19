@@ -22,7 +22,7 @@ addSpatialBias <- function(strata = strata, maxprob = NULL, correlated = FALSE){
   }
   
   covar_levels <- length(unique(strata$x))
-  covar_unique <- seq(1,0,length.out = covar_levels)
+  covar_unique <- seq(0.55,0.05,length.out = covar_levels)
   #lookup_cov <- data.frame(probs = sort(unique(probs)), covar_unique = sort(covar_unique))
   
   #lookup$covariate <- lookup_cov$covar_unique[match(lookup$probs, lookup_cov$probs)]
@@ -31,11 +31,11 @@ addSpatialBias <- function(strata = strata, maxprob = NULL, correlated = FALSE){
   #add probabilites to strata output
   
   for(i in 1:nstrata){
-    strata$stratprobs[strata$stratum == i] <- lookup$probs[i]
+    strata$covariate[strata$stratum == i] <- lookup$probs[i]
     #strata$covariate[strata$stratum == i] <- lookup$covariate[i]
   }
   for(j in 1:covar_levels){
-    strata$covariate[strata$x == j] <- covar_unique[j]
+    strata$stratprobs[strata$x == j] <- covar_unique[j]
   }
   
   

@@ -12,8 +12,8 @@ addSpatialBias <- function(strata = strata, maxprob = NULL, correlated = FALSE){
   
   lookup <- data.frame(stratum = 1:nstrata, probs = NA)
   
-  #hard code for example
-  probs <- rep(c(0.5, 0.3, 0.1, 0.05, 0.01),5)
+  #hard code for example - change to linear trend but as strata
+  probs <- rep(c(0.5, 0.4, 0.3, 0.2, 0.1),5)
   
   if(is.null(probs)){
     lookup$probs <- runif(nrow(lookup), min = 0.1, max = 0.9)

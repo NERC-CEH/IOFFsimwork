@@ -14,7 +14,8 @@ addSpatialBias <- function(strata = strata, maxprob = NULL, correlated = FALSE){
   
   
   if (correlated == FALSE){
-    probseq <-  exp(seq(log(maxprob), log(minprob), length.out = dim[1]))
+    #probseq <-  exp(seq(log(maxprob), log(minprob), length.out = dim[1]))
+    probseq <-  seq(maxprob, minprob, length.out = dim[1])#linear
     lookup <- data.frame(grid = 1:dim[1], probs = probseq)
     
     n     <- dim[1]                    # length of vector
@@ -45,7 +46,8 @@ addSpatialBias <- function(strata = strata, maxprob = NULL, correlated = FALSE){
   }
   
   if (correlated == TRUE){
-    probseq <-  exp(seq(log(maxprob), log(minprob), length.out = dim[2]))
+    #probseq <-  exp(seq(log(maxprob), log(minprob), length.out = dim[1]))
+    probseq <-  seq(maxprob, minprob, length.out = dim[1])#linear
     lookup <- data.frame(grid = dim[2]:1, probs = probseq)#positively correlated
     
     #define new variable for covariate to explain bias - correlated with true sampling probability

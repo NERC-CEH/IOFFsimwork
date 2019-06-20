@@ -6,7 +6,8 @@ source("setParams.R")
 
 library(viridis)
 
-lambda <- -3
+lambda <- -3 #manageable number
+#env.beta <- 3 #stronger env effect
 
 #' The default parameters are as follows:
 #' 
@@ -124,15 +125,15 @@ legend(-10,360,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 #' ### Structured model 
 #' 
 # #+ warning = FALSE, message = FALSE, error = FALSE, figure.align = "center"
-# source("Run models structured.R")
-# mod_1 <- structured_model(structured_data, dat1, biasfield, plotting = TRUE)
-# source("validation_function.R")
-# validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
-#                                     structured_data = structured_data, dat1 = dat1, summary_results=T, qsize = 1, absolute=TRUE, dim = dim, plotting = TRUE)
-# validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured", 
-#                                       structured_data = structured_data, dat1 = dat1, summary_results=T, qsize = 1, absolute=FALSE, dim = dim, plotting = TRUE)
+source("Run models structured.R")
+mod_1 <- structured_model(structured_data, dat1, biasfield, plotting = TRUE)
+source("validation_function.R")
+validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured",
+                                    structured_data = structured_data, dat1 = dat1, summary_results=T, qsize = 1, absolute=TRUE, dim = dim, plotting = TRUE)
+validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured",
+                                      structured_data = structured_data, dat1 = dat1, summary_results=T, qsize = 1, absolute=FALSE, dim = dim, plotting = TRUE)
 
-#' ### Unstructured model 
+#' ### Unstructured model
 #' 
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models.R")
@@ -145,20 +146,20 @@ validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), jo
 
 
 
-#' 
-#' #' ### Joint model 
-#' #' 
-#' #+ warning = FALSE, message = FALSE, error = FALSE
-#' #joint model (no covariate on bias)
-#' source("Run models joint.R")
-#' mod_3 <- joint_model(structured_data, unstructured_data, dat1, biasfield)
-#' source("validation_function.R")
-#' validation_3 <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_3[[1]], model_type="joint", 
-#'                                     unstructured_data = unstructured_data, structured_data = structured_data,
-#'                                     dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
-#' validation_3_r <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_3[[1]], model_type="joint", 
-#'                                       unstructured_data = unstructured_data, structured_data = structured_data,
-#'                                       dat1 = dat1, summary_results=T, absolute=FALSE, dim = dim, plotting = TRUE)
+
+#' ### Joint model
+#'
+#+ warning = FALSE, message = FALSE, error = FALSE
+#joint model (no covariate on bias)
+source("Run models joint.R")
+mod_3 <- joint_model(structured_data, unstructured_data, dat1, biasfield)
+source("validation_function.R")
+validation_3 <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_3[[1]], model_type="joint",
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
+validation_3_r <- validation_function(result=mod_3[[2]], resolution=c(10,10), join.stack=mod_3[[1]], model_type="joint",
+                                      unstructured_data = unstructured_data, structured_data = structured_data,
+                                      dat1 = dat1, summary_results=T, absolute=FALSE, dim = dim, plotting = TRUE)
 
 
 #' ### Unstructured model with covariate for bias
@@ -172,58 +173,58 @@ validation_4 <- validation_function(result=mod_4[[2]], resolution=c(10,10), join
 validation_4_r <- validation_function(result=mod_4[[2]], resolution=c(10,10), join.stack=mod_4[[1]], model_type="unstructuredcov", 
                                        unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=FALSE, dim = dim, plotting = TRUE)
 
-# 
-# #joint model (covariate on bias)
-# source("Run models joint covariate for bias.R")
-# mod_5 <- joint_model_cov(structured_data, unstructured_data, dat1, biasfield, resolution = c(10,10), biascov = biascov)
-# source("validation_function.R")
-# validation_5 <- validation_function(result=mod_5[[2]], resolution=c(10,10), join.stack=mod_5[[1]], model_type="jointcov", 
-#                                     unstructured_data = unstructured_data, structured_data = structured_data,
-#                                     dat1 = dat1, summary_results=T, absolute = TRUE, dim = dim, plotting = TRUE)
-# validation_5_r <- validation_function(result=mod_5[[2]], resolution=c(10,10), join.stack=mod_5[[1]], model_type="jointcov", 
-#                                     unstructured_data = unstructured_data, structured_data = structured_data,
-#                                     dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
-# 
-# 
-# ##joint model with second spatial field
-# source("Run models joint second field.R")
-# mod_6 <- joint_model2(structured_data, unstructured_data, dat1, biasfield)
-# source("validation_function.R")
-# validation_6 <- validation_function(result=mod_6[[2]], resolution=c(10,10), join.stack=mod_6[[1]], model_type="joint2", 
-#                                     unstructured_data = unstructured_data, structured_data = structured_data,
-#                                     dat1 = dat1, summary_results=T, absolute = TRUE, dim = dim, plotting = TRUE)
-# validation_6_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), join.stack=mod_6[[1]], model_type="joint2", 
-#                                     unstructured_data = unstructured_data, structured_data = structured_data,
-#                                     dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
-# 
+#
+#joint model (covariate on bias)
+source("Run models joint covariate for bias.R")
+mod_5 <- joint_model_cov(structured_data, unstructured_data, dat1, biasfield, resolution = c(10,10), biascov = biascov)
+source("validation_function.R")
+validation_5 <- validation_function(result=mod_5[[2]], resolution=c(10,10), join.stack=mod_5[[1]], model_type="jointcov",
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, summary_results=T, absolute = TRUE, dim = dim, plotting = TRUE)
+validation_5_r <- validation_function(result=mod_5[[2]], resolution=c(10,10), join.stack=mod_5[[1]], model_type="jointcov",
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
+
+
+##joint model with second spatial field
+source("Run models joint second field.R")
+mod_6 <- joint_model2(structured_data, unstructured_data, dat1, biasfield)
+source("validation_function.R")
+validation_6 <- validation_function(result=mod_6[[2]], resolution=c(10,10), join.stack=mod_6[[1]], model_type="joint2",
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, summary_results=T, absolute = TRUE, dim = dim, plotting = TRUE)
+validation_6_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), join.stack=mod_6[[1]], model_type="joint2",
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
+
 
 
 #note these are now from the relative validation
 
 
 ## Compare Mean Absolute Error between models
-# validation_1_r$'Proto-table'
+validation_1_r$'Proto-table'
 validation_2_r$'Proto-table'
-# validation_3_r$'Proto-table'
+validation_3_r$'Proto-table'
 validation_4_r$'Proto-table'
-# validation_5_r$'Proto-table'
-# validation_6_r$'Proto-table'
-# 
+validation_5_r$'Proto-table'
+validation_6_r$'Proto-table'
+#
 # ## Compare estimation of environmental covariate between models
-# mod_1$result$summary.fixed
+mod_1$result$summary.fixed
 mod_2$result$summary.fixed
-# mod_3$result$summary.fixed
+mod_3$result$summary.fixed
 mod_4$result$summary.fixed
-# mod_5$result$summary.fixed
-# mod_6$result$summary.fixed
+mod_5$result$summary.fixed
+mod_6$result$summary.fixed
 
 ## Compare correlation of true vs estimated relative intensities
-# validation_1_r$correlation
+validation_1_r$correlation
 validation_2_r$correlation
-# validation_3_r$correlation
+validation_3_r$correlation
 validation_4_r$correlation
-# validation_5_r$correlation
-# validation_6_r$correlation
+validation_5_r$correlation
+validation_6_r$correlation
 
 
 

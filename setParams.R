@@ -2,7 +2,7 @@
 
 #genData
 dim = c(300,300)
-lambda = 0.5
+lambda = -3
 env.beta = 1.2
 plotdat = TRUE
 seed = NULL

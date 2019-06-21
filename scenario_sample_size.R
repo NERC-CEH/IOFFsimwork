@@ -1,20 +1,13 @@
-#### SAMPLE SIZE SCENARIO!
+#### Code to run scenarios
 
 # run all multiple times and save output
 
-# need to decide what output to save
-# - the estimates of coefficients (untransformed)
-# - intensity at each grid square
-# - truth at each grid square
-# - label all and save as a list -> can concatenate in foreach loop
-
+# load packages needed to run in parallel
 library(foreach)
 library(doParallel)
 
-structured_sample <- c(26,50,100,150,500)
-
-#set number of runs desired here
-n_runs <- 50
+# choose number of times to run
+n_runs <- 2
 
 # create a randomly generated string of seeds
 # seed must be integer
@@ -22,33 +15,44 @@ seed <- sample(round(1:100000000),n_runs,replace=F)
 #seed <- NULL
 
 
-### STRUCTURED
-cl = makeCluster(4)
-registerDoParallel(cl)
-strt = Sys.time()
+# set up the scenario with parameters that need to be changed
 
-simulation_output_structured_v_low = foreach(i=1:n_runs,
-                                           .combine=c,
-                                           .multicombine = TRUE,
-                                           .packages=c("rgeos", "INLA", "reshape2", "fields"),
-                                           .errorhandling = 'pass') %dopar% { 
-                                             # set parameters - fixed for all runs
-                                             source("setParams.R")
-                                             source("run_function_multiple.R")
-                                             run_function_multiple(resolution=c(10,10), model_type="structured", 
-                                                                   plotting=FALSE, summary_results=TRUE,  
-                                                                   nsamp = structured_sample[1], seed = seed[i], 
-                                                                   dim = dim, lambda = lambda, env.beta = env.beta, 
-                                                                   kappa = kappa,  sigma2x = sigma2x, strata = strata,  
-                                                                   rows = rows,cols = cols,  probs = probs,  
-                                                                   plot = FALSE, plotdat = FALSE, qsize = qsize                                    
-            )
-                                           }
+# set parameters
+source("setParams.R")
+source("run_scenario.R")
 
-stopCluster(cl)
-print(Sys.time()-strt)
+# change those that need changing
+## STRUCTURED SAMPLE SIZE
+structured_sample_size <- seq(50,500,50) # 10 scenarios
 
-save(simulation_output_structured_v_low, file="structured_output_v_low_parallel.RData")
+mapply(FUN = run_scenario,
+       nsamp = structured_sample_size, 
+       parameter = structured_sample_size,
+       MoreArgs = list(
+             model_type="structured", 
+             plotting=FALSE, 
+             summary_results=FALSE,  
+             seed = seed, 
+             plot = FALSE, 
+             n_runs = n_runs,
+             scenario_name = "test",
+             dim = c(300,300),
+             lambda = -3,
+             env.beta = 1.2,
+             plotdat = TRUE,
+             sigma2x = 0.5,
+             kappa = 0.05,
+             strata = 25,
+             rows = 5,
+             cols = 5,
+             probs = 0.5,
+             qsize = 1,
+             rho = 0.99,
+             resolution = c(10,10)))
+
+load('test500.RData')
+
+
 
 
 cl = makeCluster(4)

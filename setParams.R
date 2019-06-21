@@ -24,3 +24,10 @@ nsamp = 150
 plotdat = TRUE
 qsize = 1
 
+#correlation between bias and environment
+rho = 0.99
+correlation = FALSE
+
+#general
+resolution = c(10,10)
+

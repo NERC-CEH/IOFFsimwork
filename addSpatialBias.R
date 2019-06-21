@@ -6,7 +6,10 @@
 
 
 
-addSpatialBias <- function(strata = strata, maxprob = NULL, correlated = FALSE){
+addSpatialBias <- function(strata = strata, 
+                           maxprob = NULL, 
+                           correlated = FALSE,
+                           rho = NULL){ # included rho as an input so we can change it
   
   
   dim = c(max(strata$x), max(strata$y))
@@ -19,7 +22,7 @@ addSpatialBias <- function(strata = strata, maxprob = NULL, correlated = FALSE){
     lookup <- data.frame(grid = 1:dim[1], probs = probseq)
     
     n     <- dim[1]                    # length of vector
-    rho   <- 0.99                   # desired correlation = cos(angle)
+    rho   <- rho                   # desired correlation = cos(angle)
     theta <- acos(rho)             # corresponding angle
     x1    <- probseq       # fixed given data
     x2    <- rnorm(n, 2, 0.5)      # new random data

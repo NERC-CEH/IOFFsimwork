@@ -70,11 +70,19 @@ Scripts sourced by [Functions to generate data and sample.R](https://github.com/
 
 [run models joint second field.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/run%20models%20joint%20second%20field.R) : This joint model does not include a covariate on the bias in the unstructured data but instead includes a second spatial field with the aim that this spatial field can capture residual variation in the unstructured data that is not shared with the structured data.
 
+[validation_function.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/validation_function.R) : This function runs our validation procedures on any fitted model. Outputs produced are: PLOT - of the truth inc data, predicted mean intensity, standard deviation of predicted intensity, and the relative differences between estimate and truth. SUMMARY_RESULTS - the beginnings of an output table. List includes MAE, model name, all differences, the worst performing grid squares, and the best (i.e. lowest relative difference).
+
+## Parallel code
+
+Scripts that run models in a parallel format.
+
 [run_function_multiple.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/run_function_multiple.R) : This function has the option to run structured, unstructured or joint models with validation steps and returns absolute and relative validation as well as truth and predicted datasets.
 
-[run_all_multiple.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/run_all_multiple.R) : Script to run in parallel many realisations of each model.
+[Evaluation_structured_n.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Evaluation_structured_n.R) : This script runs all models for the structured sample size scenario, produces figures and tables. Will be reworked to be a function to run any of the scenarios we want.
 
-[validation_function.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/validation_function.R) : This function runs our validation procedures on any fitted model. Outputs produced are: PLOT - of the truth inc data, predicted mean intensity, standard deviation of predicted intensity, and the relative differences between estimate and truth. SUMMARY_RESULTS - the beginnings of an output table. List includes RMSE, model name, all differences, the worst performing grid squares, and the best (i.e. lowest relative difference).
+[parallel_summary.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/parallel_summary.R) : This script creates a summary from the output from the run_function_multiple.R script.
+
+[scenario_sample_size.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/scenario_sample_size.R) : This script runs and saves the output from all models for the structured sample size scenario. 
 
 ## Steps to code
 
@@ -119,9 +127,6 @@ These are now lower priority:
 - [x] Extract and compare parameters (covariate effects...) 
 - [x] Mean absolute error by grid
 - [x] Correlation by grid
-- [ ] Cross validation by grid (on?)  
-- [ ] Cross validation by grid (on?)  
-- [ ] Cross validation by AUC  
 - [x] Visual bias inspection  
  
 

@@ -1,7 +1,11 @@
 # the following needs to be repeated 100 times
 
-run_function_multiple <- function(resolution=c(10,10), model_type = c("unstructured", "structured", "joint", "unstructuredcov", "jointcov", "joint2"),   plotting = FALSE, summary_results = FALSE, 
-   nsamp = NULL, seed = NULL, dim = NULL, lambda = NULL, env.beta = NULL, kappa = NULL,  sigma2x = NULL, strata = NULL,  rows = NULL, cols = NULL,  probs = NULL,  plot = FALSE,  plotdat = FALSE, qsize = NULL){
+run_function_multiple <- function(resolution=c(10,10), 
+   model_type = c("unstructured", "structured", "joint", "unstructuredcov", "jointcov", "joint2"),   
+   plotting = FALSE, summary_results = FALSE, 
+   nsamp = NULL, seed = NULL, dim = NULL, lambda = NULL, env.beta = NULL,
+   kappa = NULL,  sigma2x = NULL, strata = NULL,  rows = NULL, cols = NULL,  
+   probs = NULL,  plot = FALSE,  plotdat = FALSE, qsize = NULL, rho = NULL){
 
   
 # removing so they can all have same truth
@@ -19,7 +23,8 @@ g1 <- genDataFunctions(dim = dim,
                  nsamp = nsamp,
                  plot = FALSE,
                  plotdat = FALSE,
-                 qsize = qsize)
+                 qsize = qsize, 
+                 rho = rho)
 
 structured_data <- g1$structured_data
 unstructured_data <- g1$unstructured_data
@@ -48,6 +53,17 @@ source("validation_function.R")
 validation <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
                                     unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = FALSE)
 validation_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
+                                      unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=FALSE, plotting = FALSE, dim = dim)
+}
+
+if(model_type == "unstructuredcov"){
+  source("Run models unstructured bias covariate.R")
+  mod_2 <- unstructured_model_cov(unstructured_data, dat1, biasfield, dim = dim, plotting = FALSE)
+  
+  source("validation_function.R")
+  validation <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
+                                    unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = FALSE)
+  validation_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
                                       unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=FALSE, plotting = FALSE, dim = dim)
 }
   

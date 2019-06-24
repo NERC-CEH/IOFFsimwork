@@ -27,7 +27,7 @@
 #### Unstructured model
 source('parallel_summary.R')
 n_runs = 50
-n_by = 4
+n_by = 3
 n_tot = n_runs*n_by
 
 load('unstructured_output_parallel.RData')
@@ -103,7 +103,8 @@ structured_summary_R_mid <- data.frame(MAE = structured_summary_R_mid[1],
                                         UpperENV = structured_summary_R_mid[5])
 
 load('structured_output_low_parallel_TEST.RData')
-
+n_by = 4
+n_tot = n_runs*n_by
 
 structured_summary_R_low_raw <- mapply(parallel_summary, simulation_output_structured_low[seq(1,n_tot,n_by)], 
                                         MoreArgs = list(type = "single"), SIMPLIFY = T)
@@ -119,7 +120,8 @@ structured_summary_R_low <- data.frame(MAE = structured_summary_R_low[1],
                                        UpperENV = structured_summary_R_low[5])
 
 load('structured_output_v_low_parallel.RData')
-
+n_by = 3
+n_tot = n_runs*n_by
 
 structured_summary_R_v_low_raw <- mapply(parallel_summary, simulation_output_structured_v_low[seq(1,n_tot,n_by)], 
                                        MoreArgs = list(type = "single"), SIMPLIFY = T)

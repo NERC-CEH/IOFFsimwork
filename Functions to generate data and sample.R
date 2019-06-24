@@ -16,13 +16,13 @@ genDataFunctions <- function(
   nsamp = NULL,
   plot = TRUE,
   plotdat = TRUE,
-  qsize = NULL
+  qsize = NULL,
+  rho = NULL
 ){
 
 ## 'truth' data generation 
 
 source("genData.R")
-#source("genData_stochastic.R") # stochastic version for multiple runs
 
 dat1 <- genData(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x)
 
@@ -38,7 +38,7 @@ strata1 <- genStrataLam(dat1$Lam, strata = strata, rows = rows, cols = cols)
 source("addSpatialBias.R")
 
 #spatial bias not correlated with environmental covariate
-biasfield <- addSpatialBias(strata1, probs = probs)
+biasfield <- addSpatialBias(strata1, maxprob = probs[1], correlated = FALSE, rho = rho)
 
 #spatial bias correlated with environmental covariate
 #biasfield <- addSpatialBias(strata1, probs = c(0.8, 0.5, 0.2))

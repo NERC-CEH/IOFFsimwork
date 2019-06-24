@@ -16,7 +16,13 @@
 # - env correlated with spatial bias or not
 
 
-genData <- function(dim = c(100,300), lambda = 2, env.beta = 0.3, plotdat = TRUE, seed = NULL, sigma2x = 0.2, kappa = 2){
+genData <- function(dim = c(100,300), 
+                    lambda = NULL, 
+                    env.beta = NULL, 
+                    plotdat = TRUE, 
+                    seed = NULL, 
+                    sigma2x = NULL, 
+                    kappa = NULL){ # made all of the inputs null so can see everything feeds through
  
   library(spatstat) 
   # owin creates an object of class "owin" which is an observation window in 2D

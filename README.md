@@ -78,11 +78,19 @@ Scripts that run models in a parallel format.
 
 [run_function_multiple.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/run_function_multiple.R) : This function has the option to run structured, unstructured or joint models with validation steps and returns absolute and relative validation as well as truth and predicted datasets.
 
-[Evaluation_structured_n.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Evaluation_structured_n.R) : This script runs all models for the structured sample size scenario, produces figures and tables. Will be reworked to be a function to run any of the scenarios we want.
+[run_scenario.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/run_scenario.R) : A function to run models in parallel based on a scenario. It automatically saves out the model results from validation.
+
+[scenario_sample_size.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/scenario_sample_size.R) : This script runs and saves the output from all models for the structured sample size scenario. 
+
+[scenario_abundance.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/scenario_abundance.R) : This script runs and saves the output from all models for the low abundance scenario.
+
+[scenario_bias.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/scenario_bias.R) : This script runs and saves the output from all models for the high bias scenario.
+
+[scenario_correlation](https://github.com/NERC-CEH/IOFFsimwork/blob/master/scenario_correlation.R) : This script runs and saves the output from all models for the correlated environment and bias scenario.
 
 [parallel_summary.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/parallel_summary.R) : This script creates a summary from the output from the run_function_multiple.R script.
 
-[scenario_sample_size.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/scenario_sample_size.R) : This script runs and saves the output from all models for the structured sample size scenario. 
+[Evaluation_structured_n.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Evaluation_structured_n.R) : This script runs all models for the structured sample size scenario, produces figures and tables. Will be reworked to be a function to run any of the scenarios we want.
 
 ## Steps to code
 

@@ -23,7 +23,6 @@ genDataFunctions <- function(
 ## 'truth' data generation 
 
 source("genData.R")
-#source("genData_stochastic.R") # stochastic version for multiple runs
 
 dat1 <- genData(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x)
 

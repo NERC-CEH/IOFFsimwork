@@ -41,11 +41,12 @@ summary_wrapper <- function(file_name,
   output_raw <- mapply(parallel_summary, results[seq(1,n_tot,n_by)],
             MoreArgs = list(type = type), SIMPLIFY = T)
   return(output_raw)}
+  
   if(summary == "summary"){
-  output_mean <- rowMeans(mapply(parallel_summary, results[seq(1,n_tot,n_by)], 
-                  MoreArgs = list(type = type), SIMPLIFY = T))
-  output_sd <- rowSds(mapply(parallel_summary, results[seq(1,n_tot,n_by)], 
-                                             MoreArgs = list(type = type), SIMPLIFY = T))
+  output_mean <- round(rowMeans(mapply(parallel_summary, results[seq(1,n_tot,n_by)], 
+                  MoreArgs = list(type = type), SIMPLIFY = T)),2)
+  output_sd <- round(rowSds(mapply(parallel_summary, results[seq(1,n_tot,n_by)], 
+                                             MoreArgs = list(type = type), SIMPLIFY = T)),2)
   return(data.frame(MAE = output_mean[1],
              MAE_sd = output_sd[1],
              Correlation = output_mean[2],
@@ -53,4 +54,27 @@ summary_wrapper <- function(file_name,
              MeanENV = output_mean[3], 
              LowerENV = output_mean[4], 
              UpperENV = output_mean[5]))}
+}
+
+
+#### Function to make plotting dataframes
+
+summary_plot_function <- function(summary_raw, scenario){
+  # summary raw comes in as a list
+  output_data <- data.frame(correlation = summary_raw[[1]][2,1],
+                            env = summary_raw[[1]][3,1],
+                            env_in_CI = 1.2%in%(summary_raw[[1]][4,1]:summary_raw[[1]][5,1]),
+                            model = gsub("[^a-zA-Z]", "",str_sub(names(summary_raw)[1],nchar(scenario)+1, -7)), # extract name of model
+                            scenario = gsub("[^0-9]", "",str_sub(names(summary_raw)[1],nchar(scenario)+1, -7))) # extract numeric part 
+  
+  for(i in 2:length(summary_raw)){
+    output_data_temp <- data.frame(correlation = summary_raw[[i]][2,1],
+                              env = summary_raw[[i]][3,1],
+                              env_in_CI = 1.2%in%(summary_raw[[i]][4,1]:summary_raw[[i]][5,1]),
+                              model = gsub("[^a-zA-Z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract name of model
+                              scenario = gsub("[^0-9]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7))) # extract numeric part 
+    output_data <- rbind(output_data, output_data_temp)
+  }
+  
+  return(output_data)
 }

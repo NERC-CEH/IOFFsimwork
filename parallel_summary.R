@@ -1,6 +1,7 @@
 #### Function to extract and summarise results from parallel runs
 library(matrixStats)
 library(stringr)
+library(dplyr)
 
 parallel_summary <- function(results, type=c("single", "joint")){
   # results is input as a list
@@ -59,22 +60,28 @@ summary_wrapper <- function(file_name,
 
 #### Function to make plotting dataframes
 
-summary_plot_function <- function(summary_raw, scenario){
+summary_plot_function <- function(summary_raw, scenario, n_runs, type = c("summary", "CI")){
   # summary raw comes in as a list
-  output_data <- data.frame(correlation = summary_raw[[1]][2,1],
-                            env = summary_raw[[1]][3,1],
-                            env_in_CI = 1.2%in%(summary_raw[[1]][4,1]:summary_raw[[1]][5,1]),
-                            model = gsub("[^a-zA-Z]", "",str_sub(names(summary_raw)[1],nchar(scenario)+1, -7)), # extract name of model
-                            scenario = gsub("[^0-9]", "",str_sub(names(summary_raw)[1],nchar(scenario)+1, -7))) # extract numeric part 
   
-  for(i in 2:length(summary_raw)){
-    output_data_temp <- data.frame(correlation = summary_raw[[i]][2,1],
-                              env = summary_raw[[i]][3,1],
-                              env_in_CI = 1.2%in%(summary_raw[[i]][4,1]:summary_raw[[i]][5,1]),
-                              model = gsub("[^a-zA-Z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract name of model
-                              scenario = gsub("[^0-9]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7))) # extract numeric part 
-    output_data <- rbind(output_data, output_data_temp)
+  output_data <- data.frame(correlation = NA,
+                            env = NA,
+                            env_in_CI = NA,
+                            model = NA, # extract name of model
+                            scenario = NA) # extract numeric part 
+  prop_CI <- NA
+  
+  for(i in 1:length(summary_raw)){
+    for(j in 1:n_runs){
+      output_data_temp <- data.frame(correlation = summary_raw[[i]][2,j],
+                                env = summary_raw[[i]][3,j],
+                                env_in_CI = between(1.2, summary_raw[[i]][4,j], summary_raw[[i]][5,j]),
+                                model = gsub("[^a-zA-Z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract name of model
+                                scenario = gsub("[^0-9]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7))) # extract numeric part
+      output_data <- rbind(output_data, output_data_temp)
+    }
+    prop_CI_T <- length(which((output_data$env_in_CI[(((i-1)*n_runs)+1):(i*n_runs)])==TRUE))/n_runs
+    prop_CI <- c(prop_CI, prop_CI_T)
   }
-  
-  return(output_data)
+
+  if(type == "summary")return(output_data[-1,])else{return(prop_CI[-1])}
 }

@@ -56,16 +56,6 @@ validation_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join
                                       unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=FALSE, plotting = FALSE, dim = dim)
 }
 
-if(model_type == "unstructuredcov"){
-  source("Run models unstructured bias covariate.R")
-  mod_2 <- unstructured_model_cov(unstructured_data, dat1, biasfield, dim = dim, plotting = FALSE)
-  
-  source("validation_function.R")
-  validation <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
-                                    unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = FALSE)
-  validation_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
-                                      unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=FALSE, plotting = FALSE, dim = dim)
-}
   
 if(model_type == "joint"){
 source("Run models joint.R")
@@ -82,7 +72,7 @@ validation_r <- validation_function(result=mod_3[[2]], resolution=c(10,10), join
 
 if(model_type == "unstructuredcov"){
 source("Run models unstructured bias covariate.R")
-mod_4 <- unstructured_model_cov(unstructured_data, dat1, biasfield, dim = dim, plotting = TRUE)
+mod_4 <- unstructured_model_cov(unstructured_data, dat1, biasfield, dim = dim, plotting = TRUE, biascov=biascov)
 
 source("validation_function.R")
 validation <- validation_function(result=mod_4[[2]], resolution=c(10,10), join.stack=mod_4[[1]], model_type="unstructuredcov", 

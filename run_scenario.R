@@ -19,7 +19,7 @@ run_scenario <- function(resolution,
                          plotdat = FALSE, 
                          qsize = qsize, 
                          rho = rho, 
-                         correlated = FALSE, 
+                         correlation = FALSE, 
                          n_runs = NULL,
                          scenario_name = NULL,
                          parameter = NULL){
@@ -28,7 +28,7 @@ run_scenario <- function(resolution,
   # run the model in a parallel loop
   
   # create a cluster
-  cl = makeCluster(4)
+  cl = makeCluster(2)
   registerDoParallel(cl)
   strt = Sys.time() # record system time
   

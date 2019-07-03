@@ -8,7 +8,7 @@ library(foreach)
 library(doParallel)
 
 # choose number of times to run
-n_runs <- 50
+n_runs <- 2
 
 # create a randomly generated string of seeds
 # seed must be integer
@@ -24,12 +24,18 @@ source("run_scenario.R")
 
 # change those that need changing
 ## BIAS
-bias <- seq(0.01, 0.5, length.out=10) # 10 scenarios
+bias <- list(c(rep(seq(0.5, 0.01, length.out = 5),5)),
+               c(rep(seq(0.4, 0.01, length.out = 5),5)),
+               c(rep(seq(0.3, 0.01, length.out = 5),5)),
+               c(rep(seq(0.2, 0.01, length.out = 5),5)),
+               c(rep(seq(0.1, 0.01, length.out = 5),5)),
+               c(rep(seq(0.05, 0.01, length.out = 5),5)),
+               c(rep(0.01,25))) # 7 scenarios
 
 # structured model
 mapply(FUN = run_scenario,
        probs = bias, 
-       parameter = bias,
+       parameter = bias[[seq(1,1,1)]][1],
        MoreArgs = list(
          model_type="structured", 
          plotting=FALSE, 
@@ -49,14 +55,14 @@ mapply(FUN = run_scenario,
          #probs = 0.5,
          qsize = 1,
          rho = 0.8,
-         lambda = -1,
+         lambda = -3,
          nsamp = 150,
          resolution = c(10,10))) # to use the function you must put in all parameters it is expecting
 
 # unstructured model
 mapply(FUN = run_scenario,
        probs = bias, 
-       parameter = bias,
+       parameter = bias[[seq(1,1,1)]][1],
        MoreArgs = list(
          model_type="unstructured", 
          plotting=FALSE, 
@@ -76,13 +82,14 @@ mapply(FUN = run_scenario,
          #probs = 0.5,
          qsize = 1,
          rho = 0.8,
+         lambda = -3,
          nsamp = 150,
          resolution = c(10,10)))
 
 # unstructuredcov model
 mapply(FUN = run_scenario,
        probs = bias, 
-       parameter = bias,
+       parameter = bias[[seq(1,1,1)]][1],
        MoreArgs = list(
          model_type = "unstructuredcov", 
          plotting = FALSE, 
@@ -103,12 +110,13 @@ mapply(FUN = run_scenario,
          qsize = 1,
          rho = 0.8,
          nsamp = 150,
+         lambda = -3,
          resolution = c(10,10)))
 
 # joint model
 mapply(FUN = run_scenario,
        probs = bias, 
-       parameter = bias,
+       parameter = bias[[seq(1,1,1)]][1],
        MoreArgs = list(
          model_type="joint", 
          plotting=FALSE, 
@@ -128,13 +136,14 @@ mapply(FUN = run_scenario,
          #probs = 0.5,
          qsize = 1,
          rho = 0.8,
+         lambda = -3,
          nsamp = 150,
          resolution = c(10,10))) # to use the function you must put in all parameters it is expecting
 
 # jointcov model
 mapply(FUN = run_scenario,
        probs = bias,
-       parameter = bias,
+       parameter = bias[[seq(1,1,1)]][1],
        MoreArgs = list(
          model_type="jointcov", 
          plotting=FALSE, 
@@ -154,13 +163,14 @@ mapply(FUN = run_scenario,
          #probs = 0.5,
          qsize = 1,
          rho = 0.8,
+         lambda = -3,
          nsamp = 150, 
          resolution = c(10,10))) 
 
 # joint2 model
 mapply(FUN = run_scenario,
        probs = bias,
-       parameter = bias,
+       parameter = bias[[seq(1,1,1)]][1],
        MoreArgs = list(
          model_type="joint2", 
          plotting=FALSE, 
@@ -180,5 +190,6 @@ mapply(FUN = run_scenario,
          #probs = 0.5,
          qsize = 1,
          rho = 0.8,
+         lambda = -3,
          nsamp = 150, 
          resolution = c(10,10))) 

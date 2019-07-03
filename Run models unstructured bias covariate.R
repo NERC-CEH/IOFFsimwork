@@ -1,6 +1,6 @@
 ## Function to run unstructured only models with simulated data
 
-unstructured_model_cov <- function(unstructured_data, dat1, biasfield, dim = dim, plotting=FALSE){
+unstructured_model_cov <- function(unstructured_data, dat1, biasfield, dim = dim, plotting=FALSE, biascov){
   
   #packages
   library(INLA)

@@ -46,7 +46,7 @@ lambda <- -3
 #+ warning = FALSE, message = FALSE, error = FALSE, include = FALSE
 source("Functions to generate data and sample.R")
 
-g1 <- genDataFunctions(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x, strata = strata, rows = rows, cols = cols, probs = probs, nsamp = nsamp, qsize = 1)
+g1 <- genDataFunctions(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x, strata = strata, rows = rows, cols = cols, probs = probs, nsamp = nsamp, qsize = 1, rho = 0.99)
 
 structured_data <- g1$structured_data
 unstructured_data <- g1$unstructured_data
@@ -168,7 +168,7 @@ validation_3_r <- validation_function(result=mod_3[[2]], resolution=c(10,10), jo
 #' 
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models unstructured bias covariate.R")
-mod_4 <- unstructured_model_cov(unstructured_data, dat1, biasfield, dim = dim, plotting = TRUE)
+mod_4 <- unstructured_model_cov(unstructured_data, dat1, biasfield, dim = dim, plotting = TRUE, biascov = biascov)
 source("validation_function.R")
 validation_4 <- validation_function(result=mod_4[[2]], resolution=c(10,10), join.stack=mod_4[[1]], model_type="unstructuredcov", 
                                      unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
@@ -189,7 +189,7 @@ validation_5_r <- validation_function(result=mod_5[[2]], resolution=c(10,10), jo
 
 
 ##joint model with second spatial field
-source("Run models joint second field.R")
+source("run models joint second field.R")
 mod_6 <- joint_model2(structured_data, unstructured_data, dat1, biasfield)
 source("validation_function.R")
 validation_6 <- validation_function(result=mod_6[[2]], resolution=c(10,10), join.stack=mod_6[[1]], model_type="joint2",
@@ -198,6 +198,31 @@ validation_6 <- validation_function(result=mod_6[[2]], resolution=c(10,10), join
 validation_6_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), join.stack=mod_6[[1]], model_type="joint2",
                                     unstructured_data = unstructured_data, structured_data = structured_data,
                                     dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
+
+
+##covariate model
+source("Run cov model all eff prior.R")
+mod_7 <- covariate_model(structured_data = structured_data, unstructured_data = unstructured_data, unstr_mod_type = "unstructured only", dat1, biasfield, dim = dim)
+source("validation_function.R")
+validation_7 <- validation_function(result=mod_7[[2]], resolution=c(10,10), join.stack=mod_7[[1]], model_type="covariate",
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, summary_results=T, absolute = TRUE, dim = dim, plotting = TRUE)
+validation_7_r <- validation_function(result=mod_7[[2]], resolution=c(10,10), join.stack=mod_7[[1]], model_type="covariate",
+                                      unstructured_data = unstructured_data, structured_data = structured_data,
+                                      dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
+
+
+##correlation model
+source("Run correlation model.R")
+mod_8 <- correlation_model(structured_data = structured_data, unstructured_data = unstructured_data, dat1, biasfield, dim = dim)
+source("validation_function.R")
+validation_8 <- validation_function(result=mod_8[[2]], resolution=c(10,10), join.stack=mod_8[[1]], model_type="correlation",
+                                    unstructured_data = unstructured_data, structured_data = structured_data,
+                                    dat1 = dat1, summary_results=T, absolute = TRUE, dim = dim, plotting = TRUE)
+validation_8_r <- validation_function(result=mod_8[[2]], resolution=c(10,10), join.stack=mod_8[[1]], model_type="correlation",
+                                      unstructured_data = unstructured_data, structured_data = structured_data,
+                                      dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
+
 
 
 
@@ -211,6 +236,9 @@ validation_3_r$'Proto-table'
 validation_4_r$'Proto-table'
 validation_5_r$'Proto-table'
 validation_6_r$'Proto-table'
+validation_7_r$`Proto-table`
+validation_8_r$`Proto-table`
+
 #
 # ## Compare estimation of environmental covariate between models
 mod_1$result$summary.fixed
@@ -219,6 +247,8 @@ mod_3$result$summary.fixed
 mod_4$result$summary.fixed
 mod_5$result$summary.fixed
 mod_6$result$summary.fixed
+mod_7$result$summary.fixed
+mod_8$result$summary.fixed
 
 ## Compare correlation of true vs estimated relative intensities
 validation_1_r$correlation
@@ -227,6 +257,8 @@ validation_3_r$correlation
 validation_4_r$correlation
 validation_5_r$correlation
 validation_6_r$correlation
+validation_7_r$correlation
+validation_8_r$correlation
 
 
 

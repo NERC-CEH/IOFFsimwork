@@ -49,8 +49,9 @@ mapply(FUN = run_scenario,
              cols = 5,
              probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
              qsize = 1,
-             rho = 0.8,
-             resolution = c(10,10))) # to use the function you must put in all parameters it is expecting
+             rho = 0.99,
+             resolution = c(10,10),
+             correlation = FALSE)) # to use the function you must put in all parameters it is expecting
 
 # unstructured model
 run_scenario(nsamp = 150, 
@@ -73,8 +74,9 @@ run_scenario(nsamp = 150,
          cols = 5,
          probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
          qsize = 1,
-         rho = 0.8,
-         resolution = c(10,10)) # to use the function you must put in all parameters it is expecting
+         rho = 0.99,
+         resolution = c(10,10),
+         correlation = FALSE) # to use the function you must put in all parameters it is expecting
 
 # unstructuredcov model
 run_scenario(nsamp = 150, 
@@ -97,8 +99,9 @@ run_scenario(nsamp = 150,
              cols = 5,
              probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
              qsize = 1,
-             rho = 0.8,
-             resolution = c(10,10)) # to use the function you must put in all parameters it is expecting
+             rho = 0.99,
+             resolution = c(10,10),
+             correlation = FALSE) # to use the function you must put in all parameters it is expecting
 
 # joint model
 mapply(FUN = run_scenario,
@@ -123,8 +126,9 @@ mapply(FUN = run_scenario,
          cols = 5,
          probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
          qsize = 1,
-         rho = 0.8,
-         resolution = c(10,10))) # to use the function you must put in all parameters it is expecting
+         rho = 0.99,
+         resolution = c(10,10),
+         correlation = FALSE)) # to use the function you must put in all parameters it is expecting
 
 # jointcov model
 mapply(FUN = run_scenario,
@@ -149,8 +153,9 @@ mapply(FUN = run_scenario,
          cols = 5,
          probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
          qsize = 1,
-         rho = 0.8,
-         resolution = c(10,10))) # to use the function you must put in all parameters it is expecting
+         rho = 0.99,
+         resolution = c(10,10),
+         correlation = FALSE)) # to use the function you must put in all parameters it is expecting
 
 # joint2 model
 mapply(FUN = run_scenario,
@@ -175,5 +180,6 @@ mapply(FUN = run_scenario,
          cols = 5,
          probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
          qsize = 1,
-         rho = 0.8,
-         resolution = c(10,10))) # to use the function you must put in all parameters it is expecting
+         rho = 0.99,
+         resolution = c(10,10),
+         correlation = FALSE)) # to use the function you must put in all parameters it is expecting

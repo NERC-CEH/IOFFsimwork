@@ -63,7 +63,7 @@ summary_scenario_sample_size$Scenario <- as.numeric(scenario_names)
   
 summary_scenario_sample_size[,1:7] <- unlist(summary_scenario_sample_size[,1:7]) # need to unlist to save
 
-write.csv(summary_scenario_sample_size, "SummaryTable_samplesize.csv", row.names=T)
+#write.csv(summary_scenario_sample_size, "SummaryTable_samplesize.csv", row.names=T)
 
 #' ### Table
 #' 
@@ -179,9 +179,11 @@ model_names = c("unstructuredcov", "unstructured", "structured", "jointtwo", "jo
 summary_scenario_correlation <- rbind(summary_scenario_correlation,
                                       summary_scenario_sample_size[which(summary_scenario_sample_size$Scenario == 150),
                                                                    1:7])
-summary_scenario_correlation$Scenario <- c(rep("TRUE", 6), rep("FALSE", 6))
+summary_scenario_correlation$Scenario <- c(rep("TRUE", 6), rep("FALSE", 5))
 
-write.csv(summary_scenario_correlation, "SummaryTable_correlation.csv", row.names=T)
+summary_scenario_correlation[,1:7] <- unlist(summary_scenario_correlation[,1:7]) # need to unlist to save
+
+#write.csv(summary_scenario_correlation, "SummaryTable_correlation.csv", row.names=T)
 
 #' ### Table
 #' 
@@ -196,7 +198,7 @@ summary_scenario_correlation
 
 # need to add the sample size n = 150 raw results to this
 
-raw_scenario_correlation <- c(raw_scenario_correlation, raw_scenario_sample_size[c(2,11,21,30,39,40)])
+raw_scenario_correlation <- c(raw_scenario_correlation, raw_scenario_sample_size[c(2,11,21,30,31)])
 
 plotting_data <- summary_plot_function(raw_scenario_correlation, scenario = "Correlation_", 
                                        n_runs, type="summary")
@@ -220,7 +222,7 @@ Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   geom_boxplot(width=0.1)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Structured sample size")+
+  xlab("Correlation between environment and bias")+
   ylab("Correlation between prediction and truth")+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -240,7 +242,7 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   geom_boxplot(width=0.1)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Structured sample size")+
+  xlab("Correlation between environment and bias")+
   ylab("Environmental covariate estimate")+
   ylim(-10,50)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
@@ -272,6 +274,7 @@ n_by = 4
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Bias_")
+files <- files[-c(1:21,29,30, 36:42)]
 
 # create a summary of all runs of this scenario
 
@@ -280,34 +283,28 @@ summary_scenario_bias <- as.data.frame(t(mapply(summary_wrapper, files,
                                                          summary = "summary", n_tot,
                                                          n_by), SIMPLIFY = T))) # transposed to look clearer
 
-raw_scenario_correlation <- mapply(summary_wrapper, files, 
+raw_scenario_bias <- mapply(summary_wrapper, files, 
                                    MoreArgs = list(summary = "raw", n_tot,
                                                    n_by), SIMPLIFY = F)
 
 # summary table 
 
-row.names(summary_scenario_correlation) <- str_sub(row.names(summary_scenario_correlation), 13, -11)
+row.names(summary_scenario_bias) <- str_sub(row.names(summary_scenario_bias), 6, -7)
 
 # add new column of the number of samples
 # need to remove the model name - can be tricky as different lengths
-scenario_names <- unlist(row.names(summary_scenario_correlation))
+scenario_names <- unlist(row.names(summary_scenario_bias))
 # model names need to be in set order so remove completely
 model_names = c("unstructuredcov", "unstructured", "structured", "jointtwo", "jointcov", "joint")
 
-# do not need a scenario here as all TRUE just need one FALSE to compare
-# take sample size = 150 scenario
+summary_scenario_bias[,1:7] <- unlist(summary_scenario_bias[,1:7]) # need to unlist to save
 
-summary_scenario_correlation <- rbind(summary_scenario_correlation,
-                                      summary_scenario_sample_size[which(summary_scenario_sample_size$Scenario == 150),
-                                                                   1:7])
-summary_scenario_correlation$Scenario <- c(rep("TRUE", 6), rep("FALSE", 6))
-
-write.csv(summary_scenario_correlation, "SummaryTable_correlation.csv", row.names=T)
+#write.csv(summary_scenario_bias, "SummaryTable_bias.csv", row.names=T)
 
 #' ### Table
 #' 
 #+ warning = FALSE, message = FALSE, error = FALSE, include = TRUE, echo = FALSE
-summary_scenario_correlation
+summary_scenario_bias
 
 #' 
 #' ### Figures
@@ -315,11 +312,7 @@ summary_scenario_correlation
 # join all of the correlation estimates into a dataframe so can use ggplot
 # do this from the raw data
 
-# need to add the sample size n = 150 raw results to this
-
-raw_scenario_correlation <- c(raw_scenario_correlation, raw_scenario_sample_size[c(2,11,21,30,39,40)])
-
-plotting_data <- summary_plot_function(raw_scenario_correlation, scenario = "Correlation_", 
+plotting_data <- summary_plot_function(raw_scenario_bias, scenario = "Bias_", 
                                        n_runs, type="summary")
 # relevel model column
 plotting_data$model <- factor(plotting_data$model, level = c("unstructured",
@@ -341,14 +334,14 @@ Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   geom_boxplot(width=0.1)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Structured sample size")+
+  xlab("Bias in unstructured data")+
   ylab("Correlation between prediction and truth")+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 Correlation
 
-ggsave(filename = "CorrelationPlot_correlation.png", plot=last_plot(),
+ggsave(filename = "CorrelationPlot_bias.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 
@@ -361,7 +354,7 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   geom_boxplot(width=0.1)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Structured sample size")+
+  xlab("Bias in unstructured data")+
   ylab("Environmental covariate estimate")+
   ylim(-10,50)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
@@ -369,7 +362,7 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
 
 Environment
 
-ggsave(filename = "EnvironmentPlot_correlation.png", plot=last_plot(),
+ggsave(filename = "EnvironmentPlot_bias.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 #' ## Table of proportion of env estimate in CI
@@ -378,5 +371,5 @@ ggsave(filename = "EnvironmentPlot_correlation.png", plot=last_plot(),
 # calculate the proportion of simulations where true environmental beta
 # in credibility interval
 
-prop_env_in_CI <- summary_plot_function(raw_scenario_correlation, scenario = "Correlation_", n_runs, type="CI")
+prop_env_in_CI <- summary_plot_function(raw_scenario_bias, scenario = "Bias_", n_runs, type="CI")
 prop_env_in_CI

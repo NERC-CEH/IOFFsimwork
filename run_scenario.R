@@ -57,7 +57,8 @@ run_scenario <- function(resolution,
                                                  plotdat = FALSE, 
                                                  qsize = qsize, 
                                                  rho = rho,
-                                                 parameter = parameter
+                                                 parameter = parameter,
+                                                 correlation = correlation
                            )
                          }
   

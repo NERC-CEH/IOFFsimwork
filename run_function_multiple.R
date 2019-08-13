@@ -6,7 +6,7 @@ run_function_multiple <- function(resolution=c(10,10),
    nsamp = NULL, seed = NULL, dim = NULL, lambda = NULL, env.beta = NULL,
    kappa = NULL,  sigma2x = NULL, strata = NULL,  rows = NULL, cols = NULL,  
    probs = NULL,  plot = FALSE,  plotdat = FALSE, qsize = NULL, rho = NULL,
-   parameter = parameter){
+   parameter = parameter, correlation = FALSE){
 
   
 # removing so they can all have same truth
@@ -25,7 +25,8 @@ g1 <- genDataFunctions(dim = dim,
                  plot = FALSE,
                  plotdat = FALSE,
                  qsize = qsize, 
-                 rho = rho)
+                 rho = rho,
+                 correlated = correlation)
 
 structured_data <- g1$structured_data
 unstructured_data <- g1$unstructured_data

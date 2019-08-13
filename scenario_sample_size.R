@@ -8,7 +8,7 @@ library(foreach)
 library(doParallel)
 
 # choose number of times to run
-n_runs <- 2
+n_runs <- 500
 
 # create a randomly generated string of seeds
 # seed must be integer
@@ -47,7 +47,7 @@ mapply(FUN = run_scenario,
              strata = 25,
              rows = 5,
              cols = 5,
-             probs = 0.5,
+             probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
              qsize = 1,
              rho = 0.8,
              resolution = c(10,10))) # to use the function you must put in all parameters it is expecting
@@ -71,7 +71,7 @@ run_scenario(nsamp = 150,
          strata = 25,
          rows = 5,
          cols = 5,
-         probs = rep(c(0.5, 0.2, 0.1, 0.05, 0.01),5),
+         probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
          qsize = 1,
          rho = 0.8,
          resolution = c(10,10)) # to use the function you must put in all parameters it is expecting
@@ -95,7 +95,7 @@ run_scenario(nsamp = 150,
              strata = 25,
              rows = 5,
              cols = 5,
-             probs = rep(c(0.5, 0.2, 0.1, 0.05, 0.01),5),
+             probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
              qsize = 1,
              rho = 0.8,
              resolution = c(10,10)) # to use the function you must put in all parameters it is expecting
@@ -121,7 +121,7 @@ mapply(FUN = run_scenario,
          strata = 25,
          rows = 5,
          cols = 5,
-         probs = rep(c(0.5, 0.2, 0.1, 0.05, 0.01),5),
+         probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
          qsize = 1,
          rho = 0.8,
          resolution = c(10,10))) # to use the function you must put in all parameters it is expecting
@@ -147,7 +147,7 @@ mapply(FUN = run_scenario,
          strata = 25,
          rows = 5,
          cols = 5,
-         probs = rep(c(0.5, 0.2, 0.1, 0.05, 0.01),5),
+         probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
          qsize = 1,
          rho = 0.8,
          resolution = c(10,10))) # to use the function you must put in all parameters it is expecting
@@ -157,7 +157,7 @@ mapply(FUN = run_scenario,
        nsamp = structured_sample_size, 
        parameter = structured_sample_size,
        MoreArgs = list(
-         model_type="joint2", 
+         model_type="jointtwo", 
          plotting=FALSE, 
          summary_results=FALSE,  
          seed = seed, 
@@ -173,7 +173,7 @@ mapply(FUN = run_scenario,
          strata = 25,
          rows = 5,
          cols = 5,
-         probs = rep(c(0.5, 0.2, 0.1, 0.05, 0.01),5),
+         probs = c(rep(seq(0.5, 0.01, length.out = 5),5)),
          qsize = 1,
          rho = 0.8,
          resolution = c(10,10))) # to use the function you must put in all parameters it is expecting

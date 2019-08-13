@@ -8,7 +8,7 @@ library(foreach)
 library(doParallel)
 
 # choose number of times to run
-n_runs <- 2
+n_runs <- 1
 
 # create a randomly generated string of seeds
 # seed must be integer
@@ -31,11 +31,12 @@ bias <- list(c(rep(seq(0.5, 0.01, length.out = 5),5)),
                c(rep(seq(0.1, 0.01, length.out = 5),5)),
                c(rep(seq(0.05, 0.01, length.out = 5),5)),
                c(rep(0.01,25))) # 7 scenarios
+bias_top_level <- list(0.5,0.4,0.3,0.2,0.1,0.05,0.01)
 
 # structured model
 mapply(FUN = run_scenario,
        probs = bias, 
-       parameter = bias[[seq(1,1,1)]][1],
+       parameter = bias_top_level,
        MoreArgs = list(
          model_type="structured", 
          plotting=FALSE, 
@@ -62,7 +63,7 @@ mapply(FUN = run_scenario,
 # unstructured model
 mapply(FUN = run_scenario,
        probs = bias, 
-       parameter = bias[[seq(1,1,1)]][1],
+       parameter = bias_top_level,
        MoreArgs = list(
          model_type="unstructured", 
          plotting=FALSE, 
@@ -89,7 +90,7 @@ mapply(FUN = run_scenario,
 # unstructuredcov model
 mapply(FUN = run_scenario,
        probs = bias, 
-       parameter = bias[[seq(1,1,1)]][1],
+       parameter = bias_top_level,
        MoreArgs = list(
          model_type = "unstructuredcov", 
          plotting = FALSE, 
@@ -116,7 +117,7 @@ mapply(FUN = run_scenario,
 # joint model
 mapply(FUN = run_scenario,
        probs = bias, 
-       parameter = bias[[seq(1,1,1)]][1],
+       parameter = bias_top_level,
        MoreArgs = list(
          model_type="joint", 
          plotting=FALSE, 
@@ -143,7 +144,7 @@ mapply(FUN = run_scenario,
 # jointcov model
 mapply(FUN = run_scenario,
        probs = bias,
-       parameter = bias[[seq(1,1,1)]][1],
+       parameter = bias_top_level,
        MoreArgs = list(
          model_type="jointcov", 
          plotting=FALSE, 
@@ -170,9 +171,9 @@ mapply(FUN = run_scenario,
 # joint2 model
 mapply(FUN = run_scenario,
        probs = bias,
-       parameter = bias[[seq(1,1,1)]][1],
+       parameter = bias_top_level,
        MoreArgs = list(
-         model_type="joint2", 
+         model_type="jointtwo", 
          plotting=FALSE, 
          summary_results=FALSE,  
          seed = seed, 

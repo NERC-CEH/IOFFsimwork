@@ -72,13 +72,20 @@ summary_plot_function <- function(summary_raw, scenario, n_runs, type = c("summa
   
   for(i in 1:length(summary_raw)){
     for(j in 1:n_runs){
-      output_data_temp <- data.frame(correlation = summary_raw[[i]][2,j],
+      #different for correlation scenario as scenario is logical not numeric
+      if(scenario != "Correlation_"){output_data_temp <- data.frame(correlation = summary_raw[[i]][2,j],
                                 env = summary_raw[[i]][3,j],
                                 env_in_CI = between(1.2, summary_raw[[i]][4,j], summary_raw[[i]][5,j]),
                                 model = gsub("[^a-zA-Z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract name of model
                                 scenario = gsub("[^0-9]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7))) # extract numeric part
       output_data <- rbind(output_data, output_data_temp)
-    }
+      }else{output_data_temp <- data.frame(correlation = summary_raw[[i]][2,j],
+                                           env = summary_raw[[i]][3,j],
+                                           env_in_CI = between(1.2, summary_raw[[i]][4,j], summary_raw[[i]][5,j]),
+                                           model = gsub("[^a-z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract name of model
+                                           scenario = gsub("[^A-Z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7))) # extract numeric part
+      if(output_data_temp$scenario != "TRUE"){output_data_temp$scenario <- "FALSE"}
+      output_data <- rbind(output_data, output_data_temp)}}
     prop_CI_T <- length(which((output_data$env_in_CI[(((i-1)*n_runs)+1):(i*n_runs)])==TRUE))/n_runs
     prop_CI <- c(prop_CI, prop_CI_T)
   }

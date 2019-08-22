@@ -8,7 +8,7 @@ library(foreach)
 library(doParallel)
 
 # choose number of times to run
-n_runs <- 50
+n_runs <- 1
 
 # create a randomly generated string of seeds
 # seed must be integer
@@ -24,7 +24,7 @@ source("run_scenario.R")
 
 # change those that need changing
 ## ABUNDANCE
-lambda <- seq(-9, -1, length.out = 10) # 10 scenarios
+lambda <- seq(-6, -1, length.out = 10) # 10 scenarios
 
 # structured model
 mapply(FUN = run_scenario,
@@ -37,7 +37,7 @@ mapply(FUN = run_scenario,
          seed = seed, 
          plot = FALSE, 
          n_runs = n_runs,
-         scenario_name = "Abundance",
+         scenario_name = "Abundance_",
          dim = c(300,300),
          env.beta = 1.2,
          plotdat = TRUE,
@@ -63,7 +63,7 @@ mapply(FUN = run_scenario,
          seed = seed, 
          plot = FALSE, 
          n_runs = n_runs,
-         scenario_name = "Abundance",
+         scenario_name = "Abundance_",
          dim = c(300,300),
          env.beta = 1.2,
          plotdat = TRUE,
@@ -89,7 +89,7 @@ mapply(FUN = run_scenario,
          seed = seed, 
          plot = FALSE, 
          n_runs = n_runs,
-         scenario_name = "Abundance",
+         scenario_name = "Abundance_",
          dim = c(300,300),
          env.beta = 1.2,
          plotdat = TRUE,
@@ -115,7 +115,7 @@ mapply(FUN = run_scenario,
          seed = seed, 
          plot = FALSE, 
          n_runs = n_runs,
-         scenario_name = "Abundance",
+         scenario_name = "Abundance_",
          dim = c(300,300),
          env.beta = 1.2,
          plotdat = TRUE,
@@ -141,7 +141,7 @@ mapply(FUN = run_scenario,
          seed = seed, 
          plot = FALSE, 
          n_runs = n_runs,
-         scenario_name = "Abundance",
+         scenario_name = "Abundance_",
          dim = c(300,300),
          env.beta = 1.2,
          plotdat = TRUE,
@@ -167,7 +167,7 @@ mapply(FUN = run_scenario,
          seed = seed, 
          plot = FALSE, 
          n_runs = n_runs,
-         scenario_name = "Abundance",
+         scenario_name = "Abundance_",
          dim = c(300,300),
          env.beta = 1.2,
          plotdat = TRUE,

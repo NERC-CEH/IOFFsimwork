@@ -1,7 +1,7 @@
 # function to run any scenario/model in parallel
 
 run_scenario <- function(resolution, 
-                         model_type=c("structured", "unstructured", "unstructuredcov", "joint", "jointcov", "joint2"), 
+                         model_type=c("structured", "unstructured", "unstructuredcov", "joint", "jointcov", "jointtwo"), 
                          plotting=FALSE, 
                          summary_results=FALSE,  
                          nsamp = NULL, 
@@ -19,7 +19,7 @@ run_scenario <- function(resolution,
                          plotdat = FALSE, 
                          qsize = qsize, 
                          rho = rho, 
-                         correlated = FALSE, 
+                         correlation = FALSE, 
                          n_runs = NULL,
                          scenario_name = NULL,
                          parameter = NULL){
@@ -28,7 +28,7 @@ run_scenario <- function(resolution,
   # run the model in a parallel loop
   
   # create a cluster
-  cl = makeCluster(4)
+  cl = makeCluster(2)
   registerDoParallel(cl)
   strt = Sys.time() # record system time
   
@@ -40,7 +40,8 @@ run_scenario <- function(resolution,
                            source("run_function_multiple.R")
                            run_function_multiple(resolution=resolution, 
                                                  model_type=model_type, 
-                                                 plotting=FALSE, summary_results=TRUE,  
+                                                 plotting=FALSE, 
+                                                 summary_results=TRUE,  
                                                  nsamp = nsamp, 
                                                  seed = seed[i], 
                                                  dim = dim, 
@@ -54,7 +55,10 @@ run_scenario <- function(resolution,
                                                  probs = probs,  
                                                  plot = FALSE, 
                                                  plotdat = FALSE, 
-                                                 qsize = qsize, rho = rho                                    
+                                                 qsize = qsize, 
+                                                 rho = rho,
+                                                 parameter = parameter,
+                                                 correlation = correlation
                            )
                          }
   

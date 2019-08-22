@@ -55,7 +55,7 @@ addSpatialBias <- function(strata = strata,
     #define new variable for covariate to explain bias - correlated with true sampling probability
     
     n     <- dim[2]                    # length of vector
-    rho   <- 0.9                   # desired correlation = cos(angle)
+    rho   <- rho                  # desired correlation = cos(angle)
     theta <- acos(rho)             # corresponding angle
     x1    <- probseq       # fixed given data
     x2    <- rnorm(n, 2, 0.5)      # new random data

@@ -7,3 +7,4 @@
 *.md
 *.html
 figure/
+packrat/lib*/

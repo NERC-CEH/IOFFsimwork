@@ -9,7 +9,9 @@
 # structured_data
 # choose table and/or plot
 
-validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "unstructuredcov", "unstructuredsf", "structured", "joint", "jointcov", "joint2"), unstructured_data=NULL, structured_data=NULL, dat1,
+validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "unstructuredcov", "unstructuredsf", 
+                                                                               "structured", "joint", "jointcov", "jointtwo"), 
+                                unstructured_data=NULL, structured_data=NULL, dat1,
                              plotting = FALSE, summary_results = FALSE, qsize = qsize, absolute = TRUE, dim = dim){
   
 #All comparisons are on the same scale as the truth is logged too!
@@ -32,7 +34,8 @@ sd.prd <- result$summary.fitted.values$sd[index.pred.response]
 
 # calculate differences
 source('make_truth_grid.R')
-if(absolute == TRUE){truth_grid <- make_truth_grid(resolution, dat1, c(dim[1],dim[2]), type='truth', absolute=TRUE)} else {truth_grid <- make_truth_grid(resolution, dat1, c(dim[1],dim[2]), type='truth', absolute=FALSE)}
+if(absolute == TRUE){truth_grid <- make_truth_grid(resolution, dat1, c(dim[1],dim[2]), type='truth', absolute=TRUE)} else 
+  {truth_grid <- make_truth_grid(resolution, dat1, c(dim[1],dim[2]), type='truth', absolute=FALSE)}
 
 if(absolute == TRUE){
   differences <- m.prd-truth_grid # calculate differences

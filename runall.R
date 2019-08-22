@@ -46,7 +46,7 @@ lambda <- -3
 #+ warning = FALSE, message = FALSE, error = FALSE, include = FALSE
 source("Functions to generate data and sample.R")
 
-g1 <- genDataFunctions(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x, strata = strata, rows = rows, cols = cols, probs = probs, nsamp = nsamp, qsize = 1)
+g1 <- genDataFunctions(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x, strata = strata, rows = rows, cols = cols, probs = probs, nsamp = nsamp, qsize = 1, rho = 0.99)
 
 structured_data <- g1$structured_data
 unstructured_data <- g1$unstructured_data
@@ -229,4 +229,21 @@ validation_5_r$correlation
 validation_6_r$correlation
 
 
+#create family variable
+
+family_waic <- mod_3$result$dic$family
+
+mod_1$result$waic$waic
+mod_2$result$waic$waic
+mod_3$result$waic$waic
+mod_4$result$waic$waic
+mod_5$result$waic$waic
+mod_6$result$waic$waic
+
+waic_comp <- rbind(
+  separate = c( mod_2$result$waic$waic,mod_1$result$waic$waic),
+  joint_basic = tapply(mod_3$result$waic$local.waic, family_waic, function(x) sum (x, na.rm=T)),
+  joint_cov = tapply(mod_5$result$waic$local.waic, family_waic, function(x) sum (x, na.rm=T)),
+  joint_two = tapply(mod_6$result$waic$local.waic, family_waic, function(x) sum (x, na.rm=T))
+)
 

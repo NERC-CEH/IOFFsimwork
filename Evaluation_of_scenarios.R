@@ -31,7 +31,7 @@ n_by = 4
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Sample_size")
-files <- files[-c(20:29)]
+#files <- files[-c(20:29)]
 
 # create a summary of all runs of this scenario
 
@@ -63,7 +63,7 @@ summary_scenario_sample_size$Scenario <- as.numeric(scenario_names)
   
 summary_scenario_sample_size[,1:7] <- unlist(summary_scenario_sample_size[,1:7]) # need to unlist to save
 
-#write.csv(summary_scenario_sample_size, "SummaryTable_samplesize.csv", row.names=T)
+write.csv(summary_scenario_sample_size, "SummaryTable_samplesize.csv", row.names=T)
 
 #' ### Table
 #' 
@@ -151,6 +151,7 @@ n_by = 4
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Correlation_")
+#files <- files[-3]
 
 # create a summary of all runs of this scenario
 
@@ -179,11 +180,11 @@ model_names = c("unstructuredcov", "unstructured", "structured", "jointtwo", "jo
 summary_scenario_correlation <- rbind(summary_scenario_correlation,
                                       summary_scenario_sample_size[which(summary_scenario_sample_size$Scenario == 150),
                                                                    1:7])
-summary_scenario_correlation$Scenario <- c(rep("TRUE", 6), rep("FALSE", 5))
+summary_scenario_correlation$Scenario <- c(rep("TRUE", 6), rep("FALSE", 6))
 
 summary_scenario_correlation[,1:7] <- unlist(summary_scenario_correlation[,1:7]) # need to unlist to save
 
-#write.csv(summary_scenario_correlation, "SummaryTable_correlation.csv", row.names=T)
+write.csv(summary_scenario_correlation, "SummaryTable_correlation.csv", row.names=T)
 
 #' ### Table
 #' 
@@ -198,7 +199,7 @@ summary_scenario_correlation
 
 # need to add the sample size n = 150 raw results to this
 
-raw_scenario_correlation <- c(raw_scenario_correlation, raw_scenario_sample_size[c(2,11,21,30,31)])
+raw_scenario_correlation <- c(raw_scenario_correlation, raw_scenario_sample_size[c(2,11,21,30,31,41,42)])
 
 plotting_data <- summary_plot_function(raw_scenario_correlation, scenario = "Correlation_", 
                                        n_runs, type="summary")
@@ -274,7 +275,7 @@ n_by = 4
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Bias_")
-files <- files[-c(1:21,29,30, 36:42)]
+#files <- files[-c(1,2,8:21,22,23,29,30,36,37)]
 
 # create a summary of all runs of this scenario
 
@@ -299,7 +300,7 @@ model_names = c("unstructuredcov", "unstructured", "structured", "jointtwo", "jo
 
 summary_scenario_bias[,1:7] <- unlist(summary_scenario_bias[,1:7]) # need to unlist to save
 
-#write.csv(summary_scenario_bias, "SummaryTable_bias.csv", row.names=T)
+write.csv(summary_scenario_bias, "SummaryTable_bias.csv", row.names=T)
 
 #' ### Table
 #' 

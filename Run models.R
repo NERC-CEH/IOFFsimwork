@@ -87,7 +87,8 @@ result <- inla(formulaN,family="poisson",
                data=inla.stack.data(join.stack),
                control.predictor=list(A=inla.stack.A(join.stack), compute=TRUE),
                control.family = list(link = "log"),
-               E = inla.stack.data(join.stack)$e
+               E = inla.stack.data(join.stack)$e,
+               control.compute = list(cpo=TRUE, waic = TRUE, dic = TRUE)
 )
 
 result$summary.fixed

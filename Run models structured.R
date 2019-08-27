@@ -45,7 +45,8 @@ result.struct.binom <- inla(formulaN,family="binomial",
                             data=inla.stack.data(join.stack),
                             control.predictor=list(A=inla.stack.A(join.stack), compute=TRUE),
                             control.family = list(link = "cloglog"),
-                            Ntrials = inla.stack.data(join.stack)$Ntrials
+                            Ntrials = inla.stack.data(join.stack)$Ntrials,
+                            control.compute = list(cpo=TRUE, dic = TRUE, waic = TRUE)
 )
 
 

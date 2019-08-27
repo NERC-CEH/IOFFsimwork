@@ -261,4 +261,21 @@ validation_7_r$correlation
 validation_8_r$correlation
 
 
+#create family variable
+
+family_waic <- mod_3$result$dic$family
+
+mod_1$result$waic$waic
+mod_2$result$waic$waic
+mod_3$result$waic$waic
+mod_4$result$waic$waic
+mod_5$result$waic$waic
+mod_6$result$waic$waic
+
+waic_comp <- rbind(
+  separate = c( mod_2$result$waic$waic,mod_1$result$waic$waic),
+  joint_basic = tapply(mod_3$result$waic$local.waic, family_waic, function(x) sum (x, na.rm=T)),
+  joint_cov = tapply(mod_5$result$waic$local.waic, family_waic, function(x) sum (x, na.rm=T)),
+  joint_two = tapply(mod_6$result$waic$local.waic, family_waic, function(x) sum (x, na.rm=T))
+)
 

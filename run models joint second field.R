@@ -118,7 +118,8 @@ joint_model2 <- function(structured_data, unstructured_data, dat1, biasfield){
                  control.family = list(list(link = "log"), 
                                        list(link = "cloglog")),
                  E = inla.stack.data(join.stack)$e,
-                 Ntrials = inla.stack.data(join.stack)$Ntrials
+                 Ntrials = inla.stack.data(join.stack)$Ntrials,
+                 control.compute = list(cpo=TRUE, waic = TRUE, dic = TRUE)
   )
   
   

@@ -113,7 +113,8 @@ result <- inla(formulaJ,family=c("poisson", "binomial"),
                control.family = list(list(link = "log"), 
                                      list(link = "cloglog")),
                E = inla.stack.data(join.stack)$e,
-               Ntrials = inla.stack.data(join.stack)$Ntrials
+               Ntrials = inla.stack.data(join.stack)$Ntrials,
+               control.compute = list(cpo=TRUE, waic = TRUE, dic = TRUE)
 )
 
 

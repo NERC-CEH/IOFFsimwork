@@ -8,7 +8,7 @@
 #dat1 - original datafile of environmental covariate and bias
 #spde
 
-create_prediction_stack <- function(data_stack, 
+create_prediction_stack_corr <- function(data_stack, 
                                     resolution, 
                                     biasfield, 
                                     dat1, 
@@ -39,23 +39,36 @@ create_prediction_stack <- function(data_stack,
   
   # if clauses to automate correct creation depending on what is in the data stack
   if(length(data_stack$data$names$y) > 1){
-    ys <- cbind(rep(NA, nrow(pred.grid)), rep(NA, nrow(pred.grid)))
-    stack.pred.response <- inla.stack(data=list(y=ys),
-                                      effects = list(list(data.frame(interceptA=rep(1,np))), env = pred.grid$cov, list(uns_field=1:spde$n.spde)),
-                                      A=list(1,1, A.pred),
-                                      tag='pred.response')
-  } else if("Ntrials" %in% data_stack$data$names) {
-    stack.pred.response <- inla.stack(data=list(y=NA, Ntrials = rep(1,np)),
-                                      effects = list(list(data.frame(interceptA=rep(1,np))), env = pred.grid$cov, list(Bnodes=1:spde$n.spde)),
-                                      A=list(1,1, A.pred),
-                                      tag='pred.response')
-  } else {
-    stack.pred.response <- inla.stack(data=list(y=NA),
-                                      effects = list(list(data.frame(interceptB=rep(1,np))), env = pred.grid$cov, list(Bnodes=1:spde$n.spde)),
-                                      A=list(1,1, A.pred),
-                                      tag='pred.response')   
     
-      }
+    ys <- cbind(rep(NA, nrow(pred.grid)), rep(NA, nrow(pred.grid)))
+    
+    stack.pred.response <- 
+      
+      inla.stack(data=list(y=ys),
+                 
+                 effects = list(list(data.frame(interceptA=rep(1,np))),
+                                env = pred.grid$cov, 
+                                list(data.frame(uns_field=1:spde$n.spde),
+                                uns_field.group = rep(1, spde$n.spde))),
+                 
+                 A=list(1,1, A.pred),
+                 
+                 tag='pred.unstructured')
+    
+    stack.pred.response2 <- 
+      
+      inla.stack(data=list(y=ys),
+                 
+                 effects = list(list(data.frame(interceptA=rep(1,np))),
+                                env = pred.grid$cov, 
+                                list(data.frame(uns_field=1:spde$n.spde),
+                                uns_field.group = rep(2, spde$n.spde))),
+                 
+                 A=list(1,1, A.pred),
+                 
+                 tag='pred.structured')
+    
+  } 
   
   
   # make inla stack using proper tag (pred.response)
@@ -63,6 +76,6 @@ create_prediction_stack <- function(data_stack,
   
   # join this stack and previous stack
   
-  join.stack <- inla.stack(data_stack, stack.pred.response)
+  join.stack <- inla.stack(data_stack, stack.pred.response, stack.pred.response2)
   return(join.stack)
 }

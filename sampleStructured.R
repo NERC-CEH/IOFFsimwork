@@ -10,8 +10,11 @@ sampleStructured <- function(PPdat, biasfield, nsamp = NULL, qsize = NULL, plotd
   while(!success) {
   
   s1 <- sampleStrata(biasfield, nsamp = nsamp, type = "Stratified")
+  # sample from strata nsamp/nstrata times
+  # sim2 now has extra error
   
   s1$Stratified$samp_id <- 1:nrow(s1$Stratified)
+  # give each sample an id
   
   #add neighbourhood - these reflect the sampling areas
   
@@ -20,8 +23,16 @@ sampleStructured <- function(PPdat, biasfield, nsamp = NULL, qsize = NULL, plotd
   
   s2 <- data.frame()
   for(i in 1:nrow(s1$Stratified)){
-    s3 <- biasfield[biasfield$x %in% seq(s1$Stratified$x[i]-buffer, s1$Stratified$x[i]+buffer) & biasfield$y %in% seq(s1$Stratified$y[i]-buffer, s1$Stratified$y[i]+buffer),]
+    
+    s3 <- biasfield[biasfield$x %in% seq(s1$Stratified$x[i]-buffer, 
+                                         s1$Stratified$x[i]+buffer) 
+                    & biasfield$y %in% seq(s1$Stratified$y[i]-buffer,
+                                           s1$Stratified$y[i]+buffer),]
+    
+    #take the one with no extra error added since taken from biasfield
+    
     s3$samp_id <- s1$Stratified$samp_id[i]
+    
     s2 <- rbind(s2, s3)
   }
   
@@ -29,7 +40,7 @@ sampleStructured <- function(PPdat, biasfield, nsamp = NULL, qsize = NULL, plotd
   
   
   
-  newpoints <- rpoispp(lambda = PPdat$Lam)
+  newpoints <- rpoispp(lambda = PPdat$Lam) # generate random point pattern 
   #see which points are observed 	
   newpoints_sc <- data.frame(x1 = round(newpoints$x), y1 = round(newpoints$y))
   dat2 <- merge(newpoints_sc, s2, by.x = c("x1", "y1"), by.y = c("x","y"))
@@ -39,7 +50,7 @@ sampleStructured <- function(PPdat, biasfield, nsamp = NULL, qsize = NULL, plotd
   dat2$y_sc <- dat2$y
   
   
-  #dat2 now holds locations of points observed in structured survey
+  #dat2 now holds presence locations of points observed in structured survey
   
   #add absences to structured data
   
@@ -54,14 +65,15 @@ sampleStructured <- function(PPdat, biasfield, nsamp = NULL, qsize = NULL, plotd
   struct_dat$presence[!is.na(struct_dat$presence)] <- 1 #convert to p/a
   struct_dat$presence[is.na(struct_dat$presence)] <- 0
   
-  success <- sum(struct_dat$presence) >= 0.1*nsamp 
+  success <- sum(struct_dat$presence) > 0
   
   }
   
   #add env covariate to structured data
   if(!is.null(PPdat$gridcov)){
   
-  struct_dat$env <- PPdat$gridcov[as.matrix(struct_dat[,3:2])]
+  struct_dat$env <- PPdat$gridcov[as.matrix(struct_dat[,3:2])]    
+  # with y-coor, get env cov from gridcov
   }
   
   

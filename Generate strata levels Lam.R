@@ -22,6 +22,6 @@ genStrataLam <- function(Lam, strata = 8, rows = 4, cols = 2, plot = TRUE){
   rfv <- log(Lam$v)
   rfv <- as.vector(rfv)
   dat <- data.frame(x = stratxy$x, y = stratxy$y, sim1 = rfv,stratum =stratxy$stratum)
-  if(plot == TRUE){plot(dat$y ~ dat$x, col = dat$stratum)}
+  plot(dat$y ~ dat$x, col = dat$stratum)
   return(dat)
 }

@@ -95,8 +95,8 @@ Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
                     labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
                                "Structured only", "Joint",
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_boxplot(width=0.1)+
+  geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(width=0.1, outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Structured sample size")+
@@ -115,19 +115,40 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
                     labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
                                "Structured only", "Joint",
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_boxplot(width=0.1)+
+  geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(width=0.1, outlier.shape=NA)+
+  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Structured sample size")+
   ylab("Environmental covariate estimate")+
-  ylim(-10,50)+
+  ylim(-5,5)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 Environment
 
 ggsave(filename = "EnvironmentPlot_samplesize.png", plot=last_plot(),
+       width = 20, height = 10, units="cm", dpi=300)
+
+MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
+  scale_fill_manual(values=manual_colours, name = "",
+                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
+                               "Structured only", "Joint",
+                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
+  geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(width=0.1, outlier.shape=NA)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("Structured sample size")+
+  ylab("MAE")+
+  ylim(0,3)+
+  facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+MAE
+
+ggsave(filename = "MAEPlot_samplesize.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 #' ## Table of proportion of env estimate in CI
@@ -240,6 +261,7 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
                                "Structured only", "Joint",
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
   geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
+  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
   geom_boxplot(width=0.1)+
   theme_classic()+
   theme(legend.position = "none")+
@@ -252,6 +274,26 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
 Environment
 
 ggsave(filename = "EnvironmentPlot_correlation.png", plot=last_plot(),
+       width = 20, height = 10, units="cm", dpi=300)
+
+MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
+  scale_fill_manual(values=manual_colours, name = "",
+                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
+                               "Structured only", "Joint",
+                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
+  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
+  geom_boxplot(width=0.1)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("Correlation between environment and bias")+
+  ylab("MAE")+
+  ylim(0,5)+
+  facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+MAE
+
+ggsave(filename = "MAEPlot_correlation.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 #' ## Table of proportion of env estimate in CI
@@ -297,6 +339,13 @@ row.names(summary_scenario_bias) <- str_sub(row.names(summary_scenario_bias), 6,
 scenario_names <- unlist(row.names(summary_scenario_bias))
 # model names need to be in set order so remove completely
 model_names = c("unstructuredcov", "unstructured", "structured", "jointtwo", "jointcov", "joint")
+
+# easiest in loop
+for(i in 1:length(model_names)){
+  scenario_names <- str_replace(scenario_names, model_names[i], "")
+}
+
+summary_scenario_bias$Scenario <- as.numeric(scenario_names)
 
 summary_scenario_bias[,1:7] <- unlist(summary_scenario_bias[,1:7]) # need to unlist to save
 
@@ -353,6 +402,7 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
   geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
   geom_boxplot(width=0.1)+
+  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Bias in unstructured data")+
@@ -364,6 +414,27 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
 Environment
 
 ggsave(filename = "EnvironmentPlot_bias.png", plot=last_plot(),
+       width = 20, height = 10, units="cm", dpi=300)
+
+
+MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
+  scale_fill_manual(values=manual_colours, name = "",
+                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
+                               "Structured only", "Joint",
+                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
+  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
+  geom_boxplot(width=0.1)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("Bias in unstructured data")+
+  ylab("MAE")+
+  ylim(0,5)+
+  facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+MAE
+
+ggsave(filename = "MAEPlot_bias.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 #' ## Table of proportion of env estimate in CI

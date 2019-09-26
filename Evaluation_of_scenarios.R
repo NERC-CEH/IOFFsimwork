@@ -491,13 +491,13 @@ MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
                     labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
                                "Structured only", "Joint",
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_boxplot(width=0.1)+
+  #geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Bias in unstructured data")+
   ylab("MAE")+
-  ylim(0,5)+
+  ylim(0,2)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 

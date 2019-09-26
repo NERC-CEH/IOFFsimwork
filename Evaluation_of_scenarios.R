@@ -4,6 +4,7 @@
 # Packages
 library(RColorBrewer)
 library(ggplot2)
+library(plyr)
 #' 
 #' The truth is the same within each scenario.
 #' 
@@ -83,6 +84,12 @@ plotting_data$model <- factor(plotting_data$model, level = c("unstructured",
                                                              "structured", 
                                                              "joint",
                                                              "jointcov", "jointtwo"))
+plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "Unstructured only",
+                               "unstructuredcov" = "Unstructured with \nbias \ncovariate",
+                               "structured" = "Structured only", 
+                               "joint" = "Joint model",
+                               "jointcov" = "Joint with \nbias \ncovariate", 
+                               "jointtwo" = "Joint with \nsecond spatial \nfield"))
 plotting_data$scenario <- as.numeric(plotting_data$scenario)
 
 # now plot
@@ -95,8 +102,8 @@ Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
                     labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
                                "Structured only", "Joint",
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
-  geom_boxplot(width=0.1, outlier.shape=NA)+
+  #geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Structured sample size")+
@@ -109,14 +116,13 @@ Correlation
 ggsave(filename = "CorrelationPlot_samplesize.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
-
 Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   scale_fill_manual(values=manual_colours, name = "",
                     labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
                                "Structured only", "Joint",
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
-  geom_boxplot(width=0.1, outlier.shape=NA)+
+  #geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
   theme_classic()+
   theme(legend.position = "none")+
@@ -131,18 +137,41 @@ Environment
 ggsave(filename = "EnvironmentPlot_samplesize.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
+# add an extra plot of width of credible intervals
+
+Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
+  scale_fill_manual(values=manual_colours, name = "",
+                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
+                               "Structured only", "Joint",
+                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
+  #geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("Structured sample size")+
+  ylab("Environmental covariate estimate")+
+  ylim(0,15)+
+  facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+Environment_CI
+
+ggsave(filename = "EnvironmentPlotCI_samplesize.png", plot=last_plot(),
+       width = 20, height = 10, units="cm", dpi=300)
+
+
 MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
   scale_fill_manual(values=manual_colours, name = "",
                     labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
                                "Structured only", "Joint",
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
-  geom_boxplot(width=0.1, outlier.shape=NA)+
+  #geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Structured sample size")+
   ylab("MAE")+
-  ylim(0,3)+
+  ylim(0.25,1.5)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -158,7 +187,7 @@ ggsave(filename = "MAEPlot_samplesize.png", plot=last_plot(),
 # in credibility interval
 
 prop_env_in_CI <- summary_plot_function(raw_scenario_sample_size, scenario = "Sample_size_", n_runs, type="CI")
-prop_env_in_CI
+cbind(row.names(summary_scenario_sample_size),prop_env_in_CI)
 
 #' ## Correlation between bias and environment scenario
 #' 
@@ -260,20 +289,40 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
                     labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
                                "Structured only", "Joint",
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
-  geom_boxplot(width=0.1)+
+  #geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Correlation between environment and bias")+
   ylab("Environmental covariate estimate")+
-  ylim(-10,50)+
+  ylim(-10,15)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 Environment
 
 ggsave(filename = "EnvironmentPlot_correlation.png", plot=last_plot(),
+       width = 20, height = 10, units="cm", dpi=300)
+
+Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
+  scale_fill_manual(values=manual_colours, name = "",
+                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
+                               "Structured only", "Joint",
+                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
+  #geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("Correlation between environment and bias")+
+  ylab("Environmental covariate estimate")+
+  ylim(0,20)+
+  facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+Environment_CI
+
+ggsave(filename = "EnvironmentPlotCI_correlation.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
@@ -287,7 +336,7 @@ MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
   theme(legend.position = "none")+
   xlab("Correlation between environment and bias")+
   ylab("MAE")+
-  ylim(0,5)+
+  ylim(0,2.5)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -380,8 +429,8 @@ Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
                     labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
                                "Structured only", "Joint",
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_boxplot(width=0.1)+
+  #geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Bias in unstructured data")+
@@ -400,20 +449,40 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
                     labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
                                "Structured only", "Joint",
                                "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_boxplot(width=0.1)+
-  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
+  #geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Bias in unstructured data")+
+  xlab("Maximum detection probability in unstructured data")+
   ylab("Environmental covariate estimate")+
-  ylim(-10,50)+
+  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
+  ylim(-5,10)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 Environment
 
 ggsave(filename = "EnvironmentPlot_bias.png", plot=last_plot(),
+       width = 20, height = 10, units="cm", dpi=300)
+
+Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
+  scale_fill_manual(values=manual_colours, name = "",
+                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
+                               "Structured only", "Joint",
+                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
+  #geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("Maximum detection probability in unstructured data")+
+  ylab("Environmental covariate estimate")+
+  ylim(0,15)+
+  facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+Environment_CI
+
+ggsave(filename = "EnvironmentPlotCI_bias.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 

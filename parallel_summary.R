@@ -68,7 +68,8 @@ summary_plot_function <- function(summary_raw, scenario, n_runs, type = c("summa
                             env_in_CI = NA,
                             model = NA, # extract name of model
                             scenario = NA, # extract numeric part 
-                            mae = NA) 
+                            mae = NA,
+                            width = NA) 
   prop_CI <- NA
   
   for(i in 1:length(summary_raw)){
@@ -79,14 +80,16 @@ summary_plot_function <- function(summary_raw, scenario, n_runs, type = c("summa
                                 env_in_CI = between(1.2, summary_raw[[i]][4,j], summary_raw[[i]][5,j]),
                                 model = gsub("[^a-zA-Z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract name of model
                                 scenario = gsub("[^0-9]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract numeric part
-                                mae = summary_raw[[i]][1,j])
+                                mae = summary_raw[[i]][1,j],
+                                width = summary_raw[[i]][5,j] - summary_raw[[i]][4,j])
                                 output_data <- rbind(output_data, output_data_temp)
       }else{output_data_temp <- data.frame(correlation = summary_raw[[i]][2,j],
                                            env = summary_raw[[i]][3,j],
                                            env_in_CI = between(1.2, summary_raw[[i]][4,j], summary_raw[[i]][5,j]),
                                            model = gsub("[^a-z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract name of model
                                            scenario = gsub("[^A-Z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract numeric part
-                                           mae = summary_raw[[i]][1,j])
+                                           mae = summary_raw[[i]][1,j], 
+                                           width = summary_raw[[i]][5,j] - summary_raw[[i]][4,j])
       if(output_data_temp$scenario != "TRUE"){output_data_temp$scenario <- "FALSE"}
       output_data <- rbind(output_data, output_data_temp)}}
     prop_CI_T <- length(which((output_data$env_in_CI[(((i-1)*n_runs)+1):(i*n_runs)])==TRUE))/n_runs

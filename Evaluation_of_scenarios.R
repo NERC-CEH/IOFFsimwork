@@ -280,7 +280,6 @@ plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "Unstruct
                                                       "joint" = "Joint model",
                                                       "jointcov" = "Joint with \nbias \ncovariate", 
                                                       "jointtwo" = "Joint with \nsecond spatial \nfield"))
-plotting_data$scenario <- as.numeric(plotting_data$scenario)
 
 # now plot
 # set manual colours
@@ -297,8 +296,7 @@ Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
                                "Unstructured with \nbias \ncovariate",
                                "Joint with \nbias \ncovariate", 
                                "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_boxplot(width=0.1)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Correlation between environment and bias")+

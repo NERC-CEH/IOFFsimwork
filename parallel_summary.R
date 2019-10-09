@@ -12,11 +12,22 @@ parallel_summary <- function(results, type=c("single", "joint")){
   
   # want to make a summary which will include: correlation, env estimate, and MAE
   
-  if(type == "single"){return(as.numeric(c(results$'Proto-table'[2], 
+  if(type == "single"){
+    if(nrow(results$coefficients) == 2){
+      return(as.numeric(c(results$'Proto-table'[2], 
                                            results$correlation, 
                                            results$coefficients[2,1], 
                                            results$coefficients[2,2], 
-                                           results$coefficients[2,3])))}
+                                           results$coefficients[2,3])))
+    } else {
+      return(as.numeric(c(results$'Proto-table'[2], 
+                          results$correlation, 
+                          results$coefficients[2,1], 
+                          results$coefficients[2,2], 
+                          results$coefficients[2,3],
+                          results$coefficients[3,1])))
+    }
+  }
   
   # as joint has two intercepts, environmental covariate estimate is in a different place!
   if(type == "joint"){return(as.numeric(c(results$'Proto-table'[2], 

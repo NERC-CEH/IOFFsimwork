@@ -6,7 +6,7 @@ source("setParams.R")
 
 library(viridis)
 
-lambda <- -3 #manageable number
+lambda <- -3 #manageable number for Figure 1
 #env.beta <- 3 #stronger env effect
 
 #' The default parameters are as follows:
@@ -25,7 +25,8 @@ lambda <- -3 #manageable number
 #' 
 #' e.g. we want to simulate a point process with a smaller mean intensity
 
-lambda <- -3
+#lambda <- -3
+
 
 #' ## Generate data from parameters
 
@@ -46,7 +47,7 @@ lambda <- -3
 #+ warning = FALSE, message = FALSE, error = FALSE, include = FALSE
 source("Functions to generate data and sample.R")
 
-g1 <- genDataFunctions(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x, strata = strata, rows = rows, cols = cols, probs = probs, nsamp = nsamp, qsize = 1, rho = 0.99)
+g1 <- genDataFunctions(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x, strata = strata, rows = rows, cols = cols, probs = probs, nsamp = nsamp, qsize = 1, rho = 0.99, correlated = FALSE)
 
 structured_data <- g1$structured_data
 unstructured_data <- g1$unstructured_data
@@ -55,79 +56,107 @@ dat1 <- g1$dat1
 biascov <- g1$biascov
 strata1 <- g1$strata1
 
-
+#' 
 #' Visualise the random field and covariate pattern
-#+ echo = FALSE 
-par(mfrow=c(1,3)) 
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='log-Lambda', asp=1) 
+#+ echo = FALSE
+par(mfrow=c(1,3))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='log-Lambda', asp=1)
 points(dat1$xy, pch=19)
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Covariate', asp=1)
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(biascov)), main='Bias covariate', asp=1)
 
 #' Visualise the strata and associated probabilities of sampling
-#+ echo = FALSE 
-par(mfrow=c(1,1), xpd = TRUE) 
+#+ echo = FALSE
+par(mfrow=c(1,1), xpd = TRUE)
 par(mar=c(4,4,4,7))
 palette(viridis(50))
 plot(biasfield$y ~ biasfield$x, col = biasfield$stratprobs*100)
 legend(330,300, col = c(50,40,30,20,10), pch = 20, legend = c("0.4-0.5", "0.3-0.4", "0.2-0.3", "0.1-0.2", "0.01-0.1"), title = "Probability")
 
 #' Visualise thinned unstructured data
-#+ echo = FALSE 
+#+ echo = FALSE
 par(mfrow=c(1,1))
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Thinned unstructured data', asp=1) 
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Thinned unstructured data', asp=1)
 points(unstructured_data$x, unstructured_data$y, pch = 20)#note rescale again - plotting back on original
-
+#' 
 #' Visualise structured data
-#+ echo = FALSE  
+#+ echo = FALSE
 par(mfrow=c(1,1))
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Structured data', asp=1) 
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Structured data', asp=1)
 points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black")
 par(xpd = TRUE)
 legend(-10,360,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1))
 
-#' ## Run individual data models
-#' 
-#' Models are run for each data type separately first then a joint model is computed. All models are run in INLA. 
-#' 
-#' These models have the following assumptions:
-#' 
-#' 1. Unstructured data is presence only and can be modelled as a Poisson point process
-#' 
-#' 2. Structured data is presence/absence can be modelled as a binomial 
-#' 
-#' 3. A single environmental covariate determines intensity and is included in the model
-#' 
-#' 4. In joint models the true species occurrence can be represented with a shared random spatial field
-#' 
-#' ## Model outputs
-#' 
-#' Model outputs follow below (in the order of structured only, unstructured only, and then the joint model):
-#' 
-#' 1. The mean of the estimated intensity from the model AFTER accounting for the environment
-#' 
-#' 2. The 'true' species intensity driven by environmental covariate
-#' 
-#' 3. The standard deviation of the estimated intensity from the model AFTER accounting for the evnironment
-#' 
-#' Then we have some model validation plots:
-#' 
-#' 4. The 'true' species intensity driven by environmental covariate
-#' 
-#' 5. The predicted mean intensity back in environmental space (averaged on a grid system)
-#' 
-#' 6. The predicted standard deviation of intensity in environmental space (averaged on a grid system)
-#' 
-#' 7. The relative difference between the 'true intensity' and the predicted intensity in environmental space (averaged on a grid system)
-#' 
-#' Relative differences are calculated for 10X10 squares across the space. 
-#' Predictions generated at centre of these squares.
-#' True intensity averaged across each square.
-#' 
-#' ### Structured model 
-#' 
-# #+ warning = FALSE, message = FALSE, error = FALSE, figure.align = "center"
-source("Run models structured.R")
+
+### panels for Figure 1
+
+png("Figure 1.png", height = 1200, width = 1200, pointsize = 20)
+
+par(mfrow=c(2,2))
+
+#Environmental covariate
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Environmental covariate', asp=1, col = viridis(50))
+
+#Example truth
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Species intensity', asp=1 , col = viridis(50))
+
+#Bias
+palette(viridis(50))
+plot(biasfield$y ~ biasfield$x, col = biasfield$stratprobs*100, main = "Detection probability")
+legend(330,300, col = c(50,40,30,20,10), pch = 20, legend = c("0.4-0.5", "0.3-0.4", "0.2-0.3", "0.1-0.2", "0.01-0.1"), title = "Probability")
+
+#Example samples
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Sampled data', asp=1, col = viridis(50))
+points(unstructured_data$x, unstructured_data$y, pch = 20, col = "grey25")
+points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black")
+par(xpd = TRUE)
+legend(-10,360,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1))
+
+dev.off()
+
+
+
+## Run individual data models
+
+# Models are run for each data type separately first then a joint model is computed. All models are run in INLA.
+# 
+# These models have the following assumptions:
+# 
+# 1. Unstructured data is presence only and can be modelled as a Poisson point process
+# 
+# 2. Structured data is presence/absence can be modelled as a binomial
+# 
+# 3. A single environmental covariate determines intensity and is included in the model
+# 
+# 4. In joint models the true species occurrence can be represented with a shared random spatial field
+
+## Model outputs
+
+# Model outputs follow below (in the order of structured only, unstructured only, and then the joint model):
+# 
+# 1. The mean of the estimated intensity from the model AFTER accounting for the environment
+# 
+# 2. The 'true' species intensity driven by environmental covariate
+# 
+# 3. The standard deviation of the estimated intensity from the model AFTER accounting for the evnironment
+# 
+# Then we have some model validation plots:
+# 
+# 4. The 'true' species intensity driven by environmental covariate
+# 
+# 5. The predicted mean intensity back in environmental space (averaged on a grid system)
+# 
+# 6. The predicted standard deviation of intensity in environmental space (averaged on a grid system)
+# 
+# 7. The relative difference between the 'true intensity' and the predicted intensity in environmental space (averaged on a grid system)
+# 
+# Relative differences are calculated for 10X10 squares across the space.
+# Predictions generated at centre of these squares.
+# True intensity averaged across each square.
+
+### Structured model
+
+# #+ warning = FALSE, message = FALSE, error = FALSE, figure.align = "center"source("Run models structured.R")
 mod_1 <- structured_model(structured_data, dat1, biasfield, plotting = TRUE)
 source("validation_function.R")
 validation_1 <- validation_function(result=mod_1[[2]], resolution=c(10,10), join.stack=mod_1[[1]], model_type="structured",
@@ -136,14 +165,14 @@ validation_1_r <- validation_function(result=mod_1[[2]], resolution=c(10,10), jo
                                       structured_data = structured_data, dat1 = dat1, summary_results=T, qsize = 1, absolute=FALSE, dim = dim, plotting = TRUE)
 
 #' ### Unstructured model
-#' 
+#'
 #+ warning = FALSE, message = FALSE, error = FALSE
 source("Run models.R")
 mod_2 <- unstructured_model(unstructured_data, dat1, biasfield, dim = dim, plotting = TRUE)
 source("validation_function.R")
-validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
+validation_2 <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured",
                                     unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
-validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured", 
+validation_2_r <- validation_function(result=mod_2[[2]], resolution=c(10,10), join.stack=mod_2[[1]], model_type="unstructured",
                                       unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=FALSE, dim = dim, plotting = TRUE)
 
 
@@ -170,12 +199,16 @@ validation_3_r <- validation_function(result=mod_3[[2]], resolution=c(10,10), jo
 source("Run models unstructured bias covariate.R")
 mod_4 <- unstructured_model_cov(unstructured_data, dat1, biasfield, dim = dim, plotting = TRUE, biascov = biascov)
 source("validation_function.R")
-validation_4 <- validation_function(result=mod_4[[2]], resolution=c(10,10), join.stack=mod_4[[1]], model_type="unstructuredcov", 
-                                     unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
+# validation_4 <- validation_function(result=mod_4[[2]], resolution=c(10,10), join.stack=mod_4[[1]], model_type="unstructuredcov", 
+#                                      unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=TRUE, dim = dim, plotting = TRUE)
 validation_4_r <- validation_function(result=mod_4[[2]], resolution=c(10,10), join.stack=mod_4[[1]], model_type="unstructuredcov", 
                                        unstructured_data = unstructured_data, dat1 = dat1, summary_results=T, absolute=FALSE, dim = dim, plotting = TRUE)
 
-#
+
+mod_4$result$summary.fixed
+validation_4_r$'Proto-table'
+
+
 #joint model (covariate on bias)
 source("Run models joint covariate for bias.R")
 mod_5 <- joint_model_cov(structured_data, unstructured_data, dat1, biasfield, resolution = c(10,10), biascov = biascov)

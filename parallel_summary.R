@@ -98,3 +98,22 @@ summary_plot_function <- function(summary_raw, scenario, n_runs, type = c("summa
 
   if(type == "summary")return(output_data[-1,])else{return(prop_CI[-1])}
 }
+
+# Function to find the minimum y limits
+
+y_limits <- function(plotting_data, variable_name){
+  marker <- which(colnames(plotting_data)==variable_name)
+  store <- matrix(NA, ncol=2, nrow=6)
+  for(i in 1:6){
+    temp <- plotting_data[plotting_data$model == 
+                            unique(plotting_data$model)[i],
+                          marker]
+    # need the bound for lower 2.5%
+    lower <- sort(temp)[length(temp)*0.025]
+    # and upper
+    upper <- sort(temp)[length(temp)*0.975]
+    
+    store[i,] <- c(lower,upper)
+  }
+  return(c(min(store[,1]), max(store[,2])))
+}

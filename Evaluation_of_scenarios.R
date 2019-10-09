@@ -4,6 +4,7 @@
 # Packages
 library(RColorBrewer)
 library(ggplot2)
+library(plyr)
 #' 
 #' The truth is the same within each scenario.
 #' 
@@ -78,51 +79,65 @@ summary_scenario_sample_size
 
 plotting_data <- summary_plot_function(raw_scenario_sample_size, scenario = "Sample_size_", n_runs, type="summary")
 # relevel model column
-plotting_data$model <- factor(plotting_data$model, level = c("unstructured",
-                                                             "unstructuredcov",
-                                                             "structured", 
+plotting_data$model <- factor(plotting_data$model, level = c("structured",
+                                                             "unstructured",
                                                              "joint",
+                                                             "unstructuredcov",
                                                              "jointcov", "jointtwo"))
+plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "Unstructured only",
+                               "unstructuredcov" = "Unstructured with \nbias \ncovariate",
+                               "structured" = "Structured only", 
+                               "joint" = "Joint model",
+                               "jointcov" = "Joint with \nbias \ncovariate", 
+                               "jointtwo" = "Joint with \nsecond spatial \nfield"))
 plotting_data$scenario <- as.numeric(plotting_data$scenario)
 
 # now plot
 # set manual colours
-manual_colours <- c("blue", "darkblue", "orange", "grey30", "grey50", "grey80")
+manual_colours <- c("orange", "blue", "grey30", "darkblue", "grey50", "grey80")
 
+# Plot at least 95% of the estimates for each scenario
+y_correlation <- round(y_limits(plotting_data, "correlation"),2)
 
 Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
-                               "Structured only", "Joint",
-                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
-  geom_boxplot(width=0.1, outlier.shape=NA)+
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Structured sample size")+
   ylab("Correlation between prediction and truth")+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  ylim(c(y_correlation))
 
 Correlation
 
 ggsave(filename = "CorrelationPlot_samplesize.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
+y_env <- round(y_limits(plotting_data, "env"),2)
 
 Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
-                               "Structured only", "Joint",
-                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
-  geom_boxplot(width=0.1, outlier.shape=NA)+
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Structured sample size")+
   ylab("Environmental covariate estimate")+
-  ylim(-5,5)+
+  ylim(y_env)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -131,18 +146,47 @@ Environment
 ggsave(filename = "EnvironmentPlot_samplesize.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
+# add an extra plot of width of credible intervals
+y_width <- round(y_limits(plotting_data, "width"),2)
+
+Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
+  scale_fill_manual(values=manual_colours, name = "",
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("Structured sample size")+
+  ylab("Environmental covariate estimate")+
+  ylim(y_width)+
+  facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+Environment_CI
+
+ggsave(filename = "EnvironmentPlotCI_samplesize.png", plot=last_plot(),
+       width = 20, height = 10, units="cm", dpi=300)
+
+y_mae <- round(y_limits(plotting_data, "mae"),2)
+
 MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
-                               "Structured only", "Joint",
-                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=TRUE)+
-  geom_boxplot(width=0.1, outlier.shape=NA)+
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Structured sample size")+
   ylab("MAE")+
-  ylim(0,3)+
+  ylim(y_mae)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -158,7 +202,7 @@ ggsave(filename = "MAEPlot_samplesize.png", plot=last_plot(),
 # in credibility interval
 
 prop_env_in_CI <- summary_plot_function(raw_scenario_sample_size, scenario = "Sample_size_", n_runs, type="CI")
-prop_env_in_CI
+cbind(row.names(summary_scenario_sample_size),prop_env_in_CI)
 
 #' ## Correlation between bias and environment scenario
 #' 
@@ -225,50 +269,65 @@ raw_scenario_correlation <- c(raw_scenario_correlation, raw_scenario_sample_size
 plotting_data <- summary_plot_function(raw_scenario_correlation, scenario = "Correlation_", 
                                        n_runs, type="summary")
 # relevel model column
-plotting_data$model <- factor(plotting_data$model, level = c("unstructured",
-                                                             "unstructuredcov",
-                                                             "structured", 
+plotting_data$model <- factor(plotting_data$model, level = c("structured",
+                                                             "unstructured",
                                                              "joint",
+                                                             "unstructuredcov",
                                                              "jointcov", "jointtwo"))
+plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "Unstructured only",
+                                                      "unstructuredcov" = "Unstructured with \nbias \ncovariate",
+                                                      "structured" = "Structured only", 
+                                                      "joint" = "Joint model",
+                                                      "jointcov" = "Joint with \nbias \ncovariate", 
+                                                      "jointtwo" = "Joint with \nsecond spatial \nfield"))
 
 # now plot
 # set manual colours
-manual_colours <- c("blue", "darkblue", "orange", "grey30", "grey50", "grey80")
+manual_colours <- c("orange", "blue", "grey30", "darkblue", "grey50", "grey80")
+
+# Plot at least 95% of the estimates for each scenario
+y_correlation <- round(y_limits(plotting_data, "correlation"),2)
 
 Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
-                               "Structured only", "Joint",
-                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_boxplot(width=0.1)+
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Correlation between environment and bias")+
   ylab("Correlation between prediction and truth")+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  ylim(y_correlation)
 
 Correlation
 
 ggsave(filename = "CorrelationPlot_correlation.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
+y_env <- round(y_limits(plotting_data, "env"),2)
 
 Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
-                               "Structured only", "Joint",
-                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
-  geom_boxplot(width=0.1)+
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Correlation between environment and bias")+
   ylab("Environmental covariate estimate")+
-  ylim(-10,50)+
+  ylim(y_env)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 Environment
@@ -276,18 +335,47 @@ Environment
 ggsave(filename = "EnvironmentPlot_correlation.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
+y_width <- round(y_limits(plotting_data, "width"),2)
+
+Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
+  scale_fill_manual(values=manual_colours, name = "",
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("Correlation between environment and bias")+
+  ylab("Environmental covariate estimate")+
+  ylim(y_width)+
+  facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+Environment_CI
+
+ggsave(filename = "EnvironmentPlotCI_correlation.png", plot=last_plot(),
+       width = 20, height = 10, units="cm", dpi=300)
+
+y_mae <- round(y_limits(plotting_data, "mae"),2)
+
 MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
-                               "Structured only", "Joint",
-                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
   geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
   geom_boxplot(width=0.1)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Correlation between environment and bias")+
   ylab("MAE")+
-  ylim(0,5)+
+  ylim(y_mae)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -365,49 +453,65 @@ summary_scenario_bias
 plotting_data <- summary_plot_function(raw_scenario_bias, scenario = "Bias_", 
                                        n_runs, type="summary")
 # relevel model column
-plotting_data$model <- factor(plotting_data$model, level = c("unstructured",
-                                                             "unstructuredcov",
-                                                             "structured", 
+plotting_data$model <- factor(plotting_data$model, level = c("structured",
+                                                             "unstructured",
                                                              "joint",
+                                                             "unstructuredcov",
                                                              "jointcov", "jointtwo"))
+plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "Unstructured only",
+                                                      "unstructuredcov" = "Unstructured with \nbias \ncovariate",
+                                                      "structured" = "Structured only", 
+                                                      "joint" = "Joint model",
+                                                      "jointcov" = "Joint with \nbias \ncovariate", 
+                                                      "jointtwo" = "Joint with \nsecond spatial \nfield"))
+plotting_data$scenario <- as.numeric(plotting_data$scenario)
 
 # now plot
 # set manual colours
-manual_colours <- c("blue", "darkblue", "orange", "grey30", "grey50", "grey80")
+manual_colours <- c("orange", "blue", "grey30", "darkblue", "grey50", "grey80")
+
+# Plot at least 95% of the estimates for each scenario
+y_correlation <- round(y_limits(plotting_data, "correlation"),2)
 
 Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
-                               "Structured only", "Joint",
-                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_boxplot(width=0.1)+
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Bias in unstructured data")+
   ylab("Correlation between prediction and truth")+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  ylim(y_correlation)
 
 Correlation
 
 ggsave(filename = "CorrelationPlot_bias.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
+y_env <- round(y_limits(plotting_data, "env"),2)
 
 Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
-                               "Structured only", "Joint",
-                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_boxplot(width=0.1)+
-  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Bias in unstructured data")+
+  xlab("Maximum detection probability in unstructured data")+
   ylab("Environmental covariate estimate")+
-  ylim(-10,50)+
+  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
+  ylim(y_env)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -416,19 +520,46 @@ Environment
 ggsave(filename = "EnvironmentPlot_bias.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
+y_width <- round(y_limits(plotting_data, "width"),2)
+
+Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
+  scale_fill_manual(values=manual_colours, name = "",
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("Maximum detection probability in unstructured data")+
+  ylab("Environmental covariate estimate")+
+  ylim(y_width)+
+  facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+Environment_CI
+
+ggsave(filename = "EnvironmentPlotCI_bias.png", plot=last_plot(),
+       width = 20, height = 10, units="cm", dpi=300)
+
+y_mae <- round(y_limits(plotting_data, "mae"),2)
 
 MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Unstructured only", "Unstructured with \nbias \ncovariate",
-                               "Structured only", "Joint",
-                               "Joint with \nbias \ncovariate", "Joint with \nsecond spatial field"))+
-  geom_violin(aes(fill=as.factor(model)), trim=FALSE)+
-  geom_boxplot(width=0.1)+
+                    labels = c("Structured only", 
+                               "Unstructured only", 
+                               "Joint",
+                               "Unstructured with \nbias \ncovariate",
+                               "Joint with \nbias \ncovariate", 
+                               "Joint with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Bias in unstructured data")+
   ylab("MAE")+
-  ylim(0,5)+
+  ylim(y_mae)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 

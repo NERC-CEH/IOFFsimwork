@@ -90,7 +90,7 @@ legend(-10,360,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 
 ### panels for Figure 1
 
-png("Figure 1.png", height = 1200, width = 1200, pointsize = 20)
+png("Figure 1 GD.png", height = 1200, width = 1200, units = "mm", pointsize = 60, res= 20)
 
 par(mfrow=c(2,2))
 
@@ -102,13 +102,15 @@ image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Species
 
 #Bias
 palette(viridis(50))
-plot(biasfield$y ~ biasfield$x, col = biasfield$stratprobs*100, main = "Detection probability")
-legend(330,300, col = c(50,40,30,20,10), pch = 20, legend = c("0.4-0.5", "0.3-0.4", "0.2-0.3", "0.1-0.2", "0.01-0.1"), title = "Probability")
+c1 <- cast(biasfield, y ~ x, value = "stratprobs", fun.aggregate = mean)
+c1 <- as.matrix(c1[,-1])
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(c1)), main = "Detection probability", asp = 1, col = viridis(50))
+
 
 #Example samples
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Sampled data', asp=1, col = viridis(50))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Sampled data', asp=1, col = desaturate(viridis(50), amount = 0))
 points(unstructured_data$x, unstructured_data$y, pch = 20, col = "grey25")
-points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black")
+points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black", cex = 1.2)
 par(xpd = TRUE)
 legend(-10,360,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1))
 

@@ -1,0 +1,243 @@
+
+
+
+
+```{r}
+knitr::opts_chunk$set(fig.width=6, fig.height=6) 
+```
+
+# Generate species distributions
+
+
+```{r}
+source("setParams.R")
+```
+
+Set size of area over which to simulate species. Default is for a square of 300 by 300
+
+
+```{r}
+dim <- c(300,300)
+```
+
+Decide on an average number of individuals per cell. The default is 0.05
+
+
+```{r}
+indivs <- 0.05
+lambda <- log(indivs)
+```
+
+Decide on the strength of environmental gradient. Default is 1.2
+
+
+```{r}
+env.beta <- 1.2
+```
+
+The expected number of individuals across the whole area can be roughly estimated as:
+
+
+```{r}
+EN <- exp(lambda + (env.beta*0.5)) * (dim[1]*dim[2])
+print(EN)
+```
+
+Choose how much autocorrelation there is in the species distribution. Default is 0.05, increasing simulates decreased spatial autocorrelation, decreasing this value gives increased autocorrelation
+
+
+```{r}
+kappa <- 0.05
+```
+
+Run the data generation script and view the outputs
+
+
+```{r}
+source("genData.R")
+
+dat1 <- suppressMessages(genData(dim = dim, lambda = lambda, env.beta = env.beta, plotdat = TRUE, seed = NULL, sigma2x = sigma2x, kappa = kappa))
+##add points to show individuals
+points(dat1$xy, pch = 20, cex = 0.1, col = "black")
+```
+
+Calculate the number of individuals simulated
+
+
+```{r}
+print(nrow(dat1$xy))
+```
+
+# Generate a citizen science survey
+
+Decide on the maximum probability of a citizen scientist observing an individual. Default is 0.5
+
+
+```{r}
+maxprob <- 0.5
+```
+
+By default the citizen science survey is biased with one region of the area having a higher probability of sampling
+(up to the maxprob value you just specified).
+
+You can decide, should the pattern in citizen science bias be correlated with the environmental gradient? Default is FALSE
+
+
+```{r}
+correlated <- FALSE
+```
+
+
+```{r}
+##Set up bias pattern
+
+source("Generate strata levels Lam.R")
+strata1 <- genStrataLam(dat1$Lam, strata = strata, rows = rows, cols = cols, plot = FALSE)
+source("addSpatialBias.R")
+biasfield <- addSpatialBias(strata1, maxprob = probs[1], correlated = correlated, rho = rho)
+biascov <- xtabs(covariate ~ y + x, data = biasfield)
+```
+
+
+```{R}
+##Generate thinned citizen science data
+
+source("thinData.R")
+thin1 <- thinData(dat1, biasfield)
+thin1$env <- dat1$gridcov[as.matrix(thin1[,2:1])]
+thin1$bias <- biascov[as.matrix(thin1[,2:1])]
+
+unstructured_data <- thin1
+```
+
+Visualise citizen science data
+
+
+```{r}
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Thinned unstructured data', asp=1, cex.main =1) 
+points(unstructured_data$x, unstructured_data$y, pch = 20)
+```
+
+Calculate number of citizen science observations:
+
+
+```{r}
+n_citsci <- nrow(unstructured_data)
+print(n_citsci)
+```
+
+## Generate a planned survey
+
+Planned surveys are assumed to be spatially unbiased.
+
+How many survey locations should there be? Default is 150
+
+
+```{r}
+nsamp <- 150
+```
+
+How large should surveys be (i.e. how many grid cells?). Default is 1
+
+
+```{r}
+qsize <- 1
+```
+
+
+```{r}
+source("sampleStructured.R")
+
+structured_data <- sampleStructured(dat1, biasfield, nsamp = nsamp, plotdat = FALSE, qsize = qsize)
+```
+
+Visualise structured data
+
+
+```{r}
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Structured data', asp=1, cex.main = 1) 
+points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black")
+par(xpd = TRUE)
+legend(-10,360,c("Absence  ", "Presence  "), pch = 21, col = "black", pt.bg = c(0,1), cex = 0.8)
+```
+
+# Run model for citizen science data
+
+Decide whether the model should include a covariate for bias (i.e. the modeller knows what is causing bias in citizen science observations). Default is TRUE
+
+
+```{r}
+biasknown <- TRUE
+```
+
+
+```{r}
+if(biasknown == TRUE){
+    source("Run models unstructured bias covariate.R")
+    mod_citsci <- suppressWarnings(unstructured_model_cov(unstructured_data, dat1, biasfield, dim = dim, plotting = FALSE, 
+                                                          biascov = biascov))
+} else {
+    source("Run models.R")
+    mod_citsci <- suppressWarnings(unstructured_model(unstructured_data, dat1, biasfield, dim = dim, plotting = FALSE))
+    }
+```
+
+
+```{r}
+source("validation_function.R")
+validation_citsci <- validation_function(result=mod_citsci[[2]], resolution=c(10,10), join.stack=mod_citsci[[1]], 
+                                         model_type="unstructured", unstructured_data = unstructured_data, dat1 = dat1, 
+                                         summary_results=T, qsize = 1, absolute=FALSE, dim = dim, plotting = TRUE)
+
+```
+
+# Run model for planned survey data
+
+
+```{r}
+source("Run models structured.R")
+mod_planned <- suppressWarnings(structured_model(structured_data, dat1, biasfield, plotting = FALSE))
+```
+
+
+```{r}
+source("validation_function.R")
+validation_planned <- validation_function(result=mod_planned[[2]], resolution=c(10,10), join.stack=mod_planned[[1]], 
+                                          model_type="structured", structured_data = structured_data, dat1 = dat1, 
+                                          summary_results=T, qsize = 1, absolute=FALSE, dim = dim, plotting = TRUE)
+
+```
+
+# Run integrated model
+
+
+```{r}
+if(biasknown == TRUE){
+    source("Run models joint covariate for bias.R")
+    mod_integrated <- suppressWarnings(joint_model_cov(structured_data, unstructured_data, dat1, biasfield, 
+                                                       resolution = c(10,10), biascov = biascov))
+} else {
+    source("Run models joint.R")
+    mod_integrated <- suppressWarnings(joint_model(structured_data, unstructured_data, dat1, biasfield))
+}
+```
+
+
+```{r}
+source("validation_function.R")
+validation_integrated <- validation_function(result=mod_integrated[[2]], resolution=c(10,10), join.stack=mod_integrated[[1]], 
+                                             model_type="joint", unstructured_data = unstructured_data, 
+                                             structured_data = structured_data,dat1 = dat1, summary_results=T, absolute = FALSE,
+                                             dim = dim, plotting = TRUE)
+
+```
+
+## Model comparison table
+
+
+```{r}
+modeldf <- data.frame(model_type = c("Citizen science", "Planned", "Integrated"), MAE = c(as.numeric(validation_citsci$`Proto-table`)[2],as.numeric(validation_planned$`Proto-table`)[2],as.numeric(validation_integrated$`Proto-table`)[2]),
+                      Correlation = c(validation_citsci$correlation,validation_planned$correlation,validation_integrated$correlation),
+                     Env_coeff = c(c(mod_citsci$result$summary.fixed[2,1],mod_planned$result$summary.fixed[2,1],mod_integrated$result$summary.fixed[3,1])))
+modeldf
+```

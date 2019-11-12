@@ -9,7 +9,7 @@ sampleStructured <- function(PPdat, biasfield, nsamp = NULL, qsize = NULL, plotd
   
   while(!success) {
   
-  s1 <- sampleStrata(biasfield, nsamp = nsamp, type = "Stratified")
+  s1 <- sampleStrata(biasfield, nsamp = nsamp, type = "Stratified", plot = FALSE)
   
   s1$Stratified$samp_id <- 1:nrow(s1$Stratified)
   

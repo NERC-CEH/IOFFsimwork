@@ -90,25 +90,25 @@ legend(-10,360,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 
 ### panels for Figure 1
 
-png("Figure 1 GD.png", height = 1200, width = 1200, units = "mm", pointsize = 60, res= 20)
+png("Figure 1 BW.png", height = 1200, width = 1200, units = "mm", pointsize = 60, res= 300)
 
 par(mfrow=c(2,2))
 
 #Environmental covariate
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Environmental covariate', asp=1, col = viridis(50))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Environmental covariate', asp=1, col = desaturate(viridis(50)))
 
 #Example truth
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Species intensity', asp=1 , col = viridis(50))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Species intensity', asp=1 , col = desaturate(viridis(50)))
 
 #Bias
 palette(viridis(50))
 c1 <- cast(biasfield, y ~ x, value = "stratprobs", fun.aggregate = mean)
 c1 <- as.matrix(c1[,-1])
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(c1)), main = "Detection probability", asp = 1, col = viridis(50))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(c1)), main = "Detection probability", asp = 1, col = desaturate(viridis(50)))
 
 
 #Example samples
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Sampled data', asp=1, col = desaturate(viridis(50), amount = 0))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Sampled data', asp=1, col = desaturate(viridis(50), amount = 1))
 points(unstructured_data$x, unstructured_data$y, pch = 20, col = "grey25")
 points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black", cex = 1.2)
 par(xpd = TRUE)

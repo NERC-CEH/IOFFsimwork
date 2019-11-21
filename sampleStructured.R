@@ -54,7 +54,7 @@ sampleStructured <- function(PPdat, biasfield, nsamp = NULL, qsize = NULL, plotd
   struct_dat$presence[!is.na(struct_dat$presence)] <- 1 #convert to p/a
   struct_dat$presence[is.na(struct_dat$presence)] <- 0
   
-  success <- sum(struct_dat$presence) >= 0.1*nsamp 
+  success <- sum(struct_dat$presence) > 0
   
   }
   

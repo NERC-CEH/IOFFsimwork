@@ -27,8 +27,8 @@ library(plyr)
 
 # set up code and parameters for summaries
 source('parallel_summary.R')
-n_runs = 500
-n_by = 4
+n_runs = 10
+n_by = 3
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Sample_size")
@@ -403,8 +403,8 @@ prop_env_in_CI
 
 # set up code and parameters for summaries
 source('parallel_summary.R')
-n_runs = 500
-n_by = 4
+n_runs = 10
+n_by = 3
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Bias_")

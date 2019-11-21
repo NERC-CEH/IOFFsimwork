@@ -1,5 +1,8 @@
 #### Code to run scenarios - BIAS
 
+# Lambda default = -2
+# prob = 0.2
+
 # run all multiple times and save output
 # all run as functions 
 
@@ -8,7 +11,7 @@ library(foreach)
 library(doParallel)
 
 # choose number of times to run
-n_runs <- 1
+n_runs <- 10
 
 # create a randomly generated string of seeds
 # seed must be integer
@@ -24,8 +27,7 @@ source("run_scenario.R")
 
 # change those that need changing
 ## BIAS
-bias <- list(0.5,0.4,0.3,0.2,0.1,0.05,0.01) # 7 scenarios
-bias_top_level <- list(0.5,0.4,0.3,0.2,0.1,0.05,0.01)
+probs <- list(0.2,0.16,0.12,0.08,0.04,0.02,0.004) # 7 scenarios
 
 # structured model
 #mapply(FUN = run_scenario,
@@ -56,8 +58,8 @@ bias_top_level <- list(0.5,0.4,0.3,0.2,0.1,0.05,0.01)
 
 # unstructured model
 mapply(FUN = run_scenario,
-       probs = bias, 
-       parameter = bias_top_level,
+       probs = probs, 
+       parameter = probs,
        MoreArgs = list(
          model_type="unstructured", 
          plotting=FALSE, 
@@ -74,10 +76,9 @@ mapply(FUN = run_scenario,
          strata = 25,
          rows = 5,
          cols = 5,
-         #probs = 0.5,
          qsize = 1,
          rho = 0.99,
-         lambda = -3,
+         lambda = -2,
          nsamp = 150,
          resolution = c(10,10)))
 

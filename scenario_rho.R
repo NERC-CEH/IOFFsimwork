@@ -8,7 +8,7 @@ library(foreach)
 library(doParallel)
 
 # choose number of times to run
-n_runs <- 50
+n_runs <- 5
 
 # create a randomly generated string of seeds
 # seed must be integer

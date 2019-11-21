@@ -27,12 +27,12 @@ library(plyr)
 
 # set up code and parameters for summaries
 source('parallel_summary.R')
-n_runs = 50
+n_runs = 5
 n_by = 4
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Rho")
-#files <- files[-c(20:29)]
+files <- files[-c(9:12)]
 
 # create a summary of all runs of this scenario
 

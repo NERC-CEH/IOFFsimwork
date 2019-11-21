@@ -110,5 +110,5 @@ validation_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), join
                                         dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
 }
 
-return(list(validation_r, parameter, length(unstructured_data[,1])))
+return(list(validation_r, parameter, sum(structured_data$presence), length(unstructured_data[,1])))
 }

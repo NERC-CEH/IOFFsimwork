@@ -10,7 +10,10 @@
 
 create_prediction_stack <- function(data_stack, resolution, biasfield, dat1, mesh, spde){
   
-  pred.grid <- expand.grid(x=seq(resolution[1]/2,max(biasfield$x),resolution[1]), y=seq(resolution[2]/2, max(biasfield$y),resolution[2])) # make grid
+  # Create a grid and sample at each grid corner
+  pred.grid <- expand.grid(x=seq(resolution[1]/2,max(biasfield$x),resolution[1]), 
+                           y=seq(resolution[2]/2, max(biasfield$y),resolution[2])) 
+  # make grid
   dim(pred.grid) 
   
   # extract covariate values at these points

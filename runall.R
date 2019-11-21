@@ -5,8 +5,12 @@
 source("setParams.R")
 
 library(viridis)
+library(reshape)
 
-lambda <- -3 #manageable number for Figure 1
+lambda <- -2.5 #manageable number for Figure 1
+probs = c(0.2, 0.2)
+env.beta <- 2
+
 #env.beta <- 3 #stronger env effect
 
 #' The default parameters are as follows:
@@ -90,29 +94,35 @@ legend(-10,360,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1)
 
 ### panels for Figure 1
 
-png("Figure 1 BW.png", height = 1200, width = 1200, units = "mm", pointsize = 60, res= 300)
+png("Figure 1.png", height = 1200, width = 1200, units = "mm", pointsize = 60, res= 30)
 
 par(mfrow=c(2,2))
 
 #Environmental covariate
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Environmental covariate', asp=1, col = desaturate(viridis(50)))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main=expression(bold(paste('Environmental covariate ', bolditalic("x(s)")))), asp=1, col = viridis(50))
+mtext("a)", side = 3, line = 2, outer = FALSE, at = -10)
 
 #Example truth
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Species intensity', asp=1 , col = desaturate(viridis(50)))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main=expression(bold(paste("Species intensity (log ", lambda, "(s) )" ))), asp=1 , col = viridis(50))
+mtext("b)", side = 3, line = 2, outer = FALSE, at = -10)
+
 
 #Bias
 palette(viridis(50))
 c1 <- cast(biasfield, y ~ x, value = "stratprobs", fun.aggregate = mean)
 c1 <- as.matrix(c1[,-1])
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(c1)), main = "Detection probability", asp = 1, col = desaturate(viridis(50)))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(c1)), main = expression(bold(paste("Detection probability ", bolditalic("p(s)")))), asp = 1, col = viridis(50))
+mtext("c)", side = 3, line = 2, outer = FALSE, at = -10)
 
 
 #Example samples
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Sampled data', asp=1, col = desaturate(viridis(50), amount = 1))
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Sampled data', asp=1, col = viridis(50))
 points(unstructured_data$x, unstructured_data$y, pch = 20, col = "grey25")
-points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black", cex = 1.2)
+points(structured_data$x,structured_data$y, pch = 22, bg = structured_data$presence, col = "white", cex = 1.2)
 par(xpd = TRUE)
-legend(-10,360,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1))
+legend(250,360,c("Absence", "Presence"), pch = 22, col = "white", pt.bg = c(0,1))
+mtext("d)", side = 3, line = 2, outer = FALSE, at = -10)
+
 
 dev.off()
 

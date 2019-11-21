@@ -12,7 +12,8 @@
 validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "unstructuredcov", "unstructuredsf", 
                                                                                "structured", "joint", "jointcov", "jointtwo"), 
                                 unstructured_data=NULL, structured_data=NULL, dat1,
-                             plotting = FALSE, summary_results = FALSE, qsize = qsize, absolute = TRUE, dim = dim){
+                                plotting = FALSE, summary_results = FALSE, qsize = qsize, 
+                                absolute = TRUE, dim = dim){
   
 #All comparisons are on the same scale as the truth is logged too!
   
@@ -35,7 +36,7 @@ sd.prd <- result$summary.fitted.values$sd[index.pred.response]
 # calculate differences
 source('make_truth_grid.R')
 if(absolute == TRUE){truth_grid <- make_truth_grid(resolution, dat1, c(dim[1],dim[2]), type='truth', absolute=TRUE)} else 
-  {truth_grid <- make_truth_grid(resolution, dat1, c(dim[1],dim[2]), type='truth', absolute=FALSE)}
+{truth_grid <- make_truth_grid(resolution, dat1, c(dim[1],dim[2]), type='truth', absolute=FALSE)}
 
 if(absolute == TRUE){
   differences <- m.prd-truth_grid # calculate differences
@@ -82,12 +83,9 @@ if(summary_results == TRUE){
   summary_results = list(data.frame(Model = model_type,
                      MAE = mean(MAE_differences)),
                      correlation = correlation,
-               coefficients = coefficients[,c(1,3,5,6)],     
-               differences,
-               worst_areas = unique(grid[which(MAE_differences>(mean(MAE_differences)+sd(MAE_differences)))]),
-               best_areas = unique(grid[which(MAE_differences<(mean(MAE_differences)-sd(MAE_differences)))])
+               coefficients = coefficients[,c(1,3,5,6)]
                )
-  names(summary_results) <- c("Proto-table", "correlation", "coefficients", "All_differences", "Worst_grid_cells", "Best_grid_cells")
+  names(summary_results) <- c("Proto-table", "correlation", "coefficients")
   if(plotting == TRUE){return(summary_results)}else{return(c(summary_results, output))}
 }
 

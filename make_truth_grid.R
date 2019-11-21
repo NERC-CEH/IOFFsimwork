@@ -1,12 +1,13 @@
 # function to make a grid of the truth data to compare to predicted
 # will be the average intensity of each grid square
-make_truth_grid <- function(resolution, dat1, dimensions, type=c('truth', 'grid'), absolute = TRUE){
-  
-  minnum <- resolution[1]-1
+make_truth_grid <- function(resolution, dat1, 
+                            dimensions, 
+                            type=c('truth', 'grid'), 
+                            absolute = TRUE){
   
   # set up the same as prediction stack
-  grid <- expand.grid(x=seq(resolution[1]/2,max(biasfield$x),resolution[1]), 
-                     y=seq(resolution[2]/2, max(biasfield$y),resolution[2])) 
+  grid <- expand.grid(x=seq(resolution[1]/2, max(dimensions),resolution[1]), 
+                     y=seq(resolution[2]/2, max(dimensions),resolution[2])) 
   
   # extract abundance by point for truth
   output <- rep(NA, length(1:max(grid)))
@@ -20,9 +21,6 @@ make_truth_grid <- function(resolution, dat1, dimensions, type=c('truth', 'grid'
   grid$abundance <- data[Reduce('cbind', nearest.pixel(
   grid[,1], grid[,2],
   im(data)))]
-      
-  image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(data)), main='log-Lambda', asp=1)
-      
 
   if(type=='truth'){return(grid$abundance)}
   if(type=='grid'){return(grid)}

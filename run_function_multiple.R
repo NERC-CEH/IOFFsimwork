@@ -6,7 +6,8 @@ run_function_multiple <- function(resolution=c(10,10),
    nsamp = NULL, seed = NULL, dim = NULL, lambda = NULL, env.beta = NULL,
    kappa = NULL,  sigma2x = NULL, strata = NULL,  rows = NULL, cols = NULL,  
    probs = NULL,  plot = FALSE,  plotdat = FALSE, qsize = NULL, rho = NULL,
-   parameter = parameter, correlation = FALSE){
+   parameter = parameter, correlation = FALSE,
+   biasfield = biasfield){
 
   
 # removing so they can all have same truth
@@ -109,5 +110,5 @@ validation_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), join
                                         dat1 = dat1, summary_results=T, absolute = FALSE, dim = dim, plotting = TRUE)
 }
 
-return(list(validation_r, parameter, structured_data, num_presence))
+return(list(validation_r, parameter, length(unstructured_data[,1])))
 }

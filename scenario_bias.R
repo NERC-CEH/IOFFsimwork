@@ -24,13 +24,7 @@ source("run_scenario.R")
 
 # change those that need changing
 ## BIAS
-bias <- list(c(rep(seq(0.5, 0.01, length.out = 5),5)),
-               c(rep(seq(0.4, 0.01, length.out = 5),5)),
-               c(rep(seq(0.3, 0.01, length.out = 5),5)),
-               c(rep(seq(0.2, 0.01, length.out = 5),5)),
-               c(rep(seq(0.1, 0.01, length.out = 5),5)),
-               c(rep(seq(0.05, 0.01, length.out = 5),5)),
-               c(rep(0.01,25))) # 7 scenarios
+bias <- list(0.5,0.4,0.3,0.2,0.1,0.05,0.01) # 7 scenarios
 bias_top_level <- list(0.5,0.4,0.3,0.2,0.1,0.05,0.01)
 
 # structured model
@@ -115,9 +109,9 @@ mapply(FUN = run_scenario,
          resolution = c(10,10)))
 
 # joint model
-#mapply(FUN = run_scenario,
-       probs = bias, 
-       parameter = bias_top_level,
+mapply(FUN = run_scenario,
+       probs = bias[7], 
+       parameter = bias_top_level[7],
        MoreArgs = list(
          model_type="joint", 
          plotting=FALSE, 

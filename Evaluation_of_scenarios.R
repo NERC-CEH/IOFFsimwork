@@ -27,12 +27,11 @@ library(plyr)
 
 # set up code and parameters for summaries
 source('parallel_summary.R')
-n_runs = 10
+n_runs = 500
 n_by = 4
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Sample_size")
-#files <- files[-c(20:29)]
 
 # create a summary of all runs of this scenario
 
@@ -66,9 +65,10 @@ scenario_names <- str_replace(scenario_names, model_names[i], "")
 
 summary_scenario_sample_size$Scenario <- as.numeric(scenario_names)
   
-summary_scenario_sample_size[,1:7] <- unlist(summary_scenario_sample_size[,1:7]) # need to unlist to save
+summary_scenario_sample_size[,1:9] <- unlist(summary_scenario_sample_size[,1:9]) # need to unlist to save
 
 write.csv(summary_scenario_sample_size, "SummaryTable_samplesize.csv", row.names=T)
+
 
 #' ### Table
 #' 
@@ -83,11 +83,12 @@ summary_scenario_sample_size
 
 plotting_data <- summary_plot_function(raw_scenario_sample_size, scenario = "Sample_size_", n_runs, type="summary")
 # relevel model column
-plotting_data$model <- factor(plotting_data$model, level = c("unstructured",
-                                                             "unstructuredcov",
-                                                             "structured",
+plotting_data$model <- factor(plotting_data$model, level = c("structured",
+                                                             "unstructured",
                                                              "joint",
-                                                             "jointcov", "jointtwo"))
+                                                             "unstructuredcov",
+                                                             "jointcov", 
+                                                             "jointtwo"))
 plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "PO only",
                                "unstructuredcov" = "PO with \nbias \ncovariate",
                                "structured" = "PA only", 
@@ -98,20 +99,20 @@ plotting_data$scenario <- as.numeric(plotting_data$scenario)
 
 # now plot
 # set manual colours
-manual_colours <- c( "blue", "darkblue", "orange", "grey30", "grey50", "grey80")
+manual_colours <- c("orange", "blue", "grey30", "darkblue",  "grey50", "grey80")
 
 # Plot at least 95% of the estimates for each scenario
 y_correlation <- round(y_limits(plotting_data, "correlation"),2)
 
 Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("PO only", 
-                               "PO with \nbias \ncovariate",
-                               "PA only", 
+                    labels = c("PA only",
+                               "PO only", 
                                "IDM",
+                               "PO with \nbias \ncovariate",
                                "IDM with \nbias \ncovariate", 
                                "IDM with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("PA sample size")+
@@ -129,19 +130,19 @@ y_env <- round(y_limits(plotting_data, "env"),2)
 
 Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("PO only", 
-                               "PO with \nbias \ncovariate",
-                               "PA only", 
+                    labels = c("PA only",
+                               "PO only", 
                                "IDM",
+                               "PO with \nbias \ncovariate",
                                "IDM with \nbias \ncovariate", 
                                "IDM with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
-  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
+  geom_hline(aes(yintercept = 2), linetype="dashed", color = "red")+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("PA sample size")+
   ylab("Environmental covariate estimate")+
-  ylim(y_env)+
+  ylim(c(y_env[1], 6))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -155,13 +156,13 @@ y_width <- round(y_limits(plotting_data, "width"),2)
 
 Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("PO only", 
-                               "PO with \nbias \ncovariate",
-                               "PA only", 
+                    labels = c("PA only",
+                               "PO only", 
                                "IDM",
+                               "PO with \nbias \ncovariate",
                                "IDM with \nbias \ncovariate", 
                                "IDM with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("PA sample size")+
@@ -179,18 +180,18 @@ y_mae <- round(y_limits(plotting_data, "mae"),2)
 
 MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("PO only", 
-                               "PO with \nbias \ncovariate",
-                               "PA only", 
+                    labels = c("PA only",
+                               "PO only", 
                                "IDM",
+                               "PO with \nbias \ncovariate",
                                "IDM with \nbias \ncovariate", 
                                "IDM with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("PA sample size")+
   ylab("MAE")+
-  ylim(y_mae)+
+  ylim(c(y_mae[1], 1.75))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -287,7 +288,7 @@ plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "PO only"
 
 # now plot
 # set manual colours
-manual_colours <- c("orange", "blue", "darkblue", "grey30", "grey50", "grey80")
+manual_colours <- c("orange", "blue", "grey30", "darkblue", "grey50", "grey80")
 
 # Plot at least 95% of the estimates for each scenario
 y_correlation <- round(y_limits(plotting_data, "correlation"),2)
@@ -296,11 +297,11 @@ Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   scale_fill_manual(values=manual_colours, name = "",
                     labels = c("PA only",
                                "PO only", 
-                               "PO with \nbias \ncovariate",
                                "IDM",
+                               "PO with \nbias \ncovariate",
                                "IDM with \nbias \ncovariate", 
                                "IDM with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Correlation between environment and bias")+
@@ -318,20 +319,20 @@ y_env <- round(y_limits(plotting_data, "env"),2)
 
 Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Structured only", 
-                               "Unstructured only", 
-                               "Joint",
-                               "Unstructured with \nbias \ncovariate",
-                               "Joint with \nbias \ncovariate", 
-                               "Joint with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+                    labels = c("PA only",
+                               "PO only", 
+                               "IDM",
+                               "PO with \nbias \ncovariate",
+                               "IDM with \nbias \ncovariate", 
+                               "IDM with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Correlation between environment and bias")+
   ylab("Environmental covariate estimate")+
   ylim(y_env)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
-  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
+  geom_hline(aes(yintercept = 2), linetype="dashed", color = "red")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 Environment
@@ -343,13 +344,13 @@ y_width <- round(y_limits(plotting_data, "width"),2)
 
 Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Structured only", 
-                               "Unstructured only", 
-                               "Joint",
-                               "Unstructured with \nbias \ncovariate",
-                               "Joint with \nbias \ncovariate", 
-                               "Joint with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+                    labels = c("PA only",
+                               "PO only", 
+                               "IDM",
+                               "PO with \nbias \ncovariate",
+                               "IDM with \nbias \ncovariate", 
+                               "IDM with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Correlation between environment and bias")+
@@ -367,13 +368,13 @@ y_mae <- round(y_limits(plotting_data, "mae"),2)
 
 MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Structured only", 
-                               "Unstructured only", 
-                               "Joint",
-                               "Unstructured with \nbias \ncovariate",
-                               "Joint with \nbias \ncovariate", 
-                               "Joint with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+                    labels = c("PA only",
+                               "PO only", 
+                               "IDM",
+                               "PO with \nbias \ncovariate",
+                               "IDM with \nbias \ncovariate", 
+                               "IDM with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Correlation between environment and bias")+
@@ -408,7 +409,6 @@ n_by = 3
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Bias_")
-#files <- files[-c(1,2,8:21,22,23,29,30,36,37)]
 
 # create a summary of all runs of this scenario
 
@@ -469,20 +469,20 @@ plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "PO only"
                                                       "jointtwo" = "IDM with \nsecond spatial \nfield"))
 # now plot
 # set manual colours
-manual_colours <- c("orange", "blue",  "darkblue", "grey30", "grey50", "grey80")
+manual_colours <- c("orange", "blue", "grey30", "darkblue", "grey50", "grey80")
 
 # Plot at least 95% of the estimates for each scenario
 y_correlation <- round(y_limits(plotting_data, "correlation"),2)
 
 Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("PA only", 
+                    labels = c("PA only",
                                "PO only", 
-                               "PO with \nbias \ncovariate",
                                "IDM",
+                               "PO with \nbias \ncovariate",
                                "IDM with \nbias \ncovariate", 
                                "IDM with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Max detection probability in PO data")+
@@ -500,18 +500,18 @@ y_env <- round(y_limits(plotting_data, "env"),2)
 
 Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Structured only", 
-                               "Unstructured only", 
-                               "Joint",
-                               "Unstructured with \nbias \ncovariate",
-                               "Joint with \nbias \ncovariate", 
-                               "Joint with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+                    labels = c("PA only",
+                               "PO only", 
+                               "IDM",
+                               "PO with \nbias \ncovariate",
+                               "IDM with \nbias \ncovariate", 
+                               "IDM with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Maximum detection probability in unstructured data")+
   ylab("Environmental covariate estimate")+
-  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
+  geom_hline(aes(yintercept = 2), linetype="dashed", color = "red")+
   ylim(y_env)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -525,13 +525,13 @@ y_width <- round(y_limits(plotting_data, "width"),2)
 
 Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Structured only", 
-                               "Unstructured only", 
-                               "Joint",
-                               "Unstructured with \nbias \ncovariate",
-                               "Joint with \nbias \ncovariate", 
-                               "Joint with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+                    labels = c("PA only",
+                               "PO only", 
+                               "IDM",
+                               "PO with \nbias \ncovariate",
+                               "IDM with \nbias \ncovariate", 
+                               "IDM with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Maximum detection probability in unstructured data")+
@@ -549,13 +549,13 @@ y_mae <- round(y_limits(plotting_data, "mae"),2)
 
 MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("Structured only", 
-                               "Unstructured only", 
-                               "Joint",
-                               "Unstructured with \nbias \ncovariate",
-                               "Joint with \nbias \ncovariate", 
-                               "Joint with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+                    labels = c("PA only",
+                               "PO only", 
+                               "IDM",
+                               "PO with \nbias \ncovariate",
+                               "IDM with \nbias \ncovariate", 
+                               "IDM with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("Bias in unstructured data")+

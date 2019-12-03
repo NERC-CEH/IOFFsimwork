@@ -12,7 +12,7 @@ library(foreach)
 library(doParallel)
 
 # choose number of times to run
-n_runs <- 2
+n_runs <- 500
 
 # create a randomly generated string of seeds
 # seed must be integer
@@ -32,8 +32,8 @@ probs <- list(0.2,0.16,0.12,0.08,0.04,0.02,0.004) # 7 scenarios
 
 # structured model
 mapply(FUN = run_scenario,
-       probs = probs, 
-       parameter = probs,
+       probs = probs[1], 
+       parameter = probs[1],
        MoreArgs = list(
          model_type="structured", 
          plotting=FALSE, 

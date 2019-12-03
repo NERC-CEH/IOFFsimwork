@@ -59,13 +59,18 @@ summary_wrapper <- function(file_name,
                   MoreArgs = list(type = type), SIMPLIFY = T)),2)
   output_sd <- round(rowSds(mapply(parallel_summary, results[seq(1,n_tot,n_by)], 
                                              MoreArgs = list(type = type), SIMPLIFY = T)),2)
+  PO_data <- mean(mapply(mean,results[seq(4,n_tot,n_by)]))
+  PA_data <- mean(mapply(mean,results[seq(3,n_tot,n_by)]))
+  
   return(data.frame(MAE = output_mean[1],
              MAE_sd = output_sd[1],
              Correlation = output_mean[2],
              Correlation_sd = output_sd[2],
              MeanENV = output_mean[3], 
              LowerENV = output_mean[4], 
-             UpperENV = output_mean[5]))}
+             UpperENV = output_mean[5],
+             num_PO = PO_data,
+             num_PA = PA_data))}
 }
 
 

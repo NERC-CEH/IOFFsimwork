@@ -106,12 +106,12 @@ y_correlation <- round(y_limits(plotting_data, "correlation"),2)
 
 Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   scale_fill_manual(values=manual_colours, name = "",
-                    labels = c("PA only",
-                               "PO only", 
-                               "IDM",
-                               "PO with \nbias \ncovariate",
-                               "IDM with \nbias \ncovariate", 
-                               "IDM with \nsecond spatial field"))+
+                    labels = c("PA only (A)",
+                               "PO only (B)", 
+                               "IDM (C)",
+                               "PO with \nbias \ncovariate (D)",
+                               "IDM with \nbias \ncovariate (E)", 
+                               "IDM with \nsecond spatial field (F)"))+
   geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
@@ -119,7 +119,7 @@ Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   ylab("Correlation between prediction and truth")+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))+
-  ylim(c(y_correlation))
+  ylim(c(0,1))
 
 Correlation
 
@@ -142,7 +142,7 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   theme(legend.position = "none")+
   xlab("PA sample size")+
   ylab("Environmental covariate estimate")+
-  ylim(c(y_env[1], 6))+
+  ylim(c(-0.2, 6))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -167,7 +167,7 @@ Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
   theme(legend.position = "none")+
   xlab("PA sample size")+
   ylab("Environmental covariate estimate")+
-  ylim(y_width)+
+  ylim(c(0,30))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -404,15 +404,16 @@ prop_env_in_CI
 
 # set up code and parameters for summaries
 source('parallel_summary.R')
-n_runs = 10
-n_by = 3
+n_runs = 500
+n_by = 4
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Bias_")
+files <- files[1:20]
 
 # create a summary of all runs of this scenario
 
-summary_scenario_bias <- as.data.frame(t(mapply(summary_wrapper, files, 
+summary_scenario_bias <- as.data.frame(t(mapply(summary_wrapper, files[17], 
                                                        MoreArgs = list( 
                                                          summary = "summary", n_tot,
                                                          n_by), SIMPLIFY = T))) # transposed to look clearer

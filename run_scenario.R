@@ -28,7 +28,7 @@ run_scenario <- function(resolution,
   # run the model in a parallel loop
   
   # create a cluster
-  cl = makeCluster(2)
+  cl = makeCluster(4)
   registerDoParallel(cl)
   strt = Sys.time() # record system time
   

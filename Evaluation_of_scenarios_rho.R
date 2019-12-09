@@ -27,7 +27,7 @@ library(plyr)
 
 # set up code and parameters for summaries
 source('parallel_summary.R')
-n_runs = 5
+n_runs = 500
 n_by = 4
 n_tot = n_runs*n_by
 

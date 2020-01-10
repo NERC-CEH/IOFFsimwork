@@ -118,9 +118,9 @@ mtext("c)", side = 3, line = 2, outer = FALSE, at = -10)
 #Example samples
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Sampled data', asp=1, col = viridis(50))
 points(unstructured_data$x, unstructured_data$y, pch = 20, col = "grey25")
-points(structured_data$x,structured_data$y, pch = 22, bg = structured_data$presence, col = "white", cex = 1.2)
+points(structured_data$x,structured_data$y, pch = 22, bg = structured_data$presence, col = "black", cex = 1.2)
 par(xpd = TRUE)
-legend(250,360,c("Absence", "Presence"), pch = 22, col = "white", pt.bg = c(0,1))
+legend(250,360,c("Absence", "Presence"), pch = 22, col = "black", pt.bg = c(0,1))
 mtext("d)", side = 3, line = 2, outer = FALSE, at = -10)
 
 

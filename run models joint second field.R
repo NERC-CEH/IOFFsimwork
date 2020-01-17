@@ -31,7 +31,7 @@ joint_model2 <- function(structured_data, unstructured_data, dat1, biasfield){
   # Joint model
   
   # One spatial field
-  # Uses (as far as I can tell) Simpson approach for PP data
+  # Uses Simpson approach for PP data
   # Binomial model for PA data
   # Using cloglog
   

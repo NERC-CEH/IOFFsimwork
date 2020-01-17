@@ -23,8 +23,6 @@ sampleStrata <- function(strata, nsamp = 100, type = c("Stratified", "Unstructur
   }
   
   if("Unstructured" %in% type){
-    #take NMPS sample - weighted random sampling
-    #use 24 samples (roughly proportional to CS sample size)
     if(length(nsamp) == 1){nunstr = nsamp[1]} else {nunstr = nsamp[2]}
     Unstr_samp <- strata[sample(1:nrow(strata),nunstr, FALSE, prob = strata$stratprobs),]
     Unstr_samp$sim2 <- Unstr_samp$sim2 + rnorm(length(Unstr_samp$sim2),0,uerror) + ubias #add error and bias
@@ -36,8 +34,6 @@ sampleStrata <- function(strata, nsamp = 100, type = c("Stratified", "Unstructur
   }
   
   if("Intelligent" %in% type){
-    #take NMPS sample - weighted random sampling
-    #use 24 samples (roughly proportional to CS sample size)
     if(length(nsamp) == 1){nunstr = nsamp[1]
     } else if(length(nsamp) == 3) {nunstr = nsamp[3]
     } else nunstr = nsamp[2]

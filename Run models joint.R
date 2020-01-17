@@ -31,7 +31,7 @@ unstructured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(unstructure
 # Joint model
 
 # One spatial field
-# Uses (as far as I can tell) Simpson approach for PP data
+# Uses Simpson approach for PP data
 # Binomial model for PA data
 # Using cloglog
 

@@ -2,8 +2,8 @@
 
 #genData
 dim = c(300,300)
-lambda = -3
-env.beta = 1.2
+lambda = -2
+env.beta = 2
 plotdat = TRUE
 seed = NULL
 sigma2x = 0.5
@@ -17,7 +17,7 @@ plot = TRUE
 
 #addSpatialBias
 # this is where we can control bias
-probs = rep(c(0.5, 0.3, 0.1, 0.05, 0.01),5) ## Can this be a single number now?
+probs = c(0.2,0.2)
 
 #sampleStructured
 nsamp = 150

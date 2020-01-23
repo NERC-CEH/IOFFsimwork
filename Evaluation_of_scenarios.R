@@ -567,6 +567,8 @@ ggsave(filename = "MAEPlot_bias.png", plot=last_plot(),
 
 y_biascov <- round(y_limits(plotting_data, "biascov"),2)
 
+manual_colours <- c("darkblue", "grey50")
+
 plotting_data_bias <- plotting_data[!is.na(plotting_data$biascov),]
 
 plotting_data_bias$scenario <- sub("0","0.",plotting_data_bias$scenario)

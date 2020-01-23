@@ -30,11 +30,22 @@ parallel_summary <- function(results, type=c("single", "joint")){
   }
   
   # as joint has two intercepts, environmental covariate estimate is in a different place!
-  if(type == "joint"){return(as.numeric(c(results$'Proto-table'[2], 
+  if(type == "joint"){
+    if(nrow(results$coefficients) == 3){
+      return(as.numeric(c(results$'Proto-table'[2], 
                       results$correlation, 
                       results$coefficients[3,1], 
                       results$coefficients[3,2], 
-                      results$coefficients[3,3])))}
+                      results$coefficients[3,3])))
+      }   else {
+        return(as.numeric(c(results$'Proto-table'[2], 
+                            results$correlation, 
+                            results$coefficients[3,1], 
+                            results$coefficients[3,2], 
+                            results$coefficients[3,3],
+                            results$coefficients[4,1])))
+      }
+  }
 
 }
 
@@ -85,7 +96,8 @@ summary_plot_function <- function(summary_raw, scenario, n_runs, type = c("summa
                             model = NA, # extract name of model
                             scenario = NA, # extract numeric part 
                             mae = NA,
-                            width = NA) 
+                            width = NA,
+                            biascov = NA) 
   prop_CI <- NA
   
   for(i in 1:length(summary_raw)){
@@ -98,6 +110,8 @@ summary_plot_function <- function(summary_raw, scenario, n_runs, type = c("summa
                                 scenario = gsub("[^0-9]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract numeric part
                                 mae = summary_raw[[i]][1,j],
                                 width = summary_raw[[i]][5,j] - summary_raw[[i]][4,j])
+      if(nrow(summary_raw[[i]])>5) {biascov <- summary_raw[[i]][6,j]
+      output_data_temp$biascov <- biascov} else {output_data_temp$biascov <- NA}
                                 output_data <- rbind(output_data, output_data_temp)
       }else{output_data_temp <- data.frame(correlation = summary_raw[[i]][2,j],
                                            env = summary_raw[[i]][3,j],
@@ -108,6 +122,7 @@ summary_plot_function <- function(summary_raw, scenario, n_runs, type = c("summa
                                            width = summary_raw[[i]][5,j] - summary_raw[[i]][4,j])
       if(output_data_temp$scenario != "TRUE"){output_data_temp$scenario <- "FALSE"}
       output_data <- rbind(output_data, output_data_temp)}}
+    
     prop_CI_T <- length(which((output_data$env_in_CI[(((i-1)*n_runs)+1):(i*n_runs)])==TRUE))/n_runs
     prop_CI <- c(prop_CI, prop_CI_T)
   }
@@ -131,5 +146,5 @@ y_limits <- function(plotting_data, variable_name){
     
     store[i,] <- c(lower,upper)
   }
-  return(c(min(store[,1]), max(store[,2])))
+  return(c(min(store[,1], na.rm=T), max(store[,2], na.rm=T)))
 }

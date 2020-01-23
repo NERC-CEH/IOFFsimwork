@@ -565,6 +565,35 @@ MAE
 ggsave(filename = "MAEPlot_bias.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
+y_biascov <- round(y_limits(plotting_data, "biascov"),2)
+
+plotting_data_bias <- plotting_data[!is.na(plotting_data$biascov),]
+
+plotting_data_bias$scenario <- sub("0","0.",plotting_data_bias$scenario)
+
+biascov <- ggplot(plotting_data_bias, aes(as.factor(scenario), biascov))+
+  scale_fill_manual(values=manual_colours, name = "",
+                    labels = c("PA only",
+                               "PO only", 
+                               "IDM",
+                               "PO with \nbias \ncovariate",
+                               "IDM with \nbias \ncovariate", 
+                               "IDM with \nsecond spatial field"))+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("Maximum detection probability in PO data")+
+  ylab("Estimate of bias covariate")+
+  ylim(c(-5,6))+
+  facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+biascov
+
+ggsave(filename = "BiascovarPlot_bias.png", plot=last_plot(),
+       width = 10, height = 10, units="cm", dpi=300)
+
+
 #' ## Table of proportion of env estimate in CI
 #' 
 #+ warning = FALSE, message = FALSE, error = FALSE, include = TRUE, echo = FALSE
@@ -573,3 +602,6 @@ ggsave(filename = "MAEPlot_bias.png", plot=last_plot(),
 
 prop_env_in_CI <- summary_plot_function(raw_scenario_bias, scenario = "Bias_", n_runs, type="CI")
 prop_env_in_CI
+
+
+##Add plot for return of bias covariate 

@@ -2,7 +2,7 @@
 
 #input:
 # - PPdat - output from genData
-# - strata - output from addSpatialBias
+# - bias - output from addSpatialBias
 
 
 thinData <- function(PPdat = PPdat, bias = bias){
@@ -14,7 +14,7 @@ thinData <- function(PPdat = PPdat, bias = bias){
   #add spatial bias info to PP data
   pp2 <- merge(round(pp1), bias, by.x = c("x","y"), by.y = c("x","y"))
   
-  #thin points using the stratum-based detection probability
+  #thin points using the detection probability
   #reducing also to presence absence here not abundance
   pp2$presence <- rbinom(nrow(pp2),1,pp2$stratprobs)
   

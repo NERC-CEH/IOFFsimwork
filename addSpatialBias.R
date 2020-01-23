@@ -1,10 +1,5 @@
 ##define sampling bias
 
-#inputs:
-# - strata - output from genstratumLam
-# - probs - either NULL, then probabilities are generated randomly, or a vector of length equal to number of strata. Probabilities are then assigned in order e.g. stratum 1 gets the first value in the vector of probs
-
-
 
 addSpatialBias <- function(strata = strata, 
                            maxprob = NULL, 

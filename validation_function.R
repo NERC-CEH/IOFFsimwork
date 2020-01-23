@@ -8,6 +8,9 @@
 # unstructured_data 
 # structured_data
 # choose table and/or plot
+# qsize - quadrat size
+# absolute - absolute or relative to mean
+# dim - dimensions of domain
 
 validation_function <- function(result, resolution, join.stack, model_type = c("unstructured", "unstructuredcov", "unstructuredsf", 
                                                                                "structured", "joint", "jointcov", "jointtwo"), 
@@ -23,14 +26,6 @@ index.pred.response <- inla.stack.index(join.stack, tag="pred.response")$data
 # find the mean of the result and the standard deviation of predictions
 m.prd <- result$summary.fitted.values$mean[index.pred.response]
 sd.prd <- result$summary.fitted.values$sd[index.pred.response]
-
-# if the model was structured then need to account for area it represents
-# if we use 1 - should not be problem
-#if(model_type == "structured"){
-  #EZ <- (1-exp(-exp(m.prd)))-0.00000000000000008 #minus tiny number to avoid infinite values
-  #psi <- (1-(1-EZ)^(1/(qsize^2)))
-  #m.prd <- log(-log(1-psi))
-  #}
 
 
 # calculate differences

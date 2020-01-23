@@ -6,6 +6,7 @@
 #resolution
 #biasfield
 #dat1 - original datafile of environmental covariate and bias
+#mesh
 #spde
 
 create_prediction_stack <- function(data_stack, resolution, biasfield, dat1, mesh, spde){

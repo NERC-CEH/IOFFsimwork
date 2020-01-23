@@ -21,7 +21,7 @@ joint_model_cov <- function(structured_data, unstructured_data, dat1, biasfield,
   ##set the spde representation to be the mesh just created
   spde <- inla.spde2.matern(mesh)
   
-  #make A matrix for structured data - should this be pulling the x and y coordinates for the location?
+  #make A matrix for structured data
   structured_data_A <- inla.spde.make.A(mesh = mesh, loc = as.matrix(structured_data[,2:3]))
   
   #make A matrix for unstructured data
@@ -31,7 +31,7 @@ joint_model_cov <- function(structured_data, unstructured_data, dat1, biasfield,
   # Joint model
   
   # One spatial field
-  # Uses (as far as I can tell) Simpson approach for PP data
+  # Uses Simpson approach for PP data
   # Binomial model for PA data
   # Using cloglog
   

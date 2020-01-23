@@ -9,9 +9,11 @@ library(doParallel)
 
 # choose number of times to run
 n_runs <- 500
+#n_runs<-1
 
 # create a randomly generated string of seeds
 # seed must be integer
+set.seed(1)
 seed <- sample(round(1:100000000),n_runs,replace=F)
 #seed <- NULL
 

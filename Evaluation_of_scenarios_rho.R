@@ -32,7 +32,7 @@ n_by = 4
 n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Rho")
-files <- files[-c(9:12)]
+files <- files[-c(1:2)]
 
 # create a summary of all runs of this scenario
 
@@ -47,7 +47,7 @@ raw_scenario_rho <- mapply(summary_wrapper, files,
 
 # summary table 
 
-row.names(summary_scenario_rho) <- str_sub(row.names(summary_scenario_rho), 13, -7)
+row.names(summary_scenario_rho) <- str_sub(row.names(summary_scenario_rho), 5, -7)
 
 # add new column of the number of samples
 # need to remove the model name - can be tricky as different lengths
@@ -62,9 +62,9 @@ for(i in 1:length(model_names)){
 
 summary_scenario_rho$Scenario <- as.numeric(scenario_names)
 
-summary_scenario_rho[,1:7] <- unlist(summary_scenario_rho[,1:7]) # need to unlist to save
+summary_scenario_rho[,1:9] <- unlist(summary_scenario_rho[,1:9]) # need to unlist to save
 
-write.csv(summary_scenario_rho, "SummaryTable_samplesize.csv", row.names=T)
+write.csv(summary_scenario_rho, "SummaryTable_rho.csv", row.names=T)
 
 #' ### Table
 #' 
@@ -84,17 +84,20 @@ plotting_data$model <- factor(plotting_data$model, level = c("structured",
                                                              "joint",
                                                              "unstructuredcov",
                                                              "jointcov", "jointtwo"))
-plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "Unstructured only",
-                                                      "unstructuredcov" = "Unstructured with \nbias \ncovariate",
-                                                      "structured" = "Structured only", 
-                                                      "joint" = "Joint model",
-                                                      "jointcov" = "Joint with \nbias \ncovariate", 
-                                                      "jointtwo" = "Joint with \nsecond spatial \nfield"))
+plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "PO only (B)",
+                                                      "unstructuredcov" = "PO with \nbias \ncovariate (D)",
+                                                      "structured" = "PA only (A)", 
+                                                      "joint" = "IDM (C)",
+                                                      "jointcov" = "IDM with \nbias \ncovariate (E)", 
+                                                      "jointtwo" = "IDM with \nsecond spatial \nfield (F)"))
 plotting_data$scenario <- as.numeric(plotting_data$scenario)
+plotting_data$scenario[which(plotting_data$scenario==9)] <- plotting_data$scenario[which(plotting_data$scenario==9)]/10 
+plotting_data$scenario[which(plotting_data$scenario==95)] <- plotting_data$scenario[which(plotting_data$scenario==95)]/100 
+plotting_data$scenario[which(plotting_data$scenario==99)] <- plotting_data$scenario[which(plotting_data$scenario==99)]/100 
 
 # now plot
 # set manual colours
-manual_colours <- c("orange", "blue", "grey30", "darkblue", "grey50", "grey80")
+manual_colours <- c("darkblue", "grey50")
 
 # Plot at least 95% of the estimates for each scenario
 y_correlation <- round(y_limits(plotting_data, "correlation"),2)
@@ -107,18 +110,18 @@ Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
                                "Unstructured with \nbias \ncovariate",
                                "Joint with \nbias \ncovariate", 
                                "Joint with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Structured sample size")+
+  xlab("Rho (correlation between actual bias and covariate describing bias)")+
   ylab("Correlation between prediction and truth")+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  theme(axis.text.x = element_text(angle = 0, hjust = 1))+
   ylim(c(y_correlation))
 
 Correlation
 
-ggsave(filename = "CorrelationPlot_samplesize.png", plot=last_plot(),
+ggsave(filename = "CorrelationPlot_rho.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 y_env <- round(y_limits(plotting_data, "env"),2)
@@ -131,19 +134,19 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
                                "Unstructured with \nbias \ncovariate",
                                "Joint with \nbias \ncovariate", 
                                "Joint with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
-  geom_hline(aes(yintercept = 1.2), linetype="dashed", color = "red")+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
+  geom_hline(aes(yintercept = 2), linetype="dashed", color = "red")+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Structured sample size")+
+  xlab("Rho (correlation between actual bias and covariate describing bias)")+
   ylab("Environmental covariate estimate")+
-  ylim(y_env)+
+  ylim(c(0,6))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 0, hjust = 1))
 
 Environment
 
-ggsave(filename = "EnvironmentPlot_samplesize.png", plot=last_plot(),
+ggsave(filename = "EnvironmentPlot_rho.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 # add an extra plot of width of credible intervals
@@ -157,18 +160,18 @@ Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
                                "Unstructured with \nbias \ncovariate",
                                "Joint with \nbias \ncovariate", 
                                "Joint with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Structured sample size")+
-  ylab("Environmental covariate estimate")+
-  ylim(y_width)+
+  xlab("Rho (correlation between actual bias and covariate describing bias)")+
+  ylab("Width of credible interval for environmental covariate")+
+  ylim(c(0,35))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 0, hjust = 1))
 
 Environment_CI
 
-ggsave(filename = "EnvironmentPlotCI_samplesize.png", plot=last_plot(),
+ggsave(filename = "EnvironmentPlotCI_Rho.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 y_mae <- round(y_limits(plotting_data, "mae"),2)
@@ -181,18 +184,18 @@ MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
                                "Unstructured with \nbias \ncovariate",
                                "Joint with \nbias \ncovariate", 
                                "Joint with \nsecond spatial field"))+
-  geom_boxplot(aes(fill=as.factor(model)), outlier.colour ='grey', outlier.size = 0.5)+
+  geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Structured sample size")+
+  xlab("Rho (correlation between actual bias and covariate describing bias)")+
   ylab("MAE")+
-  ylim(y_mae)+
+  ylim(c(0,1.5))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 0, hjust = 1))
 
 MAE
 
-ggsave(filename = "MAEPlot_samplesize.png", plot=last_plot(),
+ggsave(filename = "MAEPlot_Rho.png", plot=last_plot(),
        width = 20, height = 10, units="cm", dpi=300)
 
 #' ## Table of proportion of env estimate in CI

@@ -3,8 +3,9 @@
 #+ warning = FALSE, message = FALSE, error = FALSE, include = TRUE, echo = FALSE
 # Packages
 library(RColorBrewer)
-library(ggplot2)
 library(plyr)
+library(ggplot2)
+
 #' 
 #' The truth is the same within each scenario.
 #' 
@@ -160,8 +161,8 @@ Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
   theme_classic()+
   theme(legend.position = "none")+
   xlab("PA sample size")+
-  ylab("Environmental covariate estimate")+
-  ylim(c(0,30))+
+  ylab("Width of credible interval for environmental covariate")+
+  ylim(c(0,45))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -243,7 +244,7 @@ model_names = c("unstructuredcov", "unstructured", "structured", "jointtwo", "jo
 summary_scenario_correlation <- rbind(summary_scenario_correlation,
                                       summary_scenario_sample_size[which(summary_scenario_sample_size$Scenario == 150),
                                                                    1:9])
-summary_scenario_correlation$Scenario <- c(rep("TRUE", 6), rep("FALSE", 5))
+summary_scenario_correlation$Scenario <- c(rep("TRUE", 6), rep("FALSE", 6))
 
 summary_scenario_correlation[,1:9] <- unlist(summary_scenario_correlation[,1:9]) # need to unlist to save
 
@@ -262,15 +263,15 @@ summary_scenario_correlation
 
 # need to add the sample size n = 150 raw results to this
 
-raw_scenario_correlation <- c(raw_scenario_correlation, raw_scenario_sample_size[c(2,12,18,27,28)])
+raw_scenario_correlation <- c(raw_scenario_correlation, raw_scenario_sample_size[c(2,12,22,32,41,42)])
 
 plotting_data <- summary_plot_function(raw_scenario_correlation, scenario = "Correlation_", 
                                        n_runs, type="summary")
 # relevel model column
 plotting_data$model <- factor(plotting_data$model, level = c("structured",
                                                              "unstructured",
-                                                             "unstructuredcov",
                                                              "joint",
+                                                             "unstructuredcov",
                                                              "jointcov", "jointtwo"))
 plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "PO only (B)",
                                                       "unstructuredcov" = "PO with \nbias \ncovariate (D)",
@@ -297,7 +298,7 @@ Correlation <- ggplot(plotting_data, aes(as.factor(scenario), correlation))+
   geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Correlation between environment and bias")+
+  xlab("Presence of correlation")+
   ylab("Correlation between prediction and truth")+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))+
@@ -321,9 +322,9 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Correlation between environment and bias")+
+  xlab("Presence of correlation")+
   ylab("Environmental covariate estimate")+
-  ylim(y_env)+
+  ylim(c(0,7.5))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   geom_hline(aes(yintercept = 2), linetype="dashed", color = "red")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -346,8 +347,8 @@ Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
   geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Correlation between environment and bias")+
-  ylab("Environmental covariate estimate")+
+  xlab("Presence of correlation")+
+  ylab("Width of credible interval for environmental covariate")+
   ylim(y_width)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -370,7 +371,7 @@ MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
   geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Correlation between environment and bias")+
+  xlab("Presence of correlation")+
   ylab("MAE")+
   ylim(y_mae)+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
@@ -403,9 +404,11 @@ n_tot = n_runs*n_by
 
 files <- list.files(path = ".", pattern = "Bias_")
 
+
+
 # create a summary of all runs of this scenario
 
-summary_scenario_bias <- as.data.frame(t(mapply(summary_wrapper, files[17], 
+summary_scenario_bias <- as.data.frame(t(mapply(summary_wrapper, files, 
                                                        MoreArgs = list( 
                                                          summary = "summary", n_tot,
                                                          n_by), SIMPLIFY = T))) # transposed to look clearer
@@ -431,7 +434,7 @@ for(i in 1:length(model_names)){
 
 summary_scenario_bias$Scenario <- as.numeric(scenario_names)
 
-summary_scenario_bias[,1:7] <- unlist(summary_scenario_bias[,1:7]) # need to unlist to save
+summary_scenario_bias[,1:9] <- unlist(summary_scenario_bias[,1:9]) # need to unlist to save
 
 write.csv(summary_scenario_bias, "SummaryTable_bias.csv", row.names=T)
 
@@ -451,8 +454,8 @@ plotting_data <- summary_plot_function(raw_scenario_bias, scenario = "Bias_",
 # relevel model column
 plotting_data$model <- factor(plotting_data$model, level = c("structured",
                                                              "unstructured",
-                                                             "unstructuredcov",
                                                              "joint",
+                                                             "unstructuredcov",
                                                              "jointcov", "jointtwo"))
 plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "PO only (B)",
                                                       "unstructuredcov" = "PO with \nbias \ncovariate (D)",
@@ -502,10 +505,10 @@ Environment <- ggplot(plotting_data, aes(as.factor(scenario), env))+
   geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Maximum detection probability in unstructured data")+
+  xlab("Maximum detection probability in PO data")+
   ylab("Environmental covariate estimate")+
   geom_hline(aes(yintercept = 2), linetype="dashed", color = "red")+
-  ylim(y_env)+
+  ylim(c(-1,7.5))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -527,9 +530,9 @@ Environment_CI <- ggplot(plotting_data, aes(as.factor(scenario), width))+
   geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Maximum detection probability in unstructured data")+
-  ylab("Environmental covariate estimate")+
-  ylim(y_width)+
+  xlab("Maximum detection probability in PO data")+
+  ylab("Width of credible interval for environmental covariate")+
+  ylim(c(0,35))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -551,9 +554,9 @@ MAE <- ggplot(plotting_data, aes(as.factor(scenario), mae))+
   geom_boxplot(aes(fill=as.factor(model)), outlier.shape=NA)+
   theme_classic()+
   theme(legend.position = "none")+
-  xlab("Bias in unstructured data")+
+  xlab("Maximum detection probability in PO data")+
   ylab("MAE")+
-  ylim(y_mae)+
+  ylim(c(0,2))+
   facet_wrap(~as.factor(model), nrow=1, scales="free_x")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 

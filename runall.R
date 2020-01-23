@@ -194,7 +194,7 @@ validation_5_r <- validation_function(result=mod_5[[2]], resolution=c(10,10), jo
 
 
 #'### (F) IDM with second spatial field
-source("run models joint second field.R")
+source("Run models joint second spatial field.R")
 mod_6 <- joint_model2(structured_data, unstructured_data, dat1, biasfield)
 source("validation_function.R")
 validation_6_r <- validation_function(result=mod_6[[2]], resolution=c(10,10), join.stack=mod_6[[1]], model_type="joint2",

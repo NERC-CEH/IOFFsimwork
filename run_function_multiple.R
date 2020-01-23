@@ -98,7 +98,7 @@ validation_r <- validation_function(result=mod_5[[2]], resolution=c(10,10), join
 }  
   
 if(model_type == "jointtwo"){
-source("Run models joint second field.R")
+source("run models joint second field.R")
 mod_6 <- joint_model2(structured_data, unstructured_data, dat1, biasfield)
 
 source("validation_function.R")

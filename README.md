@@ -49,7 +49,7 @@ Scripts sourced by [Functions to generate data and sample.R](https://github.com/
 
 [Run models joint covariate for bias.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20joint%20covariate%20for%20bias.R) : This model adds a covariate for the bias in the unstructured data to the integrated model described above (model E).
 
-[Run models joint second spatial field.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/run%20models%20joint%20second%20field.R) : This joint model does not include a covariate on the bias in the PO data but instead includes a second spatial field with the aim that this spatial field can capture residual variation in the PO data that is not shared with the PA data (model F).
+[Run models joint second spatial field.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Run%20models%20joint%20second%20spatial%20field.R) : This joint model does not include a covariate on the bias in the PO data but instead includes a second spatial field with the aim that this spatial field can capture residual variation in the PO data that is not shared with the PA data (model F).
 
 [Create prediction stack.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/Create%20prediction%20stack.R) : Required for all modelling scripts to create a stack in which to predict from the models
 

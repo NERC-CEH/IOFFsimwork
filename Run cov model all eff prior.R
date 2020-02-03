@@ -66,6 +66,8 @@ covariate_model <- function(unstructured_data,
                                     resolution = resolution)
   }
   
+  cpu.first <- unstr_model$result$cpu.used
+  
   ##############################
   
   # unstructured model parameter distribution (posterior) 
@@ -196,6 +198,8 @@ covariate_model <- function(unstructured_data,
                asp = 1)
     
   }
+  
+  result.struct.binom$cpu.used <- result.struct.binom$cpu.used + cpu.first
   
   return(list(join.stack = join.stack, result = result.struct.binom))
   

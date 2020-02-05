@@ -1,0 +1,8 @@
+#BSUB -q short-serial
+#BSUB -n 1
+#BSUB -W 1:00
+#BSUB -J CC_biased[1-500]
+#BSUB -R "rusage[mem=16000]" -M 16000
+#BSUB -oo R-%J-%I.o
+#BSUB -eo R-%J-%I.e
+R CMD BATCH "--args ${LSB_JOBINDEX}" simulation_study_repeat_JASMIN_biased.R  "CC_bias${LSB_JOBINDEX}.Rout"

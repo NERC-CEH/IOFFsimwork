@@ -8,3 +8,9 @@
 *.html
 figure/
 packrat/lib*/
+*.csv
+*.RData
+*.Rdata
+*.pdf
+*.db
+archive/*

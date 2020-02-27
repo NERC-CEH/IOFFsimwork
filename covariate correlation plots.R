@@ -19,7 +19,22 @@ simres <- simres[!simres$Model %in% c("correlation_uns", "correlationbias_uns"),
 
 simres$Model <- factor(simres$Model)
 
-#png("correlation_scenarios.png", height = 300, width = 650)
-boxplot(correlation ~ Scenario*Model, data = simres, col = c("green", "orange", "purple", "pink"))
 
+library(RColorBrewer)
 
+corr_plot <- ggplot(simres, aes(Model, correlation)) + 
+  geom_boxplot(aes(fill = Scenario), outlier.shape = NA) +
+  scale_fill_brewer(palette = "Dark2")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+corr_plot
+
+ggsave("correlation_part1.png", plot = corr_plot, device = "png", height = 100, width = 170, units = "mm")
+
+MAE_plot <- ggplot(simres, aes(Model, MAE)) + 
+  geom_boxplot(aes(fill = Scenario), outlier.shape = NA) +
+  scale_fill_brewer(palette = "Dark2")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 6.2))
+MAE_plot
+
+ggsave("MAE_part1.png", plot = MAE_plot, device = "png", height = 100, width = 170, units = "mm")

@@ -46,38 +46,44 @@ for(i in 1:600){      # for each run
 
 
 
-
-
-
-
-# unstructured data results
+#results for unstructured and unstructuredbias
 sim_results_unst <- data.frame()
-for(i in 1:5){      # for each 9th simulation (whole)
-  for(j in c(3,5)){
+for(i in 1:600){      # for each run
+  if(length(ResultList[[i]]) == 1){next} else{
     
-    sim_results_unst <- rbind(sim_results_unst,
-                              rbind(cbind(ResultList[[i]][[9]]$param,
-                                          ResultList[[i]][[9]][[j]]$result$`Proto-table`,
-                                          correlation = ResultList[[i]][[9]][[j]]$result$correlation,
-                                          worst = paste(x=(ResultList[[i]][[9]][[j]]$result$Worst_grid_cells), collapse = ', '),
-                                          best = paste(x=(ResultList[[i]][[9]][[j]]$result$Best_grid_cells), collapse = ', '),
-                                          #waic = ResultList[[i]][[j]]$result$WAIC,
-                                          tot_cpu = ResultList[[i]][[9]][[j]]$result$CPU[4],
-                                          sim = i)))
+    for (k in 9) { #only the whole dataset
+      for(j in c(3,5)){ #for the two unstructured models
+        
+        sim_results_unst <- rbind(sim_results_unst,
+                             rbind(cbind(ResultList[[i]][[k]]$param,
+                                         ResultList[[i]][[k]][[j]]$result$`Proto-table`,
+                                         correlation = ResultList[[i]][[k]][[j]]$result$correlation,
+                                         worst = paste(x=(ResultList[[i]][[k]][[j]]$result$Worst_grid_cells), collapse = ', '),
+                                         best = paste(x=(ResultList[[i]][[k]][[j]]$result$Best_grid_cells), collapse = ', '),
+                                         #waic = ResultList[[i]][[j]]$result$WAIC,
+                                         tot_cpu = ResultList[[i]][[k]][[j]]$result$CPU[4],
+                                         sim = i)))
+        
+      }
+    }
     
   }
-  
 }
+
+
+
+
 
 sim_results_full <- rbind(sim_results, sim_results_unst)
 
-write.csv(sim_results_full, file = "newscenario_results.csv")
+write.csv(sim_results_full, file = "sim_results_newscenario.csv")
 
 
 # summary.fixed
 sim_fixed <- data.frame()
-for(i in 1:5){
-  for(k in 1:9){
+for(i in 1:600){
+  if(length(ResultList[[i]]) == 1){next} else{
+    for(k in 1:9){ # for each section
   sim_fixed <- rbind(sim_fixed,
                      rbind(cbind(coefficient = row.names(ResultList[[i]][[k]]$str_v$result$coefficients),
                                 ResultList[[i]][[k]]$str_v$result$coefficients,
@@ -117,11 +123,13 @@ for(i in 1:5){
                                  sim = i,
                                  section = ResultList[[i]][[k]]$param$section))
   )
+    }
   }
 }
 
 sim_fixed_unst <- data.frame()
-for(i in 1:5){
+for(i in 1:600){
+  if(length(ResultList[[i]]) == 1){next} else{
   for(k in 9){
   sim_fixed_unst <- rbind(sim_fixed_unst,
                           rbind(
@@ -135,20 +143,21 @@ for(i in 1:5){
                                   section = ResultList[[i]][[k]]$param$section)
                           )
   )
-  
+    }
   }
 } 
 
 sim_fixed_full <- rbind(sim_fixed, sim_fixed_unst)
 
-write.csv(sim_fixed_full, file = "newscenario_fixedeff.csv")
+write.csv(sim_fixed_full, file = "sim_fixedeff_newscenario.csv")
 
 
 # summary.hyperpar
 sim_hyperpar <- data.frame()
-for(i in 1:5){
-  for(k in 1:9){
-  sim_hyperpar <- rbind(sim_hyperpar,
+for(i in 1:600){
+  if(length(ResultList[[i]]) == 1){next} else{
+    for(k in 1:9){
+    sim_hyperpar <- rbind(sim_hyperpar,
                         rbind(cbind(ResultList[[i]][[k]]$str_v$result$hyperparameters,
                                     model = "structured",
                                     sim = i,
@@ -186,11 +195,13 @@ for(i in 1:5){
                                     sim = i,
                                     section = ResultList[[i]][[k]]$param$section))
     )
+    }
   }
 }
 
 sim_hyperpar_unst <- data.frame()
-for(i in 1:5){
+for(i in 1:600){
+  if(length(ResultList[[i]]) == 1){next} else{
   sim_hyperpar_unst <- rbind(sim_hyperpar_unst,
                              rbind(
                                cbind(ResultList[[i]][[9]]$uns_v$result$hyperparameters,
@@ -203,24 +214,10 @@ for(i in 1:5){
                                      section = ResultList[[i]][[9]]$param$section)
                              )
   )
+  }
 }
 
 sim_hyperpar_full <- rbind(sim_hyperpar, sim_hyperpar_unst)
 
-write.csv(sim_hyperpar_full, file = "newscenario_hyperpar.csv")
+write.csv(sim_hyperpar_full, file = "sim_hyperpar_newscenario.csv")
 
-##########################
-
-# # plot parameter estimates
-# library(data.table)
-# env_coef <- setDT(sim_fixed_full, keep.rownames = TRUE)[]
-# env_coef2 <- env_coef[env_coef$rn %like% "env", ]
-# 
-# #boxplot
-# ggplot(env_coef2, aes(y = mean, x = section, group = model, fill = model)) + 
-#   geom_boxplot() + 
-#   facet_wrap(. ~ section, scales = "free") +
-#   ggtitle("fitted Env coefficient ") +
-#   theme(axis.text.x = element_blank()) + 
-#   xlab("") + geom_hline(yintercept=1.2, linetype="dashed", color = "red") +
-#   scale_y_continuous(breaks = c(pretty(env_coef$mean), 1.2))

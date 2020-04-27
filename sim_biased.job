@@ -1,7 +1,7 @@
 #BSUB -q short-serial
 #BSUB -n 1
 #BSUB -W 1:00
-#BSUB -J CC_biased[1-500]
+#BSUB -J CC_biased[453-500]
 #BSUB -R "rusage[mem=16000]" -M 16000
 #BSUB -oo R-%J-%I.o
 #BSUB -eo R-%J-%I.e

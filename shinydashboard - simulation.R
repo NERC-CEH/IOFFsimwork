@@ -1,6 +1,6 @@
 
 # read data
-readresult <- read.csv("sim_results-compiled.csv")
+readresult <- read.csv("sim_results_collated_500.csv")
 
 # get rid of outliers
 readresult <- readresult[readresult$MAE < 7.5,]

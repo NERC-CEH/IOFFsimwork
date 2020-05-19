@@ -315,9 +315,10 @@ write.csv(sim_hyperpar, file = "sim_hyperpar_unbiased.csv")
 
 file.list <- list.files(path = "Outputs", pattern = "ResultList_biased")
 AllRes <- list()
-for(i in 1:length(file.list)){
-  load(paste0("Outputs/ResultList_biased_repeat_", i,".Rdata"))
-  AllRes[[i]] <- ResultList
+for(i in 1:500){
+  ResultList <- NA
+  try(load(paste0("Outputs/ResultList_biased_repeat_", i,".Rdata")))
+  if(length(ResultList) > 1){AllRes[[i]] <- ResultList} else {AllRes[[i]] <- NA}
 }
 
 ResultList <- AllRes
@@ -325,7 +326,8 @@ ResultList <- AllRes
 #results
 sim_results <- data.frame()
 for(i in 1:500){     # for each simulation
-  for(j in 2:12){   # for each model absolute difference
+  if(is.na(ResultList[[i]])){next} else{
+    for(j in 2:12){   # for each model absolute difference
     
     sim_results <- rbind(sim_results,
                          rbind(cbind(ResultList[[i]]$param,
@@ -337,6 +339,7 @@ for(i in 1:500){     # for each simulation
                                      tot_cpu = ResultList[[i]][[j]]$result$CPU[4],
                                      sim = i)))
     
+    }
   }
   
 }

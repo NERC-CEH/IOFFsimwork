@@ -350,6 +350,7 @@ write.csv(sim_results, file = "sim_results_biased.csv")
 # summary.fixed
 sim_fixed <- data.frame()
 for(i in 1:500){
+  if(!is.na(ResultList[[i]])){
   sim_fixed <- rbind(sim_fixed,
                      rbind(cbind(ResultList[[i]]$str_v$result$coefficients,
                                  model = "structured",
@@ -379,12 +380,14 @@ for(i in 1:500){
                                  model = "correlationbias",
                                  sim = i))
   )
+  }
 }
 write.csv(sim_fixed, file = "sim_fixed_biased.csv")
 
 # summary.hyperpar
 sim_hyperpar <- data.frame()
 for(i in 1:500){
+  if(!is.na(ResultList[[i]])){
   sim_hyperpar <- rbind(sim_hyperpar,
                         rbind(cbind(ResultList[[i]]$str_v$result$hyperparameters,
                                     model = "structured",
@@ -414,6 +417,7 @@ for(i in 1:500){
                                     model = "correlationbias",
                                     sim = i))
   )
+  }
 }
 write.csv(sim_hyperpar, file = "sim_hyperpar_biased.csv")
 

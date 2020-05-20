@@ -139,6 +139,7 @@ joint_model2 <- function(structured_data, unstructured_data, dat1, biasfield){
   par(mfrow=c(1,4))
   image.plot(1:max_x,1:max_y,xmean1, col=tim.colors(),xlab='', ylab='',main="mean of shared r.f",asp=1)
   image.plot(1:max_x,1:max_y,xmean2, col=tim.colors(),xlab='', ylab='',main="mean of bias r.f",asp=1)
+
   image.plot(list(x=dat1$Lam$xcol*100, y=dat1$Lam$yrow*100, z=t(dat1$rf.s)), main='Truth', asp=1) # make sure scale = same
   points(structured_data[structured_data[,4] %in% 0,2:3], pch=16, col='white') #absences
   points(structured_data[structured_data[,4] %in% 1,2:3], pch=16, col='black')

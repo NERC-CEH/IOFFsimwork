@@ -109,7 +109,8 @@ summary_plot_function <- function(summary_raw, scenario, n_runs, type = c("summa
                                 model = gsub("[^a-zA-Z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract name of model
                                 scenario = gsub("[^0-9]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract numeric part
                                 mae = summary_raw[[i]][1,j],
-                                width = summary_raw[[i]][5,j] - summary_raw[[i]][4,j])
+                                width = summary_raw[[i]][5,j] - summary_raw[[i]][4,j],
+                                biascov = NA)
       if(nrow(summary_raw[[i]])>5) {biascov <- summary_raw[[i]][6,j]
       output_data_temp$biascov <- biascov} else {output_data_temp$biascov <- NA}
                                 output_data <- rbind(output_data, output_data_temp)
@@ -119,7 +120,8 @@ summary_plot_function <- function(summary_raw, scenario, n_runs, type = c("summa
                                            model = gsub("[^a-z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract name of model
                                            scenario = gsub("[^A-Z]", "",str_sub(names(summary_raw)[i],nchar(scenario)+1, -7)), # extract numeric part
                                            mae = summary_raw[[i]][1,j], 
-                                           width = summary_raw[[i]][5,j] - summary_raw[[i]][4,j])
+                                           width = summary_raw[[i]][5,j] - summary_raw[[i]][4,j],
+                                           biascov = NA)
       if(output_data_temp$scenario != "TRUE"){output_data_temp$scenario <- "FALSE"}
       output_data <- rbind(output_data, output_data_temp)}}
     

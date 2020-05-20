@@ -242,9 +242,9 @@ model_names = c("unstructuredcov", "unstructured", "structured", "jointtwo", "jo
 # take sample size = 150 scenario
 
 summary_scenario_correlation <- rbind(summary_scenario_correlation,
-                                      summary_scenario_sample_size[which(summary_scenario_sample_size$Scenario == 150),
+                                      summary_scenario_sample_size[which(summary_scenario_sample_size$Scenario == 150)[c(1:3,5:6)],
                                                                    1:9])
-summary_scenario_correlation$Scenario <- c(rep("TRUE", 6), rep("FALSE", 6))
+summary_scenario_correlation$Scenario <- c(rep("TRUE", 6), rep("FALSE", 5))
 
 summary_scenario_correlation[,1:9] <- unlist(summary_scenario_correlation[,1:9]) # need to unlist to save
 
@@ -263,7 +263,7 @@ summary_scenario_correlation
 
 # need to add the sample size n = 150 raw results to this
 
-raw_scenario_correlation <- c(raw_scenario_correlation, raw_scenario_sample_size[c(2,12,22,32,41,42)])
+raw_scenario_correlation <- c(raw_scenario_correlation, raw_scenario_sample_size[c(2,12,22,41,42)])
 
 plotting_data <- summary_plot_function(raw_scenario_correlation, scenario = "Correlation_", 
                                        n_runs, type="summary")
@@ -463,6 +463,9 @@ plotting_data$model <- revalue(plotting_data$model, c("unstructured" = "PO only 
                                                       "joint" = "IDM (C)",
                                                       "jointcov" = "IDM with \nbias \ncovariate (E)", 
                                                       "jointtwo" = "IDM with \nsecond spatial \nfield (F)"))
+
+plotting_data$scenario <- sub("0","0.",plotting_data$scenario)
+
 # now plot
 # set manual colours
 manual_colours <- c("orange", "blue", "grey30", "darkblue", "grey50", "grey80")

@@ -1,6 +1,6 @@
 
 # read data
-readresult <- read.csv("newscen_results_repeat-compiled_final50.csv")
+readresult <- read.csv("sim_results_newscenario.csv")
 
 # prepare data
 readresult <- readresult[,-1]   # delete index column

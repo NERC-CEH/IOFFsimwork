@@ -16,7 +16,8 @@ for(i in 1:500){     # for each simulation
     
     sim_results <- rbind(sim_results,
                          rbind(cbind(ResultList[[i]]$param,
-                                     ResultList[[i]][[j]]$result$`Proto-table`,
+                                     ResultList[[i]][[j]]$result$`Proto-table`[1],
+                                     MAE = mean(abs(ResultList[[i]][[j]]$values$mean_predicted/mean(ResultList[[i]][[j]]$values$mean_predicted)-ResultList[[i]][[j]]$values$truth/mean(ResultList[[i]][[j]]$values$truth))),
                                      correlation = ResultList[[i]][[j]]$result$correlation,
                                      worst = paste(x=(ResultList[[i]][[j]]$result$Worst_grid_cells), collapse = ', '),
                                      best = paste(x=(ResultList[[i]][[j]]$result$Best_grid_cells), collapse = ', '),
@@ -28,7 +29,7 @@ for(i in 1:500){     # for each simulation
   
 }
 
-write.csv(sim_results, file = "sim_results_large.csv")
+write.csv(sim_results, file = "sim_results_large_rel.csv")
 
 
 # summary.fixed
@@ -120,7 +121,8 @@ for(i in 1:500){     # for each simulation
     
     sim_results <- rbind(sim_results,
                          rbind(cbind(ResultList[[i]]$param,
-                                     ResultList[[i]][[j]]$result$`Proto-table`,
+                                     ResultList[[i]][[j]]$result$`Proto-table`[1],
+                                     MAE = mean(abs(ResultList[[i]][[j]]$values$mean_predicted/mean(ResultList[[i]][[j]]$values$mean_predicted)-ResultList[[i]][[j]]$values$truth/mean(ResultList[[i]][[j]]$values$truth))),
                                      correlation = ResultList[[i]][[j]]$result$correlation,
                                      worst = paste(x=(ResultList[[i]][[j]]$result$Worst_grid_cells), collapse = ', '),
                                      best = paste(x=(ResultList[[i]][[j]]$result$Best_grid_cells), collapse = ', '),
@@ -132,7 +134,7 @@ for(i in 1:500){     # for each simulation
   
 }
 
-write.csv(sim_results, file = "sim_results_default.csv")
+write.csv(sim_results, file = "sim_results_default_rel.csv")
 
 
 # summary.fixed
@@ -225,7 +227,8 @@ for(i in 1:500){     # for each simulation
     
     sim_results <- rbind(sim_results,
                          rbind(cbind(ResultList[[i]]$param,
-                                     ResultList[[i]][[j]]$result$`Proto-table`,
+                                     ResultList[[i]][[j]]$result$`Proto-table`[1],
+                                     MAE = mean(abs(ResultList[[i]][[j]]$values$mean_predicted/mean(ResultList[[i]][[j]]$values$mean_predicted)-ResultList[[i]][[j]]$values$truth/mean(ResultList[[i]][[j]]$values$truth))),
                                      correlation = ResultList[[i]][[j]]$result$correlation,
                                      worst = paste(x=(ResultList[[i]][[j]]$result$Worst_grid_cells), collapse = ', '),
                                      best = paste(x=(ResultList[[i]][[j]]$result$Best_grid_cells), collapse = ', '),
@@ -237,7 +240,7 @@ for(i in 1:500){     # for each simulation
   
 }
 
-write.csv(sim_results, file = "sim_results_unbiased.csv")
+write.csv(sim_results, file = "sim_results_unbiased_rel.csv")
 
 
 # summary.fixed
@@ -331,7 +334,8 @@ for(i in 1:500){     # for each simulation
     
     sim_results <- rbind(sim_results,
                          rbind(cbind(ResultList[[i]]$param,
-                                     ResultList[[i]][[j]]$result$`Proto-table`,
+                                     ResultList[[i]][[j]]$result$`Proto-table`[1],
+                                     MAE = mean(abs(ResultList[[i]][[j]]$values$mean_predicted/mean(ResultList[[i]][[j]]$values$mean_predicted)-ResultList[[i]][[j]]$values$truth/mean(ResultList[[i]][[j]]$values$truth))),
                                      correlation = ResultList[[i]][[j]]$result$correlation,
                                      worst = paste(x=(ResultList[[i]][[j]]$result$Worst_grid_cells), collapse = ', '),
                                      best = paste(x=(ResultList[[i]][[j]]$result$Best_grid_cells), collapse = ', '),
@@ -344,7 +348,7 @@ for(i in 1:500){     # for each simulation
   
 }
 
-write.csv(sim_results, file = "sim_results_biased.csv")
+write.csv(sim_results, file = "sim_results_biased_rel.csv")
 
 
 # summary.fixed

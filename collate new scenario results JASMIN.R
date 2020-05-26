@@ -30,7 +30,8 @@ for(i in 1:600){      # for each run
     
     sim_results <- rbind(sim_results,
                          rbind(cbind(ResultList[[i]][[k]]$param,
-                                     ResultList[[i]][[k]][[j]]$result$`Proto-table`,
+                                     ResultList[[i]][[k]][[j]]$result$`Proto-table`[1],
+                                     MAE = mean(abs(ResultList[[i]][[k]][[j]]$values$mean_predicted/mean(ResultList[[i]][[k]][[j]]$values$mean_predicted)-ResultList[[i]][[k]][[j]]$values$truth/mean(ResultList[[i]][[k]][[j]]$values$truth))),
                                      correlation = ResultList[[i]][[k]][[j]]$result$correlation,
                                      worst = paste(x=(ResultList[[i]][[k]][[j]]$result$Worst_grid_cells), collapse = ', '),
                                      best = paste(x=(ResultList[[i]][[k]][[j]]$result$Best_grid_cells), collapse = ', '),
@@ -56,7 +57,8 @@ for(i in 1:600){      # for each run
         
         sim_results_unst <- rbind(sim_results_unst,
                              rbind(cbind(ResultList[[i]][[k]]$param,
-                                         ResultList[[i]][[k]][[j]]$result$`Proto-table`,
+                                         ResultList[[i]][[k]][[j]]$result$`Proto-table`[1],
+                                         MAE = mean(abs(ResultList[[i]][[k]][[j]]$values$mean_predicted/mean(ResultList[[i]][[k]][[j]]$values$mean_predicted)-ResultList[[i]][[k]][[j]]$values$truth/mean(ResultList[[i]][[k]][[j]]$values$truth))),
                                          correlation = ResultList[[i]][[k]][[j]]$result$correlation,
                                          worst = paste(x=(ResultList[[i]][[k]][[j]]$result$Worst_grid_cells), collapse = ', '),
                                          best = paste(x=(ResultList[[i]][[k]][[j]]$result$Best_grid_cells), collapse = ', '),
@@ -76,7 +78,7 @@ for(i in 1:600){      # for each run
 
 sim_results_full <- rbind(sim_results, sim_results_unst)
 
-write.csv(sim_results_full, file = "sim_results_newscenario.csv")
+write.csv(sim_results_full, file = "sim_results_newscenario_rel.csv")
 
 
 # summary.fixed

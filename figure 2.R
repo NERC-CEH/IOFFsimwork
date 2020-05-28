@@ -1,8 +1,8 @@
 ##plots
 
-sim_res <- read.csv("sim_results_collated_500_rel.csv")
+sim_res <- read.csv("sim_results_collated_500.csv")
 
-env_res <- read.csv("env_results_collated_500_rel.csv")
+env_res <- read.csv("env_results_collated_500.csv")
 
 #remove extreme MAE values
 sim_res <- sim_res[sim_res$MAE < 7.5,]
@@ -19,7 +19,7 @@ p1 <- ggplot(sub1, aes(y = MAE, x = Model), group = Scenario) +
   labs(fill = "Scenario", y = "MAE \n") +
   scale_x_discrete(labels=c("correlationbias_str" = "Correlation", "covariatebias" = "Covariate","jointcov" = "Joint likelihood", "structured" = "Structured only", "unstructuredcov" = "Unstructured only"))+
   theme_classic()+
-  ylim(0,1)+
+  ylim(0,6)+
   theme(legend.position = "none") +
   theme(axis.text.x = element_blank(),
         axis.text.y = element_text(size = 10),
@@ -38,7 +38,7 @@ p2 <- ggplot(sub2, aes(y = MAE, x = Model), group = Scenario) +
   #facet_wrap(. ~ section, scales = "free") +
   labs(fill = "Scenario", y = "MAE\n") +
   scale_x_discrete(labels=c("correlation_str" = "Correlation", "covariate" = "Covariate","joint" = "Joint likelihood", "structured" = "Structured only", "unstructured" = "Unstructured only"))+
-  ylim(0,1)+
+  ylim(0,6)+
   theme_classic()+ 
   theme(legend.position = "top") +
   theme(axis.text.x = element_blank(),
@@ -137,7 +137,7 @@ p7 <- grid.arrange(p1, p2, p3, p4, p5, p6, leg, ncol=2, nrow = 4,
              layout_matrix = rbind(c(1,2),c(3,4), c(5,6), c(7,7)),
              widths = c(2.7, 2.7), heights = c(2, 2, 3.3, 0.2))
 
-ggsave("Figure 2 v2 rel.png", p7, device = "png", width = 15, height = 18.5, units = "cm")
+ggsave("Figure 2 v2.png", p7, device = "png", width = 15, height = 18.5, units = "cm")
 
 ggplot(sim_res, aes(y = MAE, x = Model), group = Scenario) +
   geom_boxplot(aes(fill = Scenario), outlier.shape = NA) +
@@ -214,5 +214,5 @@ p4l <- grid.arrange(p1l, p3l, p5l, legl, ncol=1, nrow = 4,
                    layout_matrix = rbind(c(1),c(2), c(3), c(4)),
                    widths = c(2.7), heights = c(2, 2, 3.3, 0.2))
 
-ggsave("Large scenario rel.png", p4l, device = "png", width = 15, height = 18.5, units = "cm")
+ggsave("Large scenario.png", p4l, device = "png", width = 15, height = 18.5, units = "cm")
 

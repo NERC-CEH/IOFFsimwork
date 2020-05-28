@@ -1,9 +1,9 @@
 #compile sim results
 
-sim_def <- read.csv("sim_results_default_rel.csv")
-sim_large <- read.csv("sim_results_large_rel.csv")
-sim_unbias <- read.csv("sim_results_unbiased_rel.csv")
-sim_bias <- read.csv("sim_results_biased_rel.csv")
+sim_def <- read.csv("sim_results_default.csv")
+sim_large <- read.csv("sim_results_large.csv")
+sim_unbias <- read.csv("sim_results_unbiased.csv")
+sim_bias <- read.csv("sim_results_biased.csv")
 
 
 sim_def$Scenario <- "Default"
@@ -13,7 +13,7 @@ sim_bias$Scenario <- "Biased"
 
 sim_coll <- rbind(sim_def, sim_large, sim_unbias, sim_bias)
 
-write.csv(sim_coll, "sim_results_collated_500_rel.csv")
+write.csv(sim_coll, "sim_results_collated_500.csv")
 
 
 ##env covar
@@ -37,7 +37,7 @@ env_bias$Scenario <- "Biased"
 
 env_coll <- rbind(env_def, env_large, env_unbias, env_bias)
 
-write.csv(env_coll, "env_results_collated_500_rel.csv")
+write.csv(env_coll, "env_results_collated_500.csv")
 
 
 

@@ -5,7 +5,7 @@ env_res <- env_res[grep("env", env_res$X),]
 
 sim_res$section <- factor(sim_res$section, levels = c("left", "midleft", "right", "midright", "bottom", "midbottom", "top", "midtop", "whole"))
 
-env_res$section <- factorenv_res$section, levels = c("left", "midleft", "right", "midright", "bottom", "midbottom", "top", "midtop", "whole"))
+env_res$section <- factor(env_res$section, levels = c("left", "midleft", "right", "midright", "bottom", "midbottom", "top", "midtop", "whole"))
 
 ##bias cov present, MAE
 
@@ -14,7 +14,7 @@ sub1 <- sim_res[sim_res$Model %in% c("structured", "unstructuredcov", "jointcov"
 p1 <- ggplot(sub1, aes(y = MAE, x = Model), group = section) +
   geom_boxplot(aes(fill = section), outlier.shape = NA) +
   #facet_wrap(. ~ section, scales = "free") +
-  labs(fill = "Section", y = "MAE \n") +
+  labs(fill = "Section", y = "MAE \n", tag = "a)") +
   scale_x_discrete(labels=c("correlationbias_str" = "Correlation", "covariatebias" = "Covariate","jointcov" = "Joint likelihood", "structured" = "Structured only", "unstructuredcov" = "Unstructured only"))+
   scale_fill_brewer(palette="Paired")+
   theme_classic()+
@@ -25,13 +25,14 @@ p1 <- ggplot(sub1, aes(y = MAE, x = Model), group = section) +
         legend.text = element_text(size = 10),
         axis.text = element_text(size = 10),
         axis.title = element_text(size = 10),
-        axis.title.x = element_blank())
+        axis.title.x = element_blank(),
+        plot.tag = element_text(size = 10))
 
 
 p2 <- ggplot(sub1, aes(y = correlation, x = Model), group = section) +
   geom_boxplot(aes(fill = section), outlier.shape = NA) +
   #facet_wrap(. ~ section, scales = "free") +
-  labs(fill = "Section", y = "Correlation") +
+  labs(fill = "Section", y = "Correlation", tag = "b)") +
   scale_x_discrete(labels=c("correlationbias_str" = "Correlation", "covariatebias" = "Covariate","jointcov" = "Joint likelihood", "structured" = "Structured only", "unstructuredcov" = "Unstructured only"))+
   scale_fill_brewer(palette="Paired")+
   theme_classic()+
@@ -41,7 +42,8 @@ p2 <- ggplot(sub1, aes(y = correlation, x = Model), group = section) +
         legend.text = element_text(size = 10),
         axis.text = element_text(size = 10),
         axis.title = element_text(size = 10),
-        axis.title.x = element_blank())
+        axis.title.x = element_blank(),
+        plot.tag = element_text(size = 10))
 
 
 ##bias covariate absent 
@@ -51,7 +53,7 @@ sub2 <- sim_res[sim_res$Model %in% c("structured", "unstructured", "joint", "cov
 p3 <- ggplot(sub2, aes(y = MAE, x = Model), group = section) +
   geom_boxplot(aes(fill = section), outlier.shape = NA) +
   #facet_wrap(. ~ section, scales = "free") +
-  labs(fill = "Section", y = "MAE \n") +
+  labs(fill = "Section", y = "MAE \n", tag = "c)") +
   scale_x_discrete(labels=c("correlation_str" = "Correlation", "covariate" = "Covariate","joint" = "Joint likelihood", "structured" = "Structured only", "unstructured" = "Unstructured only"))+
   scale_fill_brewer(palette="Paired")+
   theme_classic()+
@@ -62,13 +64,14 @@ p3 <- ggplot(sub2, aes(y = MAE, x = Model), group = section) +
         legend.text = element_text(size = 10),
         axis.text = element_text(size = 10),
         axis.title = element_text(size = 10),
-        axis.title.x = element_blank())
+        axis.title.x = element_blank(),
+        plot.tag = element_text(size = 10))
 
 
 p4 <- ggplot(sub2, aes(y = correlation, x = Model), group = section) +
   geom_boxplot(aes(fill = section), outlier.shape = NA) +
   #facet_wrap(. ~ section, scales = "free") +
-  labs(fill = "Section", y = "Correlation") +
+  labs(fill = "Section", y = "Correlation", tag = "d)") +
   scale_x_discrete(labels=c("correlation_str" = "Correlation", "covariate" = "Covariate","joint" = "Joint likelihood", "structured" = "Structured only", "unstructured" = "Unstructured only"))+
   scale_fill_brewer(palette="Paired")+
   theme_classic()+
@@ -78,7 +81,8 @@ p4 <- ggplot(sub2, aes(y = correlation, x = Model), group = section) +
         legend.text = element_text(size = 10),
         axis.text = element_text(size = 10),
         axis.title = element_text(size = 10),
-        axis.title.x = element_blank())
+        axis.title.x = element_blank(),
+        plot.tag = element_text(size = 10))
 
 
 ##bias cov present, env
@@ -88,8 +92,8 @@ sub1e <- env_res[env_res$model %in% c("structured", "unstr_bias", "joint_bias", 
 p5 <- ggplot(sub1e, aes(y = mean, x = model), group = section) +
   geom_boxplot(aes(fill = section), outlier.shape = NA) +
   #facet_wrap(. ~ section, scales = "free") +
-  labs(fill = "Section", y = "Coefficient estimate", x = "Model") +
-  scale_x_discrete(labels=c("correlation_bias" = "Correlation", "covariate_bias" = "Covariate","joint_bias" = "Joint likelihood", "structured" = "Structured only", "unstr_bias" = "Unstructured only"))+
+  labs(fill = "Section", y = "Coefficient estimate", x = "Model", tag = "e)") +
+  scale_x_discrete(labels=c("correlation_bias" = "Correlation", "covariate_bias" = "Covariate","joint_bias" = "Joint likelihood", "structured" = "PA only", "unstr_bias" = "PO only"))+
   theme_classic()+
   scale_fill_brewer(palette = "Paired")+
   ylim(-25,25)+
@@ -98,7 +102,8 @@ p5 <- ggplot(sub1e, aes(y = mean, x = model), group = section) +
         axis.text.y = element_text(size = 10),
         legend.text = element_text(size = 10),
         axis.text = element_text(size = 10),
-        axis.title = element_text(size = 10))+
+        axis.title = element_text(size = 10),
+        plot.tag = element_text(size = 10))+
   geom_hline(yintercept = 1.2, linetype = "dashed")
 
 ##bias cov absent, env
@@ -108,8 +113,8 @@ sub2e <- env_res[env_res$model %in% c("structured", "unstructured", "joint", "co
 p6 <- ggplot(sub2e, aes(y = mean, x = model), group = section) +
   geom_boxplot(aes(fill = section), outlier.shape = NA) +
   #facet_wrap(. ~ section, scales = "free") +
-  labs(fill = "Section", y = "Coefficient estimate", x = "Model") +
-  scale_x_discrete(labels=c("correlation" = "Correlation", "covariate" = "Covariate","joint" = "Joint likelihood", "structured" = "Structured only", "unstructured" = "Unstructured only"))+
+  labs(fill = "Section", y = "Coefficient estimate", x = "Model", tag = "f)") +
+  scale_x_discrete(labels=c("correlation" = "Correlation", "covariate" = "Covariate","joint" = "Joint likelihood", "structured" = "PA only", "unstructured" = "PO only"))+
   scale_fill_brewer(palette = "Paired")+
   ylim(-25,25)+
   theme_classic()+
@@ -118,7 +123,8 @@ p6 <- ggplot(sub2e, aes(y = mean, x = model), group = section) +
         axis.text.y = element_text(size = 10),
         legend.text = element_text(size = 10),
         axis.text = element_text(size = 10),
-        axis.title = element_text(size = 10))+
+        axis.title = element_text(size = 10),
+        plot.tag = element_text(size = 10))+
   geom_hline(yintercept = 1.2, linetype = "dashed")
 
 

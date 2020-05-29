@@ -32,7 +32,7 @@ p1 <- ggplot(sub1, aes(y = MAE, x = Model), group = section) +
 p2 <- ggplot(sub1, aes(y = correlation, x = Model), group = section) +
   geom_boxplot(aes(fill = section), outlier.shape = NA) +
   #facet_wrap(. ~ section, scales = "free") +
-  labs(fill = "Section", y = "Correlation", tag = "b)") +
+  labs(fill = "Section", y = "Correlation", tag = "c)") +
   scale_x_discrete(labels=c("correlationbias_str" = "Correlation", "covariatebias" = "Covariate","jointcov" = "Joint likelihood", "structured" = "Structured only", "unstructuredcov" = "Unstructured only"))+
   scale_fill_brewer(palette="Paired")+
   theme_classic()+
@@ -53,7 +53,7 @@ sub2 <- sim_res[sim_res$Model %in% c("structured", "unstructured", "joint", "cov
 p3 <- ggplot(sub2, aes(y = MAE, x = Model), group = section) +
   geom_boxplot(aes(fill = section), outlier.shape = NA) +
   #facet_wrap(. ~ section, scales = "free") +
-  labs(fill = "Section", y = "MAE \n", tag = "c)") +
+  labs(fill = "Section", y = "MAE \n", tag = "b)") +
   scale_x_discrete(labels=c("correlation_str" = "Correlation", "covariate" = "Covariate","joint" = "Joint likelihood", "structured" = "Structured only", "unstructured" = "Unstructured only"))+
   scale_fill_brewer(palette="Paired")+
   theme_classic()+

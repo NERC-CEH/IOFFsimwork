@@ -25,7 +25,8 @@ lambda <- -3 #manageable number
 #' 
 #' e.g. we want to simulate a point process with a smaller mean intensity
 
-lambda <- -3
+lambda <- -1
+dim = c(100,100)
 
 #' ## Generate data from parameters
 
@@ -46,7 +47,7 @@ lambda <- -3
 #+ warning = FALSE, message = FALSE, error = FALSE, include = FALSE
 source("Functions to generate data and sample.R")
 
-g1 <- genDataFunctions(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x, strata = strata, rows = rows, cols = cols, probs = probs, nsamp = nsamp, qsize = 1, rho = 0.99)
+g1 <- genDataFunctions(dim = dim, lambda = lambda, env.beta = env.beta, seed = seed, kappa = kappa, sigma2x = sigma2x, strata = strata, rows = rows, cols = cols, probs = probs, nsamp = nsamp, qsize = 1)
 
 structured_data <- g1$structured_data
 unstructured_data <- g1$unstructured_data
@@ -61,7 +62,7 @@ strata1 <- g1$strata1
 par(mfrow=c(1,3)) 
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='log-Lambda', asp=1) 
 points(dat1$xy, pch=19)
-image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Covariate', asp=1)
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Covariate', asp=1, viridis(50))
 image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(biascov)), main='Bias covariate', asp=1)
 
 #' Visualise the strata and associated probabilities of sampling
@@ -70,7 +71,7 @@ par(mfrow=c(1,1), xpd = TRUE)
 par(mar=c(4,4,4,7))
 palette(viridis(50))
 plot(biasfield$y ~ biasfield$x, col = biasfield$stratprobs*100)
-legend(330,300, col = c(50,40,30,20,10), pch = 20, legend = c("0.4-0.5", "0.3-0.4", "0.2-0.3", "0.1-0.2", "0.01-0.1"), title = "Probability")
+legend(110,100, col = c(50,40,30,20,10), pch = 20, legend = c("0.4-0.5", "0.3-0.4", "0.2-0.3", "0.1-0.2", "0.01-0.1"), title = "Probability")
 
 #' Visualise thinned unstructured data
 #+ echo = FALSE 
@@ -85,6 +86,37 @@ image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Structu
 points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black")
 par(xpd = TRUE)
 legend(-10,360,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1))
+
+##Figure 1
+
+png("Figure 1 CC.png", height = 180, width = 200, units = "mm", res = 100, pointsize = 16)
+
+par(mfrow=c(2,2))
+par(mar=c(2,4,3,5))
+
+#env
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$gridcov)), main='Environmental \ncovariate', asp=1, col = viridis(50))
+
+#intensity
+image.plot(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Species intensity \n(log-Lambda)', asp=1, col  = viridis(50))
+
+#strata
+#par(mar=c(4,4,4,7))
+palette(viridis(50))
+plot(biasfield$y ~ biasfield$x, col = biasfield$stratprobs*100, cex = 3, pch = 15, ylab = NA)
+par(xpd = TRUE)
+legend(106,100, col = c(50,40,30,20,10), pch = 20, legend = c("0.4-0.5", "0.3-0.4", "0.2-0.3", "0.1-0.2", "0.01-0.1"), title = "Probability")
+
+#data
+par(mar=c(2,4,2,5))
+image(list(x=dat1$Lam$xcol, y=dat1$Lam$yrow, z=t(dat1$rf.s)), main='Simulated data', asp=1, col = viridis(50)) 
+points(unstructured_data$x, unstructured_data$y, pch = 20, col = "grey")#note rescale again - plotting back on original
+points(structured_data$x,structured_data$y, pch = 21, bg = structured_data$presence, col = "black")
+par(xpd = TRUE)
+legend(102,100,c("Absence", "Presence"), pch = 21, col = "black", pt.bg = c(0,1), cex = 0.8)
+
+dev.off()
+
 
 #' ## Run individual data models
 #' 

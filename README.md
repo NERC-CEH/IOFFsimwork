@@ -3,11 +3,11 @@ title: "README"
 output: html_document
 ---
 
-## Code to run simulations for the paper titled 'Is more data always better? A simulation study of benefits and limitations of integrated distribution models'
+## Code to run simulations for Simmonds *et al* 2020 ['Is more data always better? A simulation study of benefits and limitations of integrated distribution models'](https://doi.org/10.1111/ecog.05146)
 
 This repository hosts functions to simulate presence-absence (PA) and presence-only (PO) data and to run species distribution models on these to evaluate under which scenarios integrated models perform better than individual dataset models. 
 
-This work is funded by the NERC International Opportunities Fund.
+This work was supported by Natural Environment Research Council grant NE/R005133/1 and award NE/R016429/1 as part of the UK-SCAPE programme delivering National Capability.
 
 An overview of the data generation, sampling and modelling can be found in [runall.R](https://github.com/NERC-CEH/IOFFsimwork/blob/master/runall.R)
 
